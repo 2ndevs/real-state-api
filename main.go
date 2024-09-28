@@ -22,12 +22,12 @@ func main() {
 
 	router := chi.NewRouter()
 
-  database.Connect()
+	database.Connect()
 	middlewares.Debug(router)
 	routes.Handler(router)
 
-  port := fmt.Sprintf(":%v", os.Getenv("APP_PORT"))
+	port := fmt.Sprintf(":%v", os.Getenv("APP_PORT"))
 
-	fmt.Printf("[SERVER] Running on port %v", port)
-  http.ListenAndServe(port, router)
+	fmt.Printf("[SERVER] Running on port %v\n", port)
+	http.ListenAndServe(port, router)
 }
