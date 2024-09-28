@@ -1,8 +1,10 @@
 package routes
 
 import (
-	"github.com/go-chi/chi/v5"
+	"main/infra/http/routes/internals/controllers"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func Handler(router chi.Router) {
@@ -13,4 +15,6 @@ func Handler(router chi.Router) {
 			writer.Write([]byte(message))
 		},
 	)
+
+  router.Post("/status", controllers.CreateStatus)
 }
