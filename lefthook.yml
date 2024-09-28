@@ -1,0 +1,14 @@
+pre-commit:
+  parallel: true
+  commands:
+    check-and-lint:
+      run: go fmt && git update-index --again
+
+    # test:
+    #   run: bun run test
+
+pre-push:
+  parallel: true
+  commands:
+    build:
+      run: go build
