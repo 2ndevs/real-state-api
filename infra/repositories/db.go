@@ -18,5 +18,10 @@ func Connect() {
 		log.Fatal("Unable to connect to database")
 	}
 
-	db.AutoMigrate(&Status{}, &Kind{}, &PaymentType{}, &Property{})
+	db.AutoMigrate(
+		&Status{},
+		&Kind{},
+		&PaymentType{},
+		&Property{},
+	)
 }

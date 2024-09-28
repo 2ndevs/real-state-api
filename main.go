@@ -6,9 +6,9 @@ import (
 	"net/http"
 	"os"
 
-	"main/database"
-	"main/http/middlewares"
-	"main/http/routes"
+	"main/infra/http/middlewares"
+	"main/infra/http/routes"
+	"main/infra/repositories"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
