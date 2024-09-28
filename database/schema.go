@@ -17,7 +17,7 @@ import (
 type Status struct {
 	gorm.Model
 
-	Name   string `gorm:"index"`
+	Name string `gorm:"index"`
 }
 
 type Kind struct {
@@ -37,7 +37,7 @@ type PaymentType struct {
 type Property struct {
 	gorm.Model
 
-	Kind         *Kind  `gorm:"index"`
+	Kind         *Kind `gorm:"index"`
 	Price        float64
 	Size         uint
 	Rooms        uint
@@ -49,7 +49,7 @@ type Property struct {
 	Coords       []uint
 	PaymentTypes []PaymentType
 
-  Status Status
+	Status Status
 }
 
 func Schema() {
@@ -74,5 +74,5 @@ func Schema() {
 
 	defer instance.Close()
 
-  db.AutoMigrate(&Status{}, &Kind{}, &PaymentType{}, &Property{})
+	db.AutoMigrate(&Status{}, &Kind{}, &PaymentType{}, &Property{})
 }
