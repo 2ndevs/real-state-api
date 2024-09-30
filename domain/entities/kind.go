@@ -1,6 +1,7 @@
 package entities
 
 type Kind struct {
-	Name   string `gorm:"index"`
+	ID       uint   `gorm:"primary_key"`
+	Name     string `gorm:"index"`
 	StatusID uint
 }

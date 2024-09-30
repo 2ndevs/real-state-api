@@ -8,7 +8,7 @@ import (
 
 	"main/infra/http/middlewares"
 	"main/infra/http/routes"
-	"main/infra/repositories"
+	database "main/infra/repositories"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -22,9 +22,14 @@ func main() {
 
 	router := chi.NewRouter()
 
-	database.Connect()
+	db, err := database.Connect()
+
+	if err != nil {
+		log.Fatalf("Database connection failed: %v", err)
+	}
+
 	middlewares.Debug(router)
-	routes.Handler(router)
+	routes.Handler(router, db)
 
 	port := fmt.Sprintf(":%v", os.Getenv("APP_PORT"))
 

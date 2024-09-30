@@ -5,9 +5,10 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"gorm.io/gorm"
 )
 
-func Handler(router chi.Router) {
+func Handler(router chi.Router, db *gorm.DB) {
 	router.Get(
 		"/",
 		func(writer http.ResponseWriter, request *http.Request) {
@@ -16,5 +17,9 @@ func Handler(router chi.Router) {
 		},
 	)
 
-  router.Post("/status", controllers.CreateStatus)
+	router.Post("/status", controllers.CreateStatus)
+
+	// KIND
+	kindController := &controllers.KindController{DB: db}
+	router.Post("/kind", kindController.CreateKind)
 }
