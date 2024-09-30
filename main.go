@@ -22,14 +22,10 @@ func main() {
 
 	router := chi.NewRouter()
 
-	db, err := database.Connect()
-
-	if err != nil {
-		log.Fatalf("Database connection failed: %v", err)
-	}
+	database.Connect()
 
 	middlewares.Debug(router)
-	routes.Handler(router, db)
+	routes.Handler(router)
 
 	port := fmt.Sprintf(":%v", os.Getenv("APP_PORT"))
 
