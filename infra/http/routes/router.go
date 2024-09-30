@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Handler(router chi.Router, db *gorm.DB) {
+func Handler(router chi.Router) {
 	router.Get(
 		"/",
 		func(writer http.ResponseWriter, request *http.Request) {
@@ -20,6 +20,6 @@ func Handler(router chi.Router, db *gorm.DB) {
 	router.Post("/status", controllers.CreateStatus)
 
 	// KIND
-	kindController := &controllers.KindController{DB: db}
+	kindController := &controllers.KindController{DB: &gorm.DB{}}
 	router.Post("/kind", kindController.CreateKind)
 }
