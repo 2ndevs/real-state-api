@@ -22,8 +22,10 @@ func DatabaseMiddleware(db *gorm.DB) func(next http.Handler) http.Handler {
 
 func GetDBFromContext(appContext context.Context) *gorm.DB {
 	db, ok := appContext.Value(dbContextKey).(*gorm.DB)
+
 	if !ok {
 		return nil
 	}
+
 	return db
 }

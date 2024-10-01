@@ -31,7 +31,9 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 	}
 
 	kind := entities.Kind{Name: kindRequest.Name}
-	if err := db.Create(&kind).Error; err != nil {
+	createKindError := db.Create(&kind).Error
+
+	if createKindError != nil {
 		http.Error(write, "Unable to create kind", http.StatusInternalServerError)
 		return
 	}
