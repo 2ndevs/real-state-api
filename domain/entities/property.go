@@ -1,6 +1,10 @@
 package entities
 
+import "gorm.io/gorm"
+
 type Property struct {
+	gorm.Model
+
 	Size      uint
 	Rooms     uint
 	Kitchens  uint

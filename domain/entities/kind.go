@@ -1,7 +1,12 @@
 package entities
 
+import (
+	"gorm.io/gorm"
+)
+
 type Kind struct {
-	ID       uint   `gorm:"primary_key"`
+	gorm.Model
+
 	Name     string `gorm:"index"`
 	StatusID uint
 }

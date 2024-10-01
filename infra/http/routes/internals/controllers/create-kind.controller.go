@@ -3,9 +3,8 @@ package controllers
 import (
 	"encoding/json"
 	"main/domain/entities"
+	"main/infra/http/middlewares"
 	"net/http"
-
-	"gorm.io/gorm"
 )
 
 type CreateKindRequest struct {
@@ -17,33 +16,34 @@ type CreateKindResponse struct {
 	Name string `json:"name"`
 }
 
-type KindController struct {
-	DB *gorm.DB
-}
+func CreateKind(write http.ResponseWriter, request *http.Request) {
+	var kindRequest CreateKindRequest
 
-func (kc *KindController) CreateKind(w http.ResponseWriter, r *http.Request) {
-	var request CreateKindRequest
-
-	// Validate body request
-	if err := json.NewDecoder(r.Body).Decode(&request); err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+	if err := json.NewDecoder(request.Body).Decode(&kindRequest); err != nil {
+		http.Error(write, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	kind := entities.Kind{Name: request.Name}
-
-	// Create new kind inside db
-	if err := kc.DB.Create(&kind).Error; err != nil {
-		http.Error(w, "Unable to create kind", http.StatusInternalServerError)
+	db := middlewares.GetDBFromContext(request.Context())
+	if db == nil {
+		http.Error(write, "Database connection not found", http.StatusInternalServerError)
 		return
 	}
 
-	// Prepare response
+	kind := entities.Kind{Name: kindRequest.Name}
+	if err := db.Create(&kind).Error; err != nil {
+		http.Error(write, "Unable to create kind", http.StatusInternalServerError)
+		return
+	}
+
 	response := CreateKindResponse{
 		ID:   kind.ID,
 		Name: kind.Name,
 	}
 
-	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(response)
+	write.WriteHeader(http.StatusCreated)
+	err := json.NewEncoder(write).Encode(response)
+	if err != nil {
+		http.Error(write, "Server error", http.StatusInternalServerError)
+	}
 }

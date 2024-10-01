@@ -20,15 +20,26 @@ func main() {
 		log.Fatal("Unable to load .env variables")
 	}
 
+	db, err := database.Connect()
+	if err != nil {
+		log.Fatal("Unable to connect to database")
+	}
+
 	router := chi.NewRouter()
 
-	database.Connect()
-
 	middlewares.Debug(router)
+
+	router.Use(middlewares.DatabaseMiddleware(db))
+
 	routes.Handler(router)
 
 	port := fmt.Sprintf(":%v", os.Getenv("APP_PORT"))
 
 	fmt.Printf("[SERVER] Running on port %v\n", port)
-	http.ListenAndServe(port, router)
+	serverError := http.ListenAndServe(port, router)
+
+	if serverError != nil {
+		log.Fatal("Unable to run server")
+	}
+
 }
