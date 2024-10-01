@@ -8,7 +8,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func Connect() {
+func Connect() (*gorm.DB, error) {
 	connectionUrl := os.Getenv("DATABASE_URL")
 
 	db, err := gorm.Open(postgres.Open(connectionUrl), &gorm.Config{
@@ -18,10 +18,16 @@ func Connect() {
 		log.Fatal("Unable to connect to database")
 	}
 
-	db.AutoMigrate(
+	autoMigrateError := db.AutoMigrate(
 		&Status{},
 		&Kind{},
 		&PaymentType{},
 		&Property{},
 	)
+
+	if autoMigrateError != nil {
+		log.Fatal("Unable to run AutoMigrate")
+	}
+
+	return db, nil
 }

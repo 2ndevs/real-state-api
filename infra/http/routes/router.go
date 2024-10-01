@@ -16,5 +16,7 @@ func Handler(router chi.Router) {
 		},
 	)
 
-  router.Post("/status", controllers.CreateStatus)
+	router.Post("/status", controllers.CreateStatus)
+
+	router.Post("/kind", controllers.CreateKind)
 }
