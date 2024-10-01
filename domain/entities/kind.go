@@ -7,6 +7,7 @@ import (
 type Kind struct {
 	gorm.Model
 
-	Name     string `gorm:"index"`
+	Name string `gorm:"index"`
+
 	StatusID uint
 }
