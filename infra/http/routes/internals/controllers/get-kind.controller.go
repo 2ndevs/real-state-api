@@ -10,10 +10,15 @@ import (
 	"gorm.io/gorm"
 )
 
+type Status struct {
+	ID     uint   `json:"id"`
+	Status string `json:"status"`
+}
+
 type GetKindResponse struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	StatusID uint   `json:"status_id"`
+	ID     uint   `json:"id"`
+	Name   string `json:"name"`
+	Status Status `json:"status"`
 }
 
 func GetKind(write http.ResponseWriter, request *http.Request) {
@@ -49,10 +54,24 @@ func GetKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	var status entities.Status
+
+	statusError := db.Model(&entities.Status{}).
+		Where("id = ?", kind.StatusID).
+		First(&status).Error
+
+	if statusError != nil {
+		http.Error(write, "Unable to retrieve status", http.StatusInternalServerError)
+		return
+	}
+
 	response := GetKindResponse{
-		ID:       kind.ID,
-		Name:     kind.Name,
-		StatusID: kind.StatusID,
+		ID:   kind.ID,
+		Name: kind.Name,
+		Status: Status{
+			ID:     status.ID,
+			Status: status.Name,
+		},
 	}
 
 	write.WriteHeader(http.StatusOK)
