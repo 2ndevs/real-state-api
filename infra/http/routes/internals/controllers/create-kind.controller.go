@@ -19,8 +19,10 @@ type CreateKindResponse struct {
 func CreateKind(write http.ResponseWriter, request *http.Request) {
 	var kindRequest CreateKindRequest
 
-	if err := json.NewDecoder(request.Body).Decode(&kindRequest); err != nil {
-		http.Error(write, err.Error(), http.StatusBadRequest)
+	parseError := json.NewDecoder(request.Body).Decode(&kindRequest)
+
+	if parseError != nil {
+		http.Error(write, parseError.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -45,6 +47,7 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 
 	write.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(write).Encode(response)
+
 	if err != nil {
 		http.Error(write, "Server error", http.StatusInternalServerError)
 	}
