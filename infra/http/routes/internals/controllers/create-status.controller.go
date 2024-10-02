@@ -1,9 +1,6 @@
 package controllers
 
 import (
-	// "fmt"
-	// "log"
-	// "main/domain/entities"
 	"encoding/json"
 	"main/domain/entities"
 	"main/infra/http/middlewares"

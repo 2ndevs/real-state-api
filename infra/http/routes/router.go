@@ -17,6 +17,7 @@ func Handler(router chi.Router) {
 	)
 
 	router.Post("/status", controllers.CreateStatus)
-
-	router.Post("/kind", controllers.CreateKind)
+	router.Post("/kinds", controllers.CreateKind)
+	router.Post("/payment-types", controllers.CreatePaymentType)
+	router.Post("/properties", controllers.CreateProperty)
 }
