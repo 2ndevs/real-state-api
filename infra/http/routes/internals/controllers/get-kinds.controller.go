@@ -30,6 +30,9 @@ func GetKinds(write http.ResponseWriter, request *http.Request) {
 		query = query.Where("name ILIKE ?", "%"+nameFilter+"%")
 	}
 
+	query = query.Where("deleted_at IS NULL")
+	query = query.Order("name asc")
+
 	findError := query.Find(&kinds).Error
 
 	if findError != nil {
@@ -48,8 +51,9 @@ func GetKinds(write http.ResponseWriter, request *http.Request) {
 	}
 
 	write.WriteHeader(http.StatusOK)
+	err := json.NewEncoder(write).Encode(response)
 
-	if err := json.NewEncoder(write).Encode(response); err != nil {
+	if err != nil {
 		http.Error(write, "Server error", http.StatusInternalServerError)
 	}
 }
