@@ -7,7 +7,7 @@ import (
 type Kind struct {
 	gorm.Model
 
-	Name string `gorm:"index"`
+  Name string `gorm:"index" validate:"required,gte=3,lte=100"`
 
-	StatusID uint
+  StatusID uint `validate:"required,min=1"`
 }

@@ -2,51 +2,41 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/domain/application"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
+	"main/infra/http/routes/internals/presenters"
 	"net/http"
 )
 
-type CreateKindRequest struct {
-	Name     string `json:"name" binding:"required,min=3,max=100"`
-	StatusID uint   `json:"status_id" binding:"required"`
-}
-
-type CreateKindResponse struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	StatusID uint   `json:"status_id"`
-}
-
 func CreateKind(write http.ResponseWriter, request *http.Request) {
-	var kindRequest CreateKindRequest
+	httpPresenter := presenters.KindPresenter{}
 
-	parseError := json.NewDecoder(request.Body).Decode(&kindRequest)
-
+	kindRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
 		http.Error(write, parseError.Error(), http.StatusBadRequest)
 		return
 	}
 
-	db := middlewares.GetDBFromContext(request.Context())
-	if db == nil {
-		http.Error(write, "Database connection not found", http.StatusInternalServerError)
+	database, ctxErr := middlewares.GetDatabaseFromContext(request)
+	if ctxErr != nil {
+		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	kind := entities.Kind{Name: kindRequest.Name, StatusID: kindRequest.StatusID}
-	createKindError := db.Create(&kind).Error
+  kindService := application.CreateKindService{ Request: request, Database: database }
+	kindPayload := entities.Kind{
+		Name:     kindRequest.Name,
+		StatusID: 1,
+	}
 
-	if createKindError != nil {
-		http.Error(write, "Unable to create kind", http.StatusInternalServerError)
+	kind, createKindErr := kindService.Execute(kindPayload)
+	if createKindErr != nil {
+		http.Error(write, createKindErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := CreateKindResponse{
-		ID:       kind.ID,
-		Name:     kind.Name,
-		StatusID: kind.StatusID,
-	}
+	response := httpPresenter.ToHTTP(*kind)
 
 	write.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(write).Encode(response)

@@ -53,8 +53,8 @@ func CreateProperty(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	db := middlewares.GetDBFromContext(request.Context())
-	if db == nil {
+	db, ctxErr := middlewares.GetDatabaseFromContext(request)
+	if ctxErr != nil {
 		http.Error(writer, "Database connection not found", http.StatusInternalServerError)
 		return
 	}
