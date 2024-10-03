@@ -5,18 +5,18 @@ import "gorm.io/gorm"
 type Property struct {
 	gorm.Model
 
-	Size      uint
-	Rooms     uint
-	Kitchens  uint
-	Bathrooms uint
-	Address   string
-	Summary   string
-	Details   string
-	Latitude  float64
-	Longitude float64
-	Price     float64
+  Size      uint `validate:"required,min=1"`
+  Rooms     uint `validate:"required,min=0"`
+  Kitchens  uint `validate:"required,min=0"`
+  Bathrooms uint `validate:"required,min=0"`
+  Address   string `validate:"required"`
+  Summary   string `validate:"required"`
+  Details   string `validate:"required"`
+  Latitude  float64 `validate:"required,min=0"`
+  Longitude float64 `validate:"required,min=0"`
+  Price     float64  `validate:"required,min=1"`
 
 	KindID        uint `gorm:"index"`
-	StatusID      uint
-	PaymentTypeID uint
+  StatusID      uint `validate:"required,min=1"`
+  PaymentTypeID uint `validate:"required,min=1"`
 }

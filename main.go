@@ -20,16 +20,18 @@ func main() {
 		log.Fatal("Unable to load .env variables")
 	}
 
-	db, err := database.Connect()
+	database, err := database.Connect()
 	if err != nil {
-		log.Fatal("Unable to connect to database")
+		log.Fatal(err.Error())
 	}
 
 	router := chi.NewRouter()
 
 	middlewares.Debug(router)
+	router.Use(middlewares.ValidatorMiddleware)
+	router.Use(middlewares.DatabaseMiddleware(database))
 
-	router.Use(middlewares.DatabaseMiddleware(db))
+	router.Use()
 
 	routes.Handler(router)
 

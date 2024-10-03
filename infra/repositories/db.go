@@ -1,7 +1,7 @@
 package database
 
 import (
-	"log"
+	"errors"
 	"os"
 
 	"gorm.io/driver/postgres"
@@ -15,7 +15,7 @@ func Connect() (*gorm.DB, error) {
 		DisableForeignKeyConstraintWhenMigrating: true,
 	})
 	if err != nil {
-		log.Fatal("Unable to connect to database")
+		return nil, errors.New("Unable to create database connection")
 	}
 
 	autoMigrateError := db.AutoMigrate(
@@ -24,9 +24,8 @@ func Connect() (*gorm.DB, error) {
 		&PaymentType{},
 		&Property{},
 	)
-
 	if autoMigrateError != nil {
-		log.Fatal("Unable to run AutoMigrate")
+		return nil, errors.New("Unable to auto migrate schemas")
 	}
 
 	return db, nil
