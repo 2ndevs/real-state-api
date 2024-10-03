@@ -2,55 +2,36 @@ package controllers
 
 import (
 	"encoding/json"
-	"main/domain/entities"
+	"main/domain/application"
 	"main/infra/http/middlewares"
+	"main/infra/http/routes/internals/presenters"
 	"net/http"
 )
 
-type GetKindsResponse struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	StatusID uint   `json:"status_id"`
-}
+func GetManyKinds(write http.ResponseWriter, request *http.Request) {
+	httpPresenter := presenters.KindPresenter{}
 
-func GetKinds(write http.ResponseWriter, request *http.Request) {
-	nameFilter := request.URL.Query().Get("name")
-
-	db := middlewares.GetDBFromContext(request.Context())
-
-	if db == nil {
-		http.Error(write, "Database connection not found", http.StatusInternalServerError)
+	database, ctxErr := middlewares.GetDatabaseFromContext(request)
+	if ctxErr != nil {
+		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	var kinds []entities.Kind
-	query := db.Model(&entities.Kind{})
+	kindService := application.GetManyKindsService{Request: request, Database: database}
 
-	if nameFilter != "" {
-		query = query.Where("name ILIKE ?", "%"+nameFilter+"%")
-	}
-
-	query = query.Where("deleted_at IS NULL")
-	query = query.Order("name asc")
-
-	findError := query.Find(&kinds).Error
-
-	if findError != nil {
-		http.Error(write, "Unable to retrieve kinds", http.StatusInternalServerError)
+	kinds, getKindsErr := kindService.Execute()
+	if getKindsErr != nil {
+		http.Error(write, getKindsErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	var response []GetKindsResponse
+	var response []presenters.KindToHTTP
 
-	for _, kind := range kinds {
-		response = append(response, GetKindsResponse{
-			ID:       kind.ID,
-			Name:     kind.Name,
-			StatusID: kind.StatusID,
-		})
+	for _, kind := range *kinds {
+		response = append(response, httpPresenter.ToHTTP(kind))
 	}
 
-	write.WriteHeader(http.StatusOK)
+	write.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {

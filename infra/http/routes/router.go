@@ -12,6 +12,6 @@ func Handler(router chi.Router) {
 	router.Post("/payment-types", controllers.CreatePaymentType)
 	router.Post("/properties", controllers.CreateProperty)
 
-	router.Get("/kinds", controllers.GetKinds)
+	router.Get("/kinds", controllers.GetManyKinds)
 	router.Get("/kinds/{id}", controllers.GetKind)
 }
