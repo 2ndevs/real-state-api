@@ -28,8 +28,8 @@ func main() {
 	router := chi.NewRouter()
 
 	middlewares.Debug(router)
-  router.Use(middlewares.ValidatorMiddleware)
-  router.Use(middlewares.DatabaseMiddleware(database))
+	router.Use(middlewares.ValidatorMiddleware)
+	router.Use(middlewares.DatabaseMiddleware(database))
 
 	router.Use()
 
