@@ -28,14 +28,14 @@ func CreatePaymentType(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	db := middlewares.GetDBFromContext(request.Context())
-	if db == nil {
-		http.Error(writer, "Database connection not found", http.StatusInternalServerError)
+	database, ctxErr := middlewares.GetDatabaseFromContext(request)
+	if ctxErr != nil {
+		http.Error(writer, ctxErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	PaymentType := entities.PaymentType{Name: paymentTypeRequest.Name, StatusID: paymentTypeRequest.StatusID}
-	createPaymentTypeError := db.Create(&PaymentType).Error
+	createPaymentTypeError := database.Create(&PaymentType).Error
 
 	if createPaymentTypeError != nil {
 		http.Error(writer, "Unable to create PaymentType", http.StatusInternalServerError)

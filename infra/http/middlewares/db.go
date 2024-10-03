@@ -2,30 +2,31 @@ package middlewares
 
 import (
 	"context"
-	"net/http"
-
+	"errors"
 	"gorm.io/gorm"
+	"net/http"
 )
 
-type contextKey string
+type DatabaseContextKey string
 
-const dbContextKey = contextKey("db")
+const databaseContextKey DatabaseContextKey = "database"
 
-func DatabaseMiddleware(db *gorm.DB) func(next http.Handler) http.Handler {
+func DatabaseMiddleware(database *gorm.DB) func(next http.Handler) http.Handler {
 	return func(next http.Handler) http.Handler {
-		return http.HandlerFunc(func(write http.ResponseWriter, request *http.Request) {
-			appContext := context.WithValue(request.Context(), dbContextKey, db)
-			next.ServeHTTP(write, request.WithContext(appContext))
-		})
+		return http.HandlerFunc(
+			func(writer http.ResponseWriter, request *http.Request) {
+				ctx := context.WithValue(request.Context(), databaseContextKey, database)
+				next.ServeHTTP(writer, request.WithContext(ctx))
+			},
+		)
 	}
 }
 
-func GetDBFromContext(appContext context.Context) *gorm.DB {
-	db, ok := appContext.Value(dbContextKey).(*gorm.DB)
-
+func GetDatabaseFromContext(request *http.Request) (*gorm.DB, error) {
+	database, ok := request.Context().Value(databaseContextKey).(*gorm.DB)
 	if !ok {
-		return nil
+		return nil, errors.New("Connection with database wasn't found")
 	}
 
-	return db
+	return database, nil
 }
