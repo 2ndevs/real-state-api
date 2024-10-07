@@ -9,7 +9,7 @@ import (
 type KindPresenter struct{}
 
 type KindFromHTTP struct {
-	Name string `json:"name"`
+	Name string `json:"name" validate:"required,gte=3,lte=100"`
 }
 
 type KindToHTTP struct {
@@ -21,7 +21,10 @@ type KindToHTTP struct {
 func (KindPresenter) FromHTTP(request *http.Request) (*KindFromHTTP, error) {
 	var kindRequest KindFromHTTP
 
-	err := json.NewDecoder(request.Body).Decode(&kindRequest)
+	decoder := json.NewDecoder(request.Body)
+	decoder.DisallowUnknownFields()
+
+	err := decoder.Decode(&kindRequest)
 	if err != nil {
 		return nil, err
 	}

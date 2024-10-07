@@ -2,56 +2,46 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/domain/application"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
+	"main/infra/http/routes/internals/presenters"
 	"net/http"
 )
 
-type CreatePaymentTypeRequest struct {
-	Name     string `json:"name" binding:"required,min=3,max=100"`
-	StatusID uint   `json:"status_id" binding:"required"`
-}
+func CreatePaymentType(write http.ResponseWriter, request *http.Request) {
+	httpPresenter := presenters.PaymentTypePresenter{}
 
-type CreatePaymentTypeResponse struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	StatusID uint   `json:"status_id"`
-}
-
-func CreatePaymentType(writer http.ResponseWriter, request *http.Request) {
-	var paymentTypeRequest CreatePaymentTypeRequest
-
-	parseError := json.NewDecoder(request.Body).Decode(&paymentTypeRequest)
-
+	paymentTypeRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
-		http.Error(writer, parseError.Error(), http.StatusBadRequest)
+		http.Error(write, parseError.Error(), http.StatusBadRequest)
 		return
 	}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(writer, ctxErr.Error(), http.StatusInternalServerError)
+		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	PaymentType := entities.PaymentType{Name: paymentTypeRequest.Name, StatusID: paymentTypeRequest.StatusID}
-	createPaymentTypeError := database.Create(&PaymentType).Error
+  paymenttypeService := application.CreatePaymentTypeService{ Request: request, Database: database }
+	paymenttypePayload := entities.PaymentType{
+		Name:     paymentTypeRequest.Name,
+		StatusID: 1,
+	}
 
-	if createPaymentTypeError != nil {
-		http.Error(writer, "Unable to create PaymentType", http.StatusInternalServerError)
+	paymenttype, createPaymentTypeErr := paymenttypeService.Execute(paymenttypePayload)
+	if createPaymentTypeErr != nil {
+		http.Error(write, createPaymentTypeErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := CreatePaymentTypeResponse{
-		ID:       PaymentType.ID,
-		Name:     PaymentType.Name,
-		StatusID: PaymentType.StatusID,
-	}
+	response := httpPresenter.ToHTTP(*paymenttype)
 
-	writer.WriteHeader(http.StatusCreated)
-	err := json.NewEncoder(writer).Encode(response)
+	write.WriteHeader(http.StatusCreated)
+	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(writer, "Server error", http.StatusInternalServerError)
+		http.Error(write, "Server error", http.StatusInternalServerError)
 	}
 }
