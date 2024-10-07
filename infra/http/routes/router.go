@@ -7,11 +7,19 @@ import (
 )
 
 func Handler(router chi.Router) {
-	router.Post("/status", controllers.CreateStatus)
 	router.Post("/kinds", controllers.CreateKind)
-	router.Post("/payment-types", controllers.CreatePaymentType)
-	router.Post("/properties", controllers.CreateProperty)
-
 	router.Get("/kinds", controllers.GetManyKinds)
 	router.Get("/kinds/{id}", controllers.GetKind)
+
+	router.Post("/payment-types", controllers.CreatePaymentType)
+	router.Get("/payment-types", controllers.GetManyPaymentTypes)
+	router.Get("/payment-types/{id}", controllers.GetPaymentType)
+
+	router.Post("/statuses", controllers.CreateStatus)
+	router.Get("/statuses", controllers.GetManyStatuses)
+	router.Get("/statuses/{id}", controllers.GetStatus)
+
+	router.Post("/properties", controllers.CreateProperty)
+	router.Get("/properties", controllers.GetManyProperties)
+	router.Get("/properties/{id}", controllers.GetProperty)
 }
