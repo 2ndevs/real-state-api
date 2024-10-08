@@ -16,8 +16,8 @@ func GetManyStatuses(write http.ResponseWriter, request *http.Request) {
 		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
 		return
 	}
-
-	statusesService := application.GetManyStatusesService{Request: request, Database: database}
+	nameFilter := request.URL.Query().Get("name")
+	statusesService := application.GetManyStatusesService{Request: request, NameFilter: &nameFilter, Database: database}
 
 	statuses, getStatusesErr := statusesService.Execute()
 	if getStatusesErr != nil {

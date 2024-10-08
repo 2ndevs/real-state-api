@@ -17,7 +17,8 @@ func GetManyKinds(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	kindService := application.GetManyKindsService{Request: request, Database: database}
+	nameFilter := request.URL.Query().Get("name")
+	kindService := application.GetManyKindsService{Request: request, NameFilter: &nameFilter, Database: database}
 
 	kinds, getKindsErr := kindService.Execute()
 	if getKindsErr != nil {

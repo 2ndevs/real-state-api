@@ -8,18 +8,17 @@ import (
 )
 
 type GetManyStatusesService struct {
-	Request  *http.Request
-	Database *gorm.DB
+	Request    *http.Request
+	NameFilter *string
+	Database   *gorm.DB
 }
 
 func (statusesService *GetManyStatusesService) Execute() (*[]entities.Status, error) {
-	nameFilter := statusesService.Request.URL.Query().Get("name")
-
 	var statuses []entities.Status
 	query := statusesService.Database.Model(&entities.Status{})
 
-	if nameFilter != "" {
-		query = query.Where("name ILIKE ?", "%"+nameFilter+"%")
+	if *statusesService.NameFilter != "" {
+		query = query.Where("name ILIKE ?", "%"+*statusesService.NameFilter+"%")
 	}
 
 	query = query.Where("deleted_at IS NULL")

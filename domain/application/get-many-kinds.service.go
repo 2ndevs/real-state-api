@@ -14,13 +14,11 @@ type GetManyKindsService struct {
 }
 
 func (kindService *GetManyKindsService) Execute() (*[]entities.Kind, error) {
-	nameFilter := kindService.Request.URL.Query().Get("name")
-
 	var kinds []entities.Kind
 	query := kindService.Database.Model(&entities.Kind{})
 
-	if nameFilter != "" {
-		query = query.Where("name ILIKE ?", "%"+nameFilter+"%")
+	if *kindService.NameFilter != "" {
+		query = query.Where("name ILIKE ?", "%"+*kindService.NameFilter+"%")
 	}
 
 	query = query.Where("deleted_at IS NULL")

@@ -8,19 +8,18 @@ import (
 )
 
 type GetManyPropertiesService struct {
-	Request  *http.Request
-	Database *gorm.DB
+	Request      *http.Request
+	SearchFilter *string
+	Database     *gorm.DB
 }
 
 func (propertiesService *GetManyPropertiesService) Execute() (*[]entities.Property, error) {
-	nameFilter := propertiesService.Request.URL.Query().Get("search")
-
 	var properties []entities.Property
 	query := propertiesService.Database.Model(&entities.Property{})
 
-	if nameFilter != "" {
-		query = query.Where("details ILIKE ?", "%"+nameFilter+"%").
-			Or("address ILIKE ?", "%"+nameFilter+"%")
+	if *propertiesService.SearchFilter != "" {
+		query = query.Where("details ILIKE ?", "%"+*propertiesService.SearchFilter+"%").
+			Or("address ILIKE ?", "%"+*propertiesService.SearchFilter+"%")
 	}
 
 	query = query.Where("deleted_at IS NULL")
