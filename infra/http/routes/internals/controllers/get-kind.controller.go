@@ -6,6 +6,7 @@ import (
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
 	"net/http"
+	"strconv"
 )
 
 func GetKind(write http.ResponseWriter, request *http.Request) {
@@ -17,7 +18,14 @@ func GetKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	kindService := application.GetKindService{Request: request, Database: database}
+	idParam := request.URL.Path[len("/kinds/"):]
+	kindId, validationErr := strconv.ParseUint(idParam, 10, 32)
+	if validationErr != nil {
+		http.Error(write, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	kindService := application.GetKindService{Request: request, KindID: kindId, Database: database}
 
 	kind, getKindErr := kindService.Execute()
 	if getKindErr != nil {

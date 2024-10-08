@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"log"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
 	"net/http"
@@ -25,8 +24,6 @@ func (kindService *CreateKindService) Execute(kind entities.Kind) (*entities.Kin
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}
-
-	log.Printf("%v", validationErr)
 
 	createKindTransaction := kindService.Database.Create(&kind)
 	if createKindTransaction.Error != nil {

@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"log"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
 	"net/http"
@@ -25,8 +24,6 @@ func (propertyService *CreatePropertyService) Execute(property entities.Property
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}
-
-	log.Printf("%v", validationErr)
 
 	createPropertyTransaction := propertyService.Database.Create(&property)
 	if createPropertyTransaction.Error != nil {

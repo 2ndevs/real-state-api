@@ -2,7 +2,6 @@ package application
 
 import (
 	"errors"
-	"log"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
 	"net/http"
@@ -25,8 +24,6 @@ func (statusService *CreateStatusService) Execute(status entities.Status) (*enti
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}
-
-	log.Printf("%v", validationErr)
 
 	createStatusTransaction := statusService.Database.Create(&status)
 	if createStatusTransaction.Error != nil {

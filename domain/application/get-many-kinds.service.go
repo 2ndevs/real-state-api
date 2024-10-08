@@ -8,8 +8,9 @@ import (
 )
 
 type GetManyKindsService struct {
-	Request  *http.Request
-	Database *gorm.DB
+	Request    *http.Request
+	NameFilter *string
+	Database   *gorm.DB
 }
 
 func (kindService *GetManyKindsService) Execute() (*[]entities.Kind, error) {

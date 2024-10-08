@@ -6,6 +6,7 @@ import (
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
 	"net/http"
+	"strconv"
 )
 
 func GetPaymentType(write http.ResponseWriter, request *http.Request) {
@@ -17,7 +18,15 @@ func GetPaymentType(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	paymentTypeService := application.GetPaymentTypeService{Request: request, Database: database}
+	idParam := request.URL.Path[len("/payment-types/"):]
+
+	paymentTypeId, validationErr := strconv.ParseUint(idParam, 10, 32)
+	if validationErr != nil {
+		http.Error(write, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	paymentTypeService := application.GetPaymentTypeService{Request: request, PaymentTypeID: paymentTypeId, Database: database}
 
 	paymentType, getPaymentTypeErr := paymentTypeService.Execute()
 	if getPaymentTypeErr != nil {

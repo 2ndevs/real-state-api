@@ -6,6 +6,7 @@ import (
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
 	"net/http"
+	"strconv"
 )
 
 func GetProperty(write http.ResponseWriter, request *http.Request) {
@@ -17,7 +18,15 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	propertyService := application.GetPropertyService{Request: request, Database: database}
+	idParam := request.URL.Path[len("/properties/"):]
+
+	propertyId, validationErr := strconv.ParseUint(idParam, 10, 32)
+	if validationErr != nil {
+		http.Error(write, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	propertyService := application.GetPropertyService{Request: request, PropertyID: propertyId, Database: database}
 
 	property, getPropertyErr := propertyService.Execute()
 	if getPropertyErr != nil {

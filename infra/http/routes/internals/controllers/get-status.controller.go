@@ -6,6 +6,7 @@ import (
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
 	"net/http"
+	"strconv"
 )
 
 func GetStatus(write http.ResponseWriter, request *http.Request) {
@@ -17,7 +18,15 @@ func GetStatus(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	statusService := application.GetStatusService{Request: request, Database: database}
+	idParam := request.URL.Path[len("/statuses/"):]
+
+	statusId, validationErr := strconv.ParseUint(idParam, 10, 32)
+	if validationErr != nil {
+		http.Error(write, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	statusService := application.GetStatusService{Request: request, StatusID: statusId, Database: database}
 
 	status, getStatusErr := statusService.Execute()
 	if getStatusErr != nil {
