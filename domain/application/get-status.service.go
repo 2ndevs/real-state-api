@@ -13,10 +13,10 @@ type GetStatusService struct {
 	Database *gorm.DB
 }
 
-func (statusService *GetStatusService) Execute() (*entities.Status, error) {
+func (self *GetStatusService) Execute() (*entities.Status, error) {
 
 	status := entities.Status{}
-	getStatusTransaction := statusService.Database.Find(&status, statusService.StatusID).Where("deleted_at IS NULL").First(&status)
+	getStatusTransaction := self.Database.Find(&status, self.StatusID).Where("deleted_at IS NULL").First(&status)
 	if getStatusTransaction.Error != nil {
 		return nil, getStatusTransaction.Error
 	}

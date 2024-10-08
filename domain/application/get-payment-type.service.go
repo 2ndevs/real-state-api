@@ -13,10 +13,10 @@ type GetPaymentTypeService struct {
 	Database      *gorm.DB
 }
 
-func (paymentTypeService *GetPaymentTypeService) Execute() (*entities.PaymentType, error) {
+func (self *GetPaymentTypeService) Execute() (*entities.PaymentType, error) {
 	paymentType := entities.PaymentType{}
 
-	getPaymentTypeTransaction := paymentTypeService.Database.Find(&paymentType, paymentTypeService.PaymentTypeID).Where("deleted_at IS NULL").First(&paymentType)
+	getPaymentTypeTransaction := self.Database.Find(&paymentType, self.PaymentTypeID).Where("deleted_at IS NULL").First(&paymentType)
 	if getPaymentTypeTransaction.Error != nil {
 		return nil, getPaymentTypeTransaction.Error
 	}

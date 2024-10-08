@@ -13,12 +13,12 @@ type GetManyStatusesService struct {
 	Database   *gorm.DB
 }
 
-func (statusesService *GetManyStatusesService) Execute() (*[]entities.Status, error) {
+func (self *GetManyStatusesService) Execute() (*[]entities.Status, error) {
 	var statuses []entities.Status
-	query := statusesService.Database.Model(&entities.Status{})
+	query := self.Database.Model(&entities.Status{})
 
-	if *statusesService.NameFilter != "" {
-		query = query.Where("name ILIKE ?", "%"+*statusesService.NameFilter+"%")
+	if *self.NameFilter != "" {
+		query = query.Where("name ILIKE ?", "%"+*self.NameFilter+"%")
 	}
 
 	query = query.Where("deleted_at IS NULL")

@@ -13,13 +13,13 @@ type GetManyPropertiesService struct {
 	Database     *gorm.DB
 }
 
-func (propertiesService *GetManyPropertiesService) Execute() (*[]entities.Property, error) {
+func (self *GetManyPropertiesService) Execute() (*[]entities.Property, error) {
 	var properties []entities.Property
-	query := propertiesService.Database.Model(&entities.Property{})
+	query := self.Database.Model(&entities.Property{})
 
-	if *propertiesService.SearchFilter != "" {
-		query = query.Where("details ILIKE ?", "%"+*propertiesService.SearchFilter+"%").
-			Or("address ILIKE ?", "%"+*propertiesService.SearchFilter+"%")
+	if *self.SearchFilter != "" {
+		query = query.Where("details ILIKE ?", "%"+*self.SearchFilter+"%").
+			Or("address ILIKE ?", "%"+*self.SearchFilter+"%")
 	}
 
 	query = query.Where("deleted_at IS NULL")

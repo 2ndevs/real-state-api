@@ -13,12 +13,12 @@ type GetManyKindsService struct {
 	Database   *gorm.DB
 }
 
-func (kindService *GetManyKindsService) Execute() (*[]entities.Kind, error) {
+func (self *GetManyKindsService) Execute() (*[]entities.Kind, error) {
 	var kinds []entities.Kind
-	query := kindService.Database.Model(&entities.Kind{})
+	query := self.Database.Model(&entities.Kind{})
 
-	if *kindService.NameFilter != "" {
-		query = query.Where("name ILIKE ?", "%"+*kindService.NameFilter+"%")
+	if *self.NameFilter != "" {
+		query = query.Where("name ILIKE ?", "%"+*self.NameFilter+"%")
 	}
 
 	query = query.Where("deleted_at IS NULL")

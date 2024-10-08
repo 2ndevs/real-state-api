@@ -13,10 +13,10 @@ type GetKindService struct {
 	Database *gorm.DB
 }
 
-func (kindService *GetKindService) Execute() (*entities.Kind, error) {
+func (self *GetKindService) Execute() (*entities.Kind, error) {
 	kind := entities.Kind{}
-	
-	getKindTransaction := kindService.Database.Find(&kind, kindService.KindID).Where("deleted_at IS NULL").First(&kind)
+
+	getKindTransaction := self.Database.Find(&kind, self.KindID).Where("deleted_at IS NULL").First(&kind)
 	if getKindTransaction.Error != nil {
 		return nil, getKindTransaction.Error
 	}

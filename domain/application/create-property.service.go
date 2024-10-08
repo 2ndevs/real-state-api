@@ -14,8 +14,8 @@ type CreatePropertyService struct {
 	Database *gorm.DB
 }
 
-func (propertyService *CreatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
-	validate, ctxErr := middlewares.GetValidator(propertyService.Request)
+func (self *CreatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
+	validate, ctxErr := middlewares.GetValidator(self.Request)
 	if ctxErr != nil {
 		return nil, ctxErr
 	}
@@ -25,7 +25,7 @@ func (propertyService *CreatePropertyService) Execute(property entities.Property
 		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}
 
-	createPropertyTransaction := propertyService.Database.Create(&property)
+	createPropertyTransaction := self.Database.Create(&property)
 	if createPropertyTransaction.Error != nil {
 		return nil, createPropertyTransaction.Error
 	}

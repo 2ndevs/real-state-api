@@ -14,8 +14,8 @@ type CreatePaymentTypeService struct {
 	Database *gorm.DB
 }
 
-func (paymentTypeService *CreatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
-	validate, ctxErr := middlewares.GetValidator(paymentTypeService.Request)
+func (self *CreatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
+	validate, ctxErr := middlewares.GetValidator(self.Request)
 	if ctxErr != nil {
 		return nil, ctxErr
 	}
@@ -25,7 +25,7 @@ func (paymentTypeService *CreatePaymentTypeService) Execute(paymentType entities
 		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}
 
-	createPaymentTypeTransaction := paymentTypeService.Database.Create(&paymentType)
+	createPaymentTypeTransaction := self.Database.Create(&paymentType)
 	if createPaymentTypeTransaction.Error != nil {
 		return nil, createPaymentTypeTransaction.Error
 	}

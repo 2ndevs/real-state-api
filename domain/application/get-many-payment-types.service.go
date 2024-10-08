@@ -8,17 +8,17 @@ import (
 )
 
 type GetManyPaymentTypesService struct {
-	Request  *http.Request
+	Request    *http.Request
 	NameFilter *string
-	Database *gorm.DB
+	Database   *gorm.DB
 }
 
-func (paymentTypeService *GetManyPaymentTypesService) Execute() (*[]entities.PaymentType, error) {
+func (self *GetManyPaymentTypesService) Execute() (*[]entities.PaymentType, error) {
 	var paymentTypes []entities.PaymentType
-	query := paymentTypeService.Database.Model(&entities.PaymentType{})
+	query := self.Database.Model(&entities.PaymentType{})
 
-	if *paymentTypeService.NameFilter != "" {
-		query = query.Where("name ILIKE ?", "%"+*paymentTypeService.NameFilter+"%")
+	if *self.NameFilter != "" {
+		query = query.Where("name ILIKE ?", "%"+*self.NameFilter+"%")
 	}
 
 	query = query.Where("deleted_at IS NULL")

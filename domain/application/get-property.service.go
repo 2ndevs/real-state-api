@@ -13,10 +13,10 @@ type GetPropertyService struct {
 	Database   *gorm.DB
 }
 
-func (propertyService *GetPropertyService) Execute() (*entities.Property, error) {
+func (self *GetPropertyService) Execute() (*entities.Property, error) {
 	property := entities.Property{}
 
-	getPropertyTransaction := propertyService.Database.Find(&property, propertyService.PropertyID).Where("deleted_at IS NULL").First(&property)
+	getPropertyTransaction := self.Database.Find(&property, self.PropertyID).Where("deleted_at IS NULL").First(&property)
 	if getPropertyTransaction.Error != nil {
 		return nil, getPropertyTransaction.Error
 	}
