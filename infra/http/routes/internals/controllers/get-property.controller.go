@@ -7,6 +7,8 @@ import (
 	"main/infra/http/routes/internals/presenters"
 	"net/http"
 	"strconv"
+
+	"github.com/go-chi/chi/v5"
 )
 
 func GetProperty(write http.ResponseWriter, request *http.Request) {
@@ -18,8 +20,7 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	idParam := request.URL.Path[len("/properties/"):]
-
+	idParam := chi.URLParam(request, "id")
 	propertyId, validationErr := strconv.ParseUint(idParam, 10, 32)
 	if validationErr != nil {
 		http.Error(write, "invalid id", http.StatusBadRequest)

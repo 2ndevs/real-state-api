@@ -7,19 +7,34 @@ import (
 )
 
 func Handler(router chi.Router) {
-	router.Post("/kinds", controllers.CreateKind)
-	router.Get("/kinds", controllers.GetManyKinds)
-	router.Get("/kinds/{id}", controllers.GetKind)
 
-	router.Post("/payment-types", controllers.CreatePaymentType)
-	router.Get("/payment-types", controllers.GetManyPaymentTypes)
-	router.Get("/payment-types/{id}", controllers.GetPaymentType)
+	router.Route("/web", func(router chi.Router) {
+		router.Route("/kinds", func(router chi.Router) {
+			router.Post("/", controllers.CreateKind)
+			router.Get("/", controllers.GetManyKinds)
+			router.Get("/{id}", controllers.GetKind)
+		})
 
-	router.Post("/statuses", controllers.CreateStatus)
-	router.Get("/statuses", controllers.GetManyStatuses)
-	router.Get("/statuses/{id}", controllers.GetStatus)
+		router.Route("/payment-types", func(router chi.Router) {
+			router.Post("/", controllers.CreatePaymentType)
+			router.Get("/", controllers.GetManyPaymentTypes)
+			router.Get("/{id}", controllers.GetPaymentType)
+		})
 
-	router.Post("/properties", controllers.CreateProperty)
-	router.Get("/properties", controllers.GetManyProperties)
-	router.Get("/properties/{id}", controllers.GetProperty)
+		router.Route("/statuses", func(router chi.Router) {
+			router.Post("/", controllers.CreateStatus)
+			router.Get("/", controllers.GetManyStatuses)
+			router.Get("/{id}", controllers.GetStatus)
+		})
+
+		router.Route("/properties", func(router chi.Router) {
+			router.Post("/", controllers.CreateProperty)
+			router.Get("/", controllers.GetManyProperties)
+			router.Get("/{id}", controllers.GetProperty)
+		})
+	})
+
+	router.Route("/admin", func(router chi.Router) {
+		// ADMIN ROUTES
+	})
 }
