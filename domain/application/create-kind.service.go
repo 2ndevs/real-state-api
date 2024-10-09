@@ -2,31 +2,22 @@ package application
 
 import (
 	"errors"
-	"log"
 	"main/domain/entities"
-	"main/infra/http/middlewares"
-	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
 type CreateKindService struct {
-	Request *http.Request
-	Database      *gorm.DB
+	Validated *validator.Validate
+	Database  *gorm.DB
 }
 
 func (self *CreateKindService) Execute(kind entities.Kind) (*entities.Kind, error) {
-	validate, ctxErr := middlewares.GetValidator(self.Request)
-	if ctxErr != nil {
-		return nil, ctxErr
-	}
-
-	validationErr := validate.Struct(kind)
+	validationErr := self.Validated.Struct(kind)
 	if validationErr != nil {
-    return nil, errors.Join(errors.New("Validation error: "), validationErr)
+		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}
-
-  log.Printf("%v", validationErr)
 
 	createKindTransaction := self.Database.Create(&kind)
 	if createKindTransaction.Error != nil {

@@ -1,0 +1,28 @@
+package application
+
+import (
+	"errors"
+	"main/domain/entities"
+
+	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
+)
+
+type CreatePaymentTypeService struct {
+	Validated *validator.Validate
+	Database  *gorm.DB
+}
+
+func (self *CreatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
+	validationErr := self.Validated.Struct(paymentType)
+	if validationErr != nil {
+		return nil, errors.Join(errors.New("validation error: "), validationErr)
+	}
+
+	createPaymentTypeTransaction := self.Database.Create(&paymentType)
+	if createPaymentTypeTransaction.Error != nil {
+		return nil, createPaymentTypeTransaction.Error
+	}
+
+	return &paymentType, nil
+}

@@ -2,53 +2,51 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/domain/application"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
+	"main/infra/http/routes/internals/presenters"
 	"net/http"
 )
 
-type CreateStatusRequest struct {
-	Name string `json:"name" binding:"required,min=3,max=100"`
-}
+func CreateStatus(write http.ResponseWriter, request *http.Request) {
+	httpPresenter := presenters.StatusPresenter{}
 
-type CreateStatusResponse struct {
-	ID   uint   `json:"id"`
-	Name string `json:"name"`
-}
-
-func CreateStatus(writer http.ResponseWriter, request *http.Request) {
-	var statusRequest CreateStatusRequest
-
-	parseError := json.NewDecoder(request.Body).Decode(&statusRequest)
-
+	statusRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
-		http.Error(writer, parseError.Error(), http.StatusBadRequest)
+		http.Error(write, parseError.Error(), http.StatusBadRequest)
 		return
 	}
 
-	db, ctxErr := middlewares.GetDatabaseFromContext(request)
+	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(writer, "Database connection not found", http.StatusInternalServerError)
+		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	Status := entities.Status{Name: statusRequest.Name}
-	createStatusError := db.Create(&Status).Error
-
-	if createStatusError != nil {
-		http.Error(writer, "Unable to create Status", http.StatusInternalServerError)
+	validated, ctxErr := middlewares.GetValidator(request)
+	if ctxErr != nil {
+		http.Error(write, ctxErr.Error(), http.StatusBadRequest)
 		return
 	}
 
-	response := CreateStatusResponse{
-		ID:   Status.ID,
-		Name: Status.Name,
+	statusService := application.CreateStatusService{Validated: validated, Database: database}
+	statusPayload := entities.Status{
+		Name: statusRequest.Name,
 	}
 
-	writer.WriteHeader(http.StatusCreated)
-	err := json.NewEncoder(writer).Encode(response)
+	status, createStatusErr := statusService.Execute(statusPayload)
+	if createStatusErr != nil {
+		http.Error(write, createStatusErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	response := httpPresenter.ToHTTP(*status)
+
+	write.WriteHeader(http.StatusCreated)
+	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(writer, "Server error", http.StatusInternalServerError)
+		http.Error(write, "Server error", http.StatusInternalServerError)
 	}
 }
