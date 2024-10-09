@@ -3,24 +3,18 @@ package application
 import (
 	"errors"
 	"main/domain/entities"
-	"main/infra/http/middlewares"
-	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
 type CreatePropertyService struct {
-	Request  *http.Request
-	Database *gorm.DB
+	Validated *validator.Validate
+	Database  *gorm.DB
 }
 
 func (self *CreatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
-	validate, ctxErr := middlewares.GetValidator(self.Request)
-	if ctxErr != nil {
-		return nil, ctxErr
-	}
-
-	validationErr := validate.Struct(property)
+	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}

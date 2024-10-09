@@ -18,7 +18,7 @@ func GetManyProperties(write http.ResponseWriter, request *http.Request) {
 	}
 
 	searchFilter := request.URL.Query().Get("search")
-	propertiesService := application.GetManyPropertiesService{Request: request, SearchFilter: &searchFilter, Database: database}
+	propertiesService := application.GetManyPropertiesService{SearchFilter: &searchFilter, Database: database}
 
 	properties, getPropertiesErr := propertiesService.Execute()
 	if getPropertiesErr != nil {

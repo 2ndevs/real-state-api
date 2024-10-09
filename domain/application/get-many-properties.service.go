@@ -2,13 +2,11 @@ package application
 
 import (
 	"main/domain/entities"
-	"net/http"
 
 	"gorm.io/gorm"
 )
 
 type GetManyPropertiesService struct {
-	Request      *http.Request
 	SearchFilter *string
 	Database     *gorm.DB
 }

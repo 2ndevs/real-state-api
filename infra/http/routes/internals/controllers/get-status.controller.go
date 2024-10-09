@@ -26,7 +26,7 @@ func GetStatus(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	statusService := application.GetStatusService{Request: request, StatusID: statusId, Database: database}
+	statusService := application.GetStatusService{StatusID: statusId, Database: database}
 
 	status, getStatusErr := statusService.Execute()
 	if getStatusErr != nil {

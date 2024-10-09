@@ -3,24 +3,18 @@ package application
 import (
 	"errors"
 	"main/domain/entities"
-	"main/infra/http/middlewares"
-	"net/http"
 
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
 type CreatePaymentTypeService struct {
-	Request  *http.Request
-	Database *gorm.DB
+	Validated *validator.Validate
+	Database  *gorm.DB
 }
 
 func (self *CreatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
-	validate, ctxErr := middlewares.GetValidator(self.Request)
-	if ctxErr != nil {
-		return nil, ctxErr
-	}
-
-	validationErr := validate.Struct(paymentType)
+	validationErr := self.Validated.Struct(paymentType)
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation error: "), validationErr)
 	}

@@ -2,13 +2,11 @@ package application
 
 import (
 	"main/domain/entities"
-	"net/http"
 
 	"gorm.io/gorm"
 )
 
 type GetStatusService struct {
-	Request  *http.Request
 	StatusID uint64
 	Database *gorm.DB
 }

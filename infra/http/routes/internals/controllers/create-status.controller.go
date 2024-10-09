@@ -24,7 +24,13 @@ func CreateStatus(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	statusService := application.CreateStatusService{Request: request, Database: database}
+	validated, ctxErr := middlewares.GetValidator(request)
+	if ctxErr != nil {
+		http.Error(write, ctxErr.Error(), http.StatusBadRequest)
+		return
+	}
+
+	statusService := application.CreateStatusService{Validated: validated, Database: database}
 	statusPayload := entities.Status{
 		Name: statusRequest.Name,
 	}

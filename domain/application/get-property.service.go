@@ -2,13 +2,11 @@ package application
 
 import (
 	"main/domain/entities"
-	"net/http"
 
 	"gorm.io/gorm"
 )
 
 type GetPropertyService struct {
-	Request    *http.Request
 	PropertyID uint64
 	Database   *gorm.DB
 }

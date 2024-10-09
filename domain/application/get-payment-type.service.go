@@ -2,13 +2,11 @@ package application
 
 import (
 	"main/domain/entities"
-	"net/http"
 
 	"gorm.io/gorm"
 )
 
 type GetPaymentTypeService struct {
-	Request       *http.Request
 	PaymentTypeID uint64
 	Database      *gorm.DB
 }

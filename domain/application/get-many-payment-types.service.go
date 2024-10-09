@@ -2,13 +2,11 @@ package application
 
 import (
 	"main/domain/entities"
-	"net/http"
 
 	"gorm.io/gorm"
 )
 
 type GetManyPaymentTypesService struct {
-	Request    *http.Request
 	NameFilter *string
 	Database   *gorm.DB
 }

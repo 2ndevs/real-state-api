@@ -24,7 +24,13 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-  kindService := application.CreateKindService{ Request: request, Database: database }
+	validated, ctxErr := middlewares.GetValidator(request)
+	if ctxErr != nil {
+		http.Error(write, ctxErr.Error(), http.StatusBadRequest)
+		return
+	}
+
+	kindService := application.CreateKindService{Validated: validated, Database: database}
 	kindPayload := entities.Kind{
 		Name:     kindRequest.Name,
 		StatusID: 1,

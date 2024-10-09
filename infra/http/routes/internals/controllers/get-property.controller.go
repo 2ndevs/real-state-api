@@ -26,7 +26,7 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	propertyService := application.GetPropertyService{Request: request, PropertyID: propertyId, Database: database}
+	propertyService := application.GetPropertyService{PropertyID: propertyId, Database: database}
 
 	property, getPropertyErr := propertyService.Execute()
 	if getPropertyErr != nil {

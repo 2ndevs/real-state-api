@@ -18,7 +18,7 @@ func GetManyPaymentTypes(write http.ResponseWriter, request *http.Request) {
 	}
 
 	nameFilter := request.URL.Query().Get("name")
-	paymentTypeService := application.GetManyPaymentTypesService{Request: request, NameFilter: &nameFilter, Database: database}
+	paymentTypeService := application.GetManyPaymentTypesService{NameFilter: &nameFilter, Database: database}
 
 	paymenttypes, getPaymentTypesErr := paymentTypeService.Execute()
 	if getPaymentTypesErr != nil {

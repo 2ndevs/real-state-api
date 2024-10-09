@@ -2,13 +2,11 @@ package application
 
 import (
 	"main/domain/entities"
-	"net/http"
 
 	"gorm.io/gorm"
 )
 
 type GetKindService struct {
-	Request  *http.Request
 	KindID   uint64
 	Database *gorm.DB
 }

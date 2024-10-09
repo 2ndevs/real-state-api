@@ -26,7 +26,7 @@ func GetPaymentType(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	paymentTypeService := application.GetPaymentTypeService{Request: request, PaymentTypeID: paymentTypeId, Database: database}
+	paymentTypeService := application.GetPaymentTypeService{PaymentTypeID: paymentTypeId, Database: database}
 
 	paymentType, getPaymentTypeErr := paymentTypeService.Execute()
 	if getPaymentTypeErr != nil {

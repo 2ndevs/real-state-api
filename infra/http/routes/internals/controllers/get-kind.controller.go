@@ -25,7 +25,7 @@ func GetKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	kindService := application.GetKindService{Request: request, KindID: kindId, Database: database}
+	kindService := application.GetKindService{KindID: kindId, Database: database}
 
 	kind, getKindErr := kindService.Execute()
 	if getKindErr != nil {
