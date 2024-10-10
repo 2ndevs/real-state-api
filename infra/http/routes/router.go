@@ -35,6 +35,16 @@ func Handler(router chi.Router) {
 	})
 
 	router.Route("/admin", func(router chi.Router) {
+		router.Route("/users", func(router chi.Router) {
+			// router.Post("/sign-in", controllers.SignIn)
+      // router.Post("/sign-up", controllers.SignUp) // FIXME: remove, it's likely that it's not even an option
+		})
+
+		router.Route("/roles", func(router chi.Router) {
+			// router.Post("/", controllers.CreateRole)
+			// router.Get("/", controllers.GetManyRoles)
+			// router.Get("/{id}", controllers.GetRole)
+		})
 		// ADMIN ROUTES
 	})
 }
