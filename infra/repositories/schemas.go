@@ -4,6 +4,14 @@ import (
 	"main/domain/entities"
 )
 
+type User struct {
+  entities.User
+}
+
+type Role struct {
+  entities.Role
+}
+
 type Status struct {
 	entities.Status
 }

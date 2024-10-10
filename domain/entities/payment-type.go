@@ -7,5 +7,5 @@ type PaymentType struct {
 
   Name string `gorm:"index" validate:"required"`
 
-  StatusID uint `validate:"required,min=1"`
+  StatusID uint `json:"status_id" validate:"required,min=1"`
 }

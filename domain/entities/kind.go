@@ -9,5 +9,5 @@ type Kind struct {
 
   Name string `gorm:"index" validate:"required,gte=3,lte=100"`
 
-  StatusID uint `validate:"required,min=1"`
+  StatusID uint `json:"status_id" validate:"required,min=1"`
 }
