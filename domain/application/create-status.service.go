@@ -16,7 +16,7 @@ type CreateStatusService struct {
 func (self *CreateStatusService) Execute(status entities.Status) (*entities.Status, error) {
 	validationErr := self.Validated.Struct(status)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation error: "), validationErr)
+		return nil, errors.Join(errors.New("Erros de validação: "), validationErr)
 	}
 
 	createStatusTransaction := self.Database.Create(&status)

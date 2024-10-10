@@ -16,7 +16,7 @@ type CreatePaymentTypeService struct {
 func (self *CreatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
 	validationErr := self.Validated.Struct(paymentType)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation error: "), validationErr)
+		return nil, errors.Join(errors.New("Erros de validação: "), validationErr)
 	}
 
 	createPaymentTypeTransaction := self.Database.Create(&paymentType)

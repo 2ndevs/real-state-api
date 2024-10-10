@@ -23,7 +23,7 @@ func GetKind(write http.ResponseWriter, request *http.Request) {
 	idParam := chi.URLParam(request, "id")
 	kindId, validationErr := strconv.ParseUint(idParam, 10, 32)
 	if validationErr != nil {
-		http.Error(write, "invalid id", http.StatusBadRequest)
+		http.Error(write, "ID inválido", http.StatusBadRequest)
 		return
 	}
 
@@ -41,6 +41,6 @@ func GetKind(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Server error", http.StatusInternalServerError)
+		http.Error(write, "Erro no servidor", http.StatusInternalServerError)
 	}
 }

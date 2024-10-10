@@ -16,7 +16,7 @@ type CreateKindService struct {
 func (self *CreateKindService) Execute(kind entities.Kind) (*entities.Kind, error) {
 	validationErr := self.Validated.Struct(kind)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation error: "), validationErr)
+		return nil, errors.Join(errors.New("Erros de validação: "), validationErr)
 	}
 
 	createKindTransaction := self.Database.Create(&kind)
