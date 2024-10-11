@@ -17,7 +17,7 @@ type UpdateStatusService struct {
 func (self *UpdateStatusService) Execute(status entities.Status) (*entities.Status, error) {
 	validationErr := self.Validated.Struct(status)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("Erros de validação: "), validationErr)
+		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingStatus *entities.Status
@@ -25,7 +25,7 @@ func (self *UpdateStatusService) Execute(status entities.Status) (*entities.Stat
 
 	existingStatusDatabaseResponse := query.First(&existingStatus)
 	if errors.Is(existingStatusDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("Status não encontrado")
+		return nil, errors.New("status not found")
 	}
 
 	if existingStatusDatabaseResponse.Error != nil {

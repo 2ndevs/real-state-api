@@ -9,15 +9,15 @@ import (
 )
 
 type UpdatePropertyService struct {
-	Validated *validator.Validate
-	PropertyID    uint64
-	Database  *gorm.DB
+	Validated  *validator.Validate
+	PropertyID uint64
+	Database   *gorm.DB
 }
 
 func (self *UpdatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
 	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("Erros de validação: "), validationErr)
+		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingProperty *entities.Property
@@ -25,7 +25,7 @@ func (self *UpdatePropertyService) Execute(property entities.Property) (*entitie
 
 	existingPropertyDatabaseResponse := query.First(&existingProperty)
 	if errors.Is(existingPropertyDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("Propriedade não encontrado")
+		return nil, errors.New("property not found")
 	}
 
 	if existingPropertyDatabaseResponse.Error != nil {

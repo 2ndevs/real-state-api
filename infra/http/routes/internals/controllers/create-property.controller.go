@@ -60,6 +60,6 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Erro no servidor", http.StatusInternalServerError)
+		http.Error(write, "Server error", http.StatusInternalServerError)
 	}
 }

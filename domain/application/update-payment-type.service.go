@@ -17,7 +17,7 @@ type UpdatePaymentTypeService struct {
 func (self *UpdatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
 	validationErr := self.Validated.Struct(paymentType)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("Erros de validação: "), validationErr)
+		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingPaymentType *entities.PaymentType
@@ -25,7 +25,7 @@ func (self *UpdatePaymentTypeService) Execute(paymentType entities.PaymentType) 
 
 	existingPaymentTypeDatabaseResponse := query.First(&existingPaymentType)
 	if errors.Is(existingPaymentTypeDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("Tipo de pagamento não encontrado")
+		return nil, errors.New("payment-type not found")
 	}
 
 	if existingPaymentTypeDatabaseResponse.Error != nil {

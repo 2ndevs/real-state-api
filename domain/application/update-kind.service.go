@@ -17,7 +17,7 @@ type UpdateKindService struct {
 func (self *UpdateKindService) Execute(kind entities.Kind) (*entities.Kind, error) {
 	validationErr := self.Validated.Struct(kind)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("Erros de validação: "), validationErr)
+		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingKind *entities.Kind
@@ -25,7 +25,7 @@ func (self *UpdateKindService) Execute(kind entities.Kind) (*entities.Kind, erro
 
 	existingKindDatabaseResponse := query.First(&existingKind)
 	if errors.Is(existingKindDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("Tipo não encontrado")
+		return nil, errors.New("kind not found")
 	}
 
 	if existingKindDatabaseResponse.Error != nil {

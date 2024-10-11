@@ -36,7 +36,7 @@ func UpdateStatus(write http.ResponseWriter, request *http.Request) {
 	idParam := chi.URLParam(request, "id")
 	statusId, validationErr := strconv.ParseUint(idParam, 10, 32)
 	if validationErr != nil {
-		http.Error(write, "ID inválido", http.StatusBadRequest)
+		http.Error(write, "invalid ID", http.StatusBadRequest)
 		return
 	}
 
@@ -57,6 +57,6 @@ func UpdateStatus(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Erro no servidor", http.StatusInternalServerError)
+		http.Error(write, "Server error", http.StatusInternalServerError)
 	}
 }
