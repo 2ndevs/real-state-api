@@ -10,18 +10,17 @@ import (
 
 type UpdateStatusService struct {
 	Validated *validator.Validate
-	StatusID  uint64
 	Database  *gorm.DB
 }
 
-func (self *UpdateStatusService) Execute(status entities.Status) (*entities.Status, error) {
+func (self *UpdateStatusService) Execute(status entities.Status, statusID uint64) (*entities.Status, error) {
 	validationErr := self.Validated.Struct(status)
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingStatus *entities.Status
-	query := self.Database.Model(&entities.Status{}).Where("id = ?", self.StatusID)
+	query := self.Database.Model(&entities.Status{}).Where("id = ?", statusID)
 
 	existingStatusDatabaseResponse := query.First(&existingStatus)
 	if errors.Is(existingStatusDatabaseResponse.Error, gorm.ErrRecordNotFound) {

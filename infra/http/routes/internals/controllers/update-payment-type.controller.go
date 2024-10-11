@@ -40,13 +40,13 @@ func UpdatePaymentType(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	paymentTypeService := application.UpdatePaymentTypeService{Validated: validated, PaymentTypeID: paymentTypeId, Database: database}
+	paymentTypeService := application.UpdatePaymentTypeService{Validated: validated, Database: database}
 	paymenttypePayload := entities.PaymentType{
 		Name:     paymentTypeRequest.Name,
 		StatusID: 1,
 	}
 
-	paymentType, updatePaymentTypeErr := paymentTypeService.Execute(paymenttypePayload)
+	paymentType, updatePaymentTypeErr := paymentTypeService.Execute(paymenttypePayload, paymentTypeId)
 	if updatePaymentTypeErr != nil {
 		http.Error(write, updatePaymentTypeErr.Error(), http.StatusInternalServerError)
 		return

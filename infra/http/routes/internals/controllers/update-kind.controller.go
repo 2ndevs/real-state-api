@@ -40,13 +40,13 @@ func UpdateKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	kindService := application.UpdateKindService{Validated: validated, KindID: kindId, Database: database}
+	kindService := application.UpdateKindService{Validated: validated, Database: database}
 	kindPayload := entities.Kind{
 		Name:     kindRequest.Name,
 		StatusID: 1,
 	}
 
-	kind, updateKindErr := kindService.Execute(kindPayload)
+	kind, updateKindErr := kindService.Execute(kindPayload, kindId)
 	if updateKindErr != nil {
 		http.Error(write, updateKindErr.Error(), http.StatusInternalServerError)
 		return

@@ -40,7 +40,7 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	propertyService := application.UpdatePropertyService{Validated: validated, PropertyID: propertyId, Database: database}
+	propertyService := application.UpdatePropertyService{Validated: validated, Database: database}
 	propertyPayload := entities.Property{
 		Size:      propertyRequest.Size,
 		Rooms:     propertyRequest.Rooms,
@@ -58,7 +58,7 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 		StatusID:      1,
 	}
 
-	property, updatePropertyErr := propertyService.Execute(propertyPayload)
+	property, updatePropertyErr := propertyService.Execute(propertyPayload, propertyId)
 	if updatePropertyErr != nil {
 		http.Error(write, updatePropertyErr.Error(), http.StatusInternalServerError)
 		return

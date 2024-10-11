@@ -10,18 +10,17 @@ import (
 
 type UpdateKindService struct {
 	Validated *validator.Validate
-	KindID    uint64
 	Database  *gorm.DB
 }
 
-func (self *UpdateKindService) Execute(kind entities.Kind) (*entities.Kind, error) {
+func (self *UpdateKindService) Execute(kind entities.Kind, kindID uint64) (*entities.Kind, error) {
 	validationErr := self.Validated.Struct(kind)
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingKind *entities.Kind
-	query := self.Database.Model(&entities.Kind{}).Where("id = ?", self.KindID)
+	query := self.Database.Model(&entities.Kind{}).Where("id = ?", kindID)
 
 	existingKindDatabaseResponse := query.First(&existingKind)
 	if errors.Is(existingKindDatabaseResponse.Error, gorm.ErrRecordNotFound) {

@@ -40,12 +40,12 @@ func UpdateStatus(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	statusService := application.UpdateStatusService{Validated: validated, StatusID: statusId, Database: database}
+	statusService := application.UpdateStatusService{Validated: validated, Database: database}
 	statusPayload := entities.Status{
 		Name: statusRequest.Name,
 	}
 
-	status, updateStatusErr := statusService.Execute(statusPayload)
+	status, updateStatusErr := statusService.Execute(statusPayload, statusId)
 	if updateStatusErr != nil {
 		http.Error(write, updateStatusErr.Error(), http.StatusInternalServerError)
 		return

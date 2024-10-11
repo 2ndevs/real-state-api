@@ -9,19 +9,18 @@ import (
 )
 
 type UpdatePaymentTypeService struct {
-	Validated     *validator.Validate
-	PaymentTypeID uint64
-	Database      *gorm.DB
+	Validated *validator.Validate
+	Database  *gorm.DB
 }
 
-func (self *UpdatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
+func (self *UpdatePaymentTypeService) Execute(paymentType entities.PaymentType, paymentTypeID uint64) (*entities.PaymentType, error) {
 	validationErr := self.Validated.Struct(paymentType)
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingPaymentType *entities.PaymentType
-	query := self.Database.Model(&entities.PaymentType{}).Where("id = ?", self.PaymentTypeID)
+	query := self.Database.Model(&entities.PaymentType{}).Where("id = ?", paymentTypeID)
 
 	existingPaymentTypeDatabaseResponse := query.First(&existingPaymentType)
 	if errors.Is(existingPaymentTypeDatabaseResponse.Error, gorm.ErrRecordNotFound) {

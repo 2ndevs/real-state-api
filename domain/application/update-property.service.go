@@ -9,19 +9,18 @@ import (
 )
 
 type UpdatePropertyService struct {
-	Validated  *validator.Validate
-	PropertyID uint64
-	Database   *gorm.DB
+	Validated *validator.Validate
+	Database  *gorm.DB
 }
 
-func (self *UpdatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
+func (self *UpdatePropertyService) Execute(property entities.Property, propertyID uint64) (*entities.Property, error) {
 	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
 		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	var existingProperty *entities.Property
-	query := self.Database.Model(&entities.Property{}).Where("id = ?", self.PropertyID)
+	query := self.Database.Model(&entities.Property{}).Where("id = ?", propertyID)
 
 	existingPropertyDatabaseResponse := query.First(&existingProperty)
 	if errors.Is(existingPropertyDatabaseResponse.Error, gorm.ErrRecordNotFound) {
