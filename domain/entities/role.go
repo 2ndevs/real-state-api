@@ -1,11 +1,15 @@
 package entities
 
-import "gorm.io/gorm"
+import (
+	"github.com/lib/pq"
+	"gorm.io/gorm"
+)
 
 type Role struct {
-  gorm.Model
+	gorm.Model
 
-  Name string `json:"name" validate:"required,gte=3"`
+	Name        string         `json:"name" validate:"required,gte=3"`
+	Permissions pq.StringArray `gorm:"type:text[]" json:"permissions" validate:"required,min=1"`
 
-  StatusID uint `json:"status_id" validate:"required,gte=1"`
+	StatusID uint `json:"status_id" validate:"required,gte=1"`
 }
