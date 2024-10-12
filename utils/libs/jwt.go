@@ -49,7 +49,7 @@ func (JWT) Parse(value string) (*jwt.Token, error) {
 	}
 
 	token, err := jwt.Parse(value, func(constructor *jwt.Token) (any, error) {
-		return secret, nil
+		return []byte(secret), nil
 	})
 	if err != nil {
 		return nil, err

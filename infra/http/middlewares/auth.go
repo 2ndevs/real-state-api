@@ -1,12 +1,13 @@
 package middlewares
 
 import (
-	"github.com/golang-jwt/jwt/v5"
 	"main/core"
 	"main/utils/libs"
 	"net/http"
 	"slices"
 	"strings"
+
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func AuthMiddleware(next http.Handler) http.Handler {
@@ -19,7 +20,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 			var token string
 			bearer := request.Header.Get("Authorization")
-			tokenArr := strings.Split(bearer, "Bearer ")
+			tokenArr := strings.Split(bearer, " ")
 
 			if len(tokenArr) > 1 {
 				token = tokenArr[1]
