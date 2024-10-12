@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"main/domain/application"
+	"main/domain/entities"
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
 	"net/http"
@@ -11,12 +12,24 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetStatus(write http.ResponseWriter, request *http.Request) {
+func UpdateStatus(write http.ResponseWriter, request *http.Request) {
 	httpPresenter := presenters.StatusPresenter{}
+
+	statusRequest, parseError := httpPresenter.FromHTTP(request)
+	if parseError != nil {
+		http.Error(write, parseError.Error(), http.StatusBadRequest)
+		return
+	}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
 		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	validated, ctxErr := middlewares.GetValidator(request)
+	if ctxErr != nil {
+		http.Error(write, ctxErr.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -27,17 +40,20 @@ func GetStatus(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	statusService := application.GetStatusService{StatusID: statusId, Database: database}
+	statusService := application.UpdateStatusService{Validated: validated, Database: database}
+	statusPayload := entities.Status{
+		Name: statusRequest.Name,
+	}
 
-	status, getStatusErr := statusService.Execute()
-	if getStatusErr != nil {
-		http.Error(write, getStatusErr.Error(), http.StatusInternalServerError)
+	status, updateStatusErr := statusService.Execute(statusPayload, statusId)
+	if updateStatusErr != nil {
+		http.Error(write, updateStatusErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response := httpPresenter.ToHTTP(*status)
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusNoContent)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {

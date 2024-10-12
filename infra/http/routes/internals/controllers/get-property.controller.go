@@ -23,7 +23,7 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 	idParam := chi.URLParam(request, "id")
 	propertyId, validationErr := strconv.ParseUint(idParam, 10, 32)
 	if validationErr != nil {
-		http.Error(write, "invalid id", http.StatusBadRequest)
+		http.Error(write, "invalid ID", http.StatusBadRequest)
 		return
 	}
 

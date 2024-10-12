@@ -16,7 +16,7 @@ type CreatePropertyService struct {
 func (self *CreatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
 	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation error: "), validationErr)
+		return nil, errors.Join(errors.New("validation errors: "), validationErr)
 	}
 
 	createPropertyTransaction := self.Database.Create(&property)
