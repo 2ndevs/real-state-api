@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
@@ -14,19 +15,20 @@ func CreatePaymentType(write http.ResponseWriter, request *http.Request) {
 
 	paymentTypeRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
-		http.Error(write, parseError.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, ctxErr)
+
 		return
 	}
 
 	validated, ctxErr := middlewares.GetValidator(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
 
@@ -38,7 +40,7 @@ func CreatePaymentType(write http.ResponseWriter, request *http.Request) {
 
 	paymenttype, createPaymentTypeErr := paymenttypeService.Execute(paymenttypePayload)
 	if createPaymentTypeErr != nil {
-		http.Error(write, createPaymentTypeErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, createPaymentTypeErr)
 		return
 	}
 
@@ -48,6 +50,6 @@ func CreatePaymentType(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Server error", http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 	}
 }

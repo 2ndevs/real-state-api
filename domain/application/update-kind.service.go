@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +17,7 @@ type UpdateKindService struct {
 func (self *UpdateKindService) Execute(kind entities.Kind, kindID uint64) (*entities.Kind, error) {
 	validationErr := self.Validated.Struct(kind)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	var existingKind *entities.Kind
@@ -24,7 +25,7 @@ func (self *UpdateKindService) Execute(kind entities.Kind, kindID uint64) (*enti
 
 	existingKindDatabaseResponse := query.First(&existingKind)
 	if errors.Is(existingKindDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("kind not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingKindDatabaseResponse.Error != nil {

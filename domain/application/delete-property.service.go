@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ func (self *DeletePropertyService) Execute(propertyID uint64) (*entities.Propert
 
 	existingPropertyDatabaseResponse := query.First(&existingProperty)
 	if errors.Is(existingPropertyDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("property not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingPropertyDatabaseResponse.Error != nil {

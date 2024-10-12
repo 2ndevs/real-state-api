@@ -1,7 +1,7 @@
 package application
 
 import (
-	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +16,7 @@ type CreatePropertyService struct {
 func (self *CreatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
 	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	createPropertyTransaction := self.Database.Create(&property)

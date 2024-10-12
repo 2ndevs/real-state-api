@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/core"
 	"main/domain/application"
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
@@ -14,7 +15,7 @@ func GetManyProperties(write http.ResponseWriter, request *http.Request) {
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, ctxErr)
 		return
 	}
 
@@ -38,7 +39,7 @@ func GetManyProperties(write http.ResponseWriter, request *http.Request) {
 
 	properties, getPropertiesErr := propertiesService.Execute(filters)
 	if getPropertiesErr != nil {
-		http.Error(write, getPropertiesErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, getPropertiesErr)
 		return
 	}
 
@@ -52,6 +53,6 @@ func GetManyProperties(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Server error", http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 	}
 }

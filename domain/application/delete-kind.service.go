@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ func (self *DeleteKindService) Execute(kindID uint64) (*entities.Kind, error) {
 
 	existingKindDatabaseResponse := query.First(&existingKind)
 	if errors.Is(existingKindDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("kind not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingKindDatabaseResponse.Error != nil {

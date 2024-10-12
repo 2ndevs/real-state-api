@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +17,7 @@ type UpdateStatusService struct {
 func (self *UpdateStatusService) Execute(status entities.Status, statusID uint64) (*entities.Status, error) {
 	validationErr := self.Validated.Struct(status)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	var existingStatus *entities.Status
@@ -24,7 +25,7 @@ func (self *UpdateStatusService) Execute(status entities.Status, statusID uint64
 
 	existingStatusDatabaseResponse := query.First(&existingStatus)
 	if errors.Is(existingStatusDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("status not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingStatusDatabaseResponse.Error != nil {
