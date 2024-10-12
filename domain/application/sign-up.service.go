@@ -52,9 +52,9 @@ func (self SignUpService) Execute(request SignUpRequest) (*SignUpResponse, error
 		return nil, query.Error
 	}
 
-	// if query.Error == nil {
-	// 	return nil, core.EntityAlreadyExistsError
-	// }
+	if query.Error == nil {
+		return nil, core.EntityAlreadyExistsError
+	}
 
 	hashedPassword, err := self.Hasher.EncryptPassword(request.Password)
 	if err != nil {
