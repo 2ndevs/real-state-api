@@ -21,10 +21,10 @@ type SignInResponse struct {
 }
 
 type SignInService struct {
-	Database     *gorm.DB
-	Validate     *validator.Validate
-	Serilization libs.JWT
-	Hashing      libs.Hashing
+	Database *gorm.DB
+	Validate *validator.Validate
+	Parser   libs.JWT
+	Hasher   libs.Hashing
 }
 
 func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error) {
@@ -41,31 +41,31 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 		return nil, errors.Join(core.InvalidEmailError, databaseResponse.Error)
 	}
 
-	passwordErr := self.Hashing.IsValidPassword(params.Password, user.PasswordHash)
+	passwordErr := self.Hasher.IsValidPassword(params.Password, user.PasswordHash)
 	if passwordErr != nil {
 		return nil, core.InvalidPasswordError
 	}
 
-	token, tokenErr := self.Serilization.Generate(libs.CreateJWTParams{
+	token, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
 	})
-	if tokenErr != nil {
-		return nil, tokenErr
+	if err != nil {
+		return nil, err
 	}
 
-	refreshToken, refreshErr := self.Serilization.Generate(libs.CreateJWTParams{
+	refreshToken, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
 	})
-	if refreshErr != nil {
-		return nil, refreshErr
+	if err != nil {
+		return nil, err
 	}
 
-  updateTokenDatabaseResponse := self.Database.Model(&entities.User{}).Where("id = ?", user.ID).Update("refresh_token", refreshToken)
-  if updateTokenDatabaseResponse.Error != nil {
-    return nil, core.UnableToPersistToken
-  }
+	updateTokenDatabaseResponse := self.Database.Model(&entities.User{}).Where("id = ?", user.ID).Update("refresh_token", refreshToken)
+	if updateTokenDatabaseResponse.Error != nil {
+		return nil, core.UnableToPersistToken
+	}
 
 	response := SignInResponse{
 		Token:        *token,
