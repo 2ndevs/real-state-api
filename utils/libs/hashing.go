@@ -2,13 +2,9 @@ package libs
 
 import (
 	"errors"
+	"main/core"
 
 	"golang.org/x/crypto/bcrypt"
-)
-
-var (
-	InvalidPasswordError = errors.New("Senha incorreta")
-	PasswordEncryptionError = errors.New("Não foi possivel encriptar a senha")
 )
 
 type Hashing struct{}
@@ -18,7 +14,7 @@ func (Hashing) EncryptPassword(value string) (*string, error) {
 
 	bytes, err := bcrypt.GenerateFromPassword(valueAsBytes, 14)
 	if err != nil {
-		return nil, errors.Join(PasswordEncryptionError, err)
+		return nil, errors.Join(core.PasswordEncryptionError, err)
 	}
 
 	hash := string(bytes)
@@ -34,7 +30,7 @@ func (Hashing) IsValidPassword(password string, hash string) error {
 		hashAsBytes,
 	)
   if err != nil {
-    return errors.Join(InvalidPasswordError, err)
+    return errors.Join(core.InvalidPasswordError, err)
   }
 
 	return err

@@ -10,12 +10,6 @@ import (
 	"gorm.io/gorm"
 )
 
-var (
-	InvalidEmailError    = errors.New("Email não foi encontrado")
-	InvalidPasswordError = errors.New("Senha invalida")
-	UnableToPersistToken = errors.New("Não foi possivel criar token, tente novamente")
-)
-
 type SignInRequest struct {
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required"`
@@ -44,12 +38,12 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 
 	databaseResponse := query.First(&user)
 	if databaseResponse.Error != nil {
-		return nil, errors.Join(InvalidEmailError, databaseResponse.Error)
+		return nil, errors.Join(core.InvalidEmailError, databaseResponse.Error)
 	}
 
 	passwordErr := self.Hashing.IsValidPassword(params.Password, user.PasswordHash)
 	if passwordErr != nil {
-		return nil, InvalidPasswordError
+		return nil, core.InvalidPasswordError
 	}
 
 	token, tokenErr := self.Serilization.Generate(libs.CreateJWTParams{
@@ -70,7 +64,7 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 
   updateTokenDatabaseResponse := self.Database.Model(&entities.User{}).Where("id = ?", user.ID).Update("refresh_token", refreshToken)
   if updateTokenDatabaseResponse.Error != nil {
-    return nil, UnableToPersistToken
+    return nil, core.UnableToPersistToken
   }
 
 	response := SignInResponse{

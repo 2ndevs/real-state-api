@@ -13,21 +13,26 @@ var (
 	MissingRefreshTokenError        = errors.New("Nao foi possivel atualizar token")
 	AuthorizationTokenExpiredError  = errors.New("Token de autorização expirado")
 	RefreshTokenExpiredError        = errors.New("Token de autorização expirado")
+	PasswordEncryptionError         = errors.New("Não foi possivel encriptar a senha")
+	InvalidPasswordError            = errors.New("Senha incorreta")
+	InvalidEmailError               = errors.New("Email não foi encontrado")
+	UnableToPersistToken            = errors.New("Não foi possivel criar token, tente novamente")
+	FallbackError                   = errors.New("Ocorreu um erro no servidor")
 )
 
 func HandleHTTPStatus(write http.ResponseWriter, err error) {
 	errMessage := err.Error()
 
 	switch err.(error) {
-	case MissingAuthorizationTokenError:
-		{
-			http.Error(write, errMessage, 499) // ESRI: Token required (unofficial)
-		}
-	case AuthorizationTokenExpiredError:
+	case
+		InvalidEmailError,
+		InvalidPasswordError,
+		MissingAuthorizationTokenError,
+		MissingRefreshTokenError:
 		{
 			http.Error(write, errMessage, http.StatusUnauthorized)
 		}
-	case MissingRefreshTokenError:
+	case AuthorizationTokenExpiredError:
 		{
 			http.Error(write, errMessage, 498) // ESRI: Invalid token (unofficial)
 		}
@@ -42,7 +47,7 @@ func HandleHTTPStatus(write http.ResponseWriter, err error) {
 
 	default:
 		{
-			http.Error(write, errMessage, http.StatusInternalServerError)
+			http.Error(write, FallbackError.Error(), http.StatusInternalServerError)
 		}
 	}
 }
