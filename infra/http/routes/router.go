@@ -14,6 +14,7 @@ func Handler(appRouter chi.Router) {
 			router.Get("/", controllers.GetManyKinds)
 			router.Get("/{id}", controllers.GetKind)
 			router.Put("/{id}", controllers.UpdateKind)
+			router.Delete("/{id}", controllers.DeleteKind)
 		})
 
 		webRouter.Route("/payment-types", func(router chi.Router) {
@@ -21,6 +22,7 @@ func Handler(appRouter chi.Router) {
 			router.Get("/", controllers.GetManyPaymentTypes)
 			router.Get("/{id}", controllers.GetPaymentType)
 			router.Put("/{id}", controllers.UpdatePaymentType)
+			router.Delete("/{id}", controllers.DeletePaymentType)
 		})
 
 		webRouter.Route("/statuses", func(router chi.Router) {
@@ -28,6 +30,7 @@ func Handler(appRouter chi.Router) {
 			router.Get("/", controllers.GetManyStatuses)
 			router.Get("/{id}", controllers.GetStatus)
 			router.Put("/{id}", controllers.UpdateStatus)
+			router.Delete("/{id}", controllers.DeleteStatus)
 		})
 
 		webRouter.Route("/properties", func(router chi.Router) {
@@ -35,6 +38,7 @@ func Handler(appRouter chi.Router) {
 			router.Get("/", controllers.GetManyProperties)
 			router.Get("/{id}", controllers.GetProperty)
 			router.Put("/{id}", controllers.UpdateProperty)
+			router.Delete("/{id}", controllers.DeleteProperty)
 		})
 	})
 
