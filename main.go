@@ -31,8 +31,6 @@ func main() {
 	router.Use(middlewares.ValidatorMiddleware)
 	router.Use(middlewares.DatabaseMiddleware(database))
 
-	router.Use()
-
 	routes.Handler(router)
 
 	port := fmt.Sprintf(":%v", os.Getenv("APP_PORT"))

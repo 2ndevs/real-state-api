@@ -1,48 +1,75 @@
 package routes
 
 import (
+	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/controllers"
+	"net/http"
 
 	"github.com/go-chi/chi/v5"
 )
 
-func Handler(appRouter chi.Router) {
+func Handler(router chi.Router) {
+	router.Get("/ping", func(write http.ResponseWriter, request *http.Request) {
+		write.Write([]byte("pong"))
+	})
 
-	appRouter.Route("/web", func(webRouter chi.Router) {
-		webRouter.Route("/kinds", func(router chi.Router) {
+	router.Route("/kinds", func(router chi.Router) {
+		router.Get("/", controllers.GetManyKinds)
+		router.Get("/{id}", controllers.GetKind)
+	})
+
+	router.Route("/payment-types", func(router chi.Router) {
+		router.Get("/", controllers.GetManyPaymentTypes)
+		router.Get("/{id}", controllers.GetPaymentType)
+	})
+
+	router.Route("/statuses", func(router chi.Router) {
+		router.Get("/", controllers.GetManyStatuses)
+		router.Get("/{id}", controllers.GetStatus)
+	})
+
+	router.Route("/properties", func(router chi.Router) {
+		router.Get("/", controllers.GetManyProperties)
+		router.Get("/{id}", controllers.GetProperty)
+	})
+
+	router.Route("/admin", func(router chi.Router) {
+		router.Use(middlewares.AuthMiddleware)
+
+		router.Put("/refresh", controllers.RefreshToken)
+		router.Route("/users", func(router chi.Router) {
+			router.Post("/sign-in", controllers.SignIn)
+			router.Post("/sign-up", controllers.SignUp)
+		})
+
+		router.Route("/kinds", func(router chi.Router) {
 			router.Post("/", controllers.CreateKind)
-			router.Get("/", controllers.GetManyKinds)
-			router.Get("/{id}", controllers.GetKind)
 			router.Put("/{id}", controllers.UpdateKind)
 			router.Delete("/{id}", controllers.DeleteKind)
 		})
 
-		webRouter.Route("/payment-types", func(router chi.Router) {
+		router.Route("/payment-types", func(router chi.Router) {
 			router.Post("/", controllers.CreatePaymentType)
-			router.Get("/", controllers.GetManyPaymentTypes)
-			router.Get("/{id}", controllers.GetPaymentType)
 			router.Put("/{id}", controllers.UpdatePaymentType)
 			router.Delete("/{id}", controllers.DeletePaymentType)
 		})
 
-		webRouter.Route("/statuses", func(router chi.Router) {
+		router.Route("/statuses", func(router chi.Router) {
 			router.Post("/", controllers.CreateStatus)
-			router.Get("/", controllers.GetManyStatuses)
-			router.Get("/{id}", controllers.GetStatus)
 			router.Put("/{id}", controllers.UpdateStatus)
 			router.Delete("/{id}", controllers.DeleteStatus)
 		})
 
-		webRouter.Route("/properties", func(router chi.Router) {
+		router.Route("/properties", func(router chi.Router) {
 			router.Post("/", controllers.CreateProperty)
-			router.Get("/", controllers.GetManyProperties)
-			router.Get("/{id}", controllers.GetProperty)
 			router.Put("/{id}", controllers.UpdateProperty)
 			router.Delete("/{id}", controllers.DeleteProperty)
 		})
-	})
 
-	appRouter.Route("/admin", func(router chi.Router) {
-		// ADMIN ROUTES
+		router.Route("/roles", func(router chi.Router) {
+			router.Post("/", controllers.CreateRole)
+			// router.Get("/", controllers.GetManyRoles)
+			// router.Get("/{id}", controllers.GetRole)
+		})
 	})
 }
