@@ -15,18 +15,20 @@ func CreateRole(write http.ResponseWriter, request *http.Request) {
 
 	database, err := middlewares.GetDatabaseFromContext(request)
 	if err != nil {
-		http.Error(write, err.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 		return
 	}
 
 	parser, err := middlewares.GetValidator(request)
 	if err != nil {
-		http.Error(write, err.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, err)
+		return
 	}
 
 	body, err := httpPresenter.FromHTTP(request)
 	if err != nil {
-		http.Error(write, err.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
+		return
 	}
 
 	createRoleService := application.CreateRoleService{
@@ -41,7 +43,6 @@ func CreateRole(write http.ResponseWriter, request *http.Request) {
 	}
 
 	response, err := createRoleService.Execute(payload)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 		return

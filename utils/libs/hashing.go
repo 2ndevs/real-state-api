@@ -12,7 +12,7 @@ type Hashing struct{}
 func (Hashing) EncryptPassword(value string) (*string, error) {
 	valueAsBytes := []byte(value)
 
-	bytes, err := bcrypt.GenerateFromPassword(valueAsBytes, 14)
+	bytes, err := bcrypt.GenerateFromPassword(valueAsBytes, 10)
 	if err != nil {
 		return nil, errors.Join(core.PasswordEncryptionError, err)
 	}
@@ -26,11 +26,11 @@ func (Hashing) IsValidPassword(password string, hash string) error {
 	hashAsBytes := []byte(hash)
 
 	err := bcrypt.CompareHashAndPassword(
-		passwordAsBytes,
 		hashAsBytes,
+		passwordAsBytes,
 	)
   if err != nil {
-    return errors.Join(core.InvalidPasswordError, err)
+    return core.InvalidPasswordError
   }
 
 	return err

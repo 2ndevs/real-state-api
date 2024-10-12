@@ -1,10 +1,10 @@
 package application
 
 import (
-	"errors"
 	"main/core"
 	"main/domain/entities"
 	"main/utils/libs"
+	"time"
 
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
@@ -30,7 +30,7 @@ type SignInService struct {
 func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error) {
 	validationErr := self.Validate.Struct(params)
 	if validationErr != nil {
-		return nil, errors.Join(core.InvalidParametersError, validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	var user entities.User
@@ -38,7 +38,7 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 
 	databaseResponse := query.First(&user)
 	if databaseResponse.Error != nil {
-		return nil, errors.Join(core.InvalidEmailError, databaseResponse.Error)
+		return nil, core.InvalidEmailError
 	}
 
 	passwordErr := self.Hasher.IsValidPassword(params.Password, user.PasswordHash)
@@ -49,6 +49,12 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 	token, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
+		Time: time.Now().Add(time.Second * 15).Unix(),
+		Data: map[string]any{
+			"email":      user.Email,
+			"created_at": user.CreatedAt,
+			"updated_at": user.UpdatedAt,
+		},
 	})
 	if err != nil {
 		return nil, err
@@ -57,6 +63,7 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 	refreshToken, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
+		Time: time.Now().Add(time.Hour * 24).Unix(),
 	})
 	if err != nil {
 		return nil, err

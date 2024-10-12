@@ -42,7 +42,7 @@ func (self SignUpService) Execute(request SignUpRequest) (*SignUpResponse, error
 
 	err := self.Validator.Struct(request)
 	if err != nil {
-		return nil, errors.Join(core.InvalidParametersError, err)
+		return nil, core.InvalidParametersError
 	}
 
 	var existingUser *entities.User
@@ -79,6 +79,11 @@ func (self SignUpService) Execute(request SignUpRequest) (*SignUpResponse, error
 		Sub:  user.ID,
 		Role: user.RoleID,
 		Time: time.Now().Add(time.Hour * 2).Unix(),
+		Data: map[string]any{
+			"email":      user.Email,
+			"created_at": user.CreatedAt,
+			"updated_at": user.UpdatedAt,
+		},
 	})
 	if err != nil {
 		return nil, core.UnableToPersistTokenButEntityCreated
@@ -88,11 +93,6 @@ func (self SignUpService) Execute(request SignUpRequest) (*SignUpResponse, error
 		Sub:  user.ID,
 		Role: user.RoleID,
 		Time: time.Now().Add(time.Hour * 24).Unix(),
-		Data: map[string]any{
-			"email":      user.Email,
-			"created_at": user.CreatedAt,
-			"updated_at": user.UpdatedAt,
-		},
 	})
 	if err != nil {
 		return nil, core.UnableToPersistTokenButEntityCreated
