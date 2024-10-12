@@ -19,6 +19,7 @@ type JWT struct{}
 type CreateJWTParams struct {
 	Sub  uint
 	Role uint
+	Data any
 }
 
 func (JWT) Generate(params CreateJWTParams) (*string, error) {
@@ -30,6 +31,7 @@ func (JWT) Generate(params CreateJWTParams) (*string, error) {
 	constructor := jwt.NewWithClaims(jwt.SigningMethodRS256, jwt.MapClaims{
 		"sub":   params.Sub,
 		"role": params.Role,
+		"data": params.Data,
     "exp": time.Now().Add(time.Hour * 24).Unix(),
 	})
 

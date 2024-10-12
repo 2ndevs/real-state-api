@@ -1,19 +1,18 @@
 package middlewares
 
 import (
+	"github.com/golang-jwt/jwt/v5"
 	"main/core"
 	"main/utils/libs"
 	"net/http"
 	"slices"
 	"strings"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(writer http.ResponseWriter, request *http.Request) {
-			signPaths := []string { "/admin/users/sign-up", "/admin/users/sign-in" }
+			signPaths := []string{"/admin/users/sign-up", "/admin/users/sign-in"}
 			parser := libs.JWT{}
 
 			token := strings.Split(request.Header.Get("Authorization"), "Bearer ")[1]

@@ -6,6 +6,7 @@ import (
 	"main/domain/application"
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
+	"main/utils/libs"
 	"net/http"
 )
 
@@ -33,6 +34,8 @@ func SignUp(writer http.ResponseWriter, request *http.Request) {
 	service := application.SignUpService {
 		Validator: validator,
 		Database: database,
+		Parser: libs.JWT{},
+		Hasher: libs.Hashing{},
 	}
 	payload := application.SignUpRequest {
 		Email: body.Email,
