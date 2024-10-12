@@ -1,6 +1,8 @@
 package controllers
 
 import (
+	"encoding/json"
+	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
@@ -26,7 +28,7 @@ func CreateRole(write http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		http.Error(write, err.Error(), http.StatusBadRequest)
 	}
-	
+
 	createRoleService := application.CreateRoleService{
 		Validate: parser,
 		Database: database,
@@ -38,16 +40,17 @@ func CreateRole(write http.ResponseWriter, request *http.Request) {
 		StatusID:    1,
 	}
 
-	_, err = createRoleService.Execute(payload)
+	response, err := createRoleService.Execute(payload)
+
 	if err != nil {
-		http.Error(write, err.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 		return
 	}
-	
-	// write.WriteHeader(http.StatusCreated)
-	// err = json.NewEncoder(write).Encode(response)
 
-	// if err != nil {
-	// 	http.Error(write, err.Error(), http.StatusInternalServerError)
-	// }
+	write.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(write).Encode(response)
+
+	if err != nil {
+		core.HandleHTTPStatus(write, err)
+	}
 }

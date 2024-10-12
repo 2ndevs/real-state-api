@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/controllers"
 	"net/http"
 
@@ -33,6 +34,16 @@ func Handler(router chi.Router) {
 	})
 
 	router.Route("/admin", func(router chi.Router) {
+		router.Use(middlewares.AuthMiddleware)
+
+		router.Route("/refresh", func(router chi.Router) {
+			router.Get("/", controllers.RefreshToken)
+			router.Put("/", controllers.RefreshToken)
+			router.Post("/", controllers.RefreshToken)
+			router.Patch("/", controllers.RefreshToken)
+			router.Delete("/", controllers.RefreshToken)
+		})
+
 		router.Route("/kinds", func(router chi.Router) {
 			router.Post("/", controllers.CreateKind)
 			router.Put("/{id}", controllers.UpdateKind)
@@ -58,8 +69,8 @@ func Handler(router chi.Router) {
 		})
 
 		router.Route("/users", func(router chi.Router) {
-			// router.Post("/sign-in", controllers.SignIn)
-			// router.Post("/sign-up", controllers.SignUp) // FIXME: remove, it's likely that it's not even an option
+			router.Post("/sign-in", controllers.SignIn)
+			router.Post("/sign-up", controllers.SignUp)
 		})
 
 		router.Route("/roles", func(router chi.Router) {

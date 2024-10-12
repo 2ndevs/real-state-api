@@ -21,6 +21,7 @@ func (self CreateRoleService) Execute(role entities.Role) (*entities.Role, error
 	}
 
 	var existingRole *entities.Role
+
 	query := self.Database.Model(&entities.Role{}).Where("name = ?", role.Name)
 	response := query.First(&existingRole)
 

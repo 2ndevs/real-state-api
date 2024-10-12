@@ -51,7 +51,7 @@ func (JWT) Parse(value string) (*jwt.Token, error) {
     return secret, nil
   })
   if err != nil {
-    return nil, errors.Join(errors.New("Unable to parse token: "), err)
+    return nil, err
   }
 
   if !token.Valid {
