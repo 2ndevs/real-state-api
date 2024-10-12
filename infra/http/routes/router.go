@@ -36,12 +36,10 @@ func Handler(router chi.Router) {
 	router.Route("/admin", func(router chi.Router) {
 		router.Use(middlewares.AuthMiddleware)
 
-		router.Route("/refresh", func(router chi.Router) {
-			router.Get("/", controllers.RefreshToken)
-			router.Put("/", controllers.RefreshToken)
-			router.Post("/", controllers.RefreshToken)
-			router.Patch("/", controllers.RefreshToken)
-			router.Delete("/", controllers.RefreshToken)
+		router.Put("/refresh", controllers.RefreshToken)
+		router.Route("/users", func(router chi.Router) {
+			router.Post("/sign-in", controllers.SignIn)
+			router.Post("/sign-up", controllers.SignUp)
 		})
 
 		router.Route("/kinds", func(router chi.Router) {
@@ -66,11 +64,6 @@ func Handler(router chi.Router) {
 			router.Post("/", controllers.CreateProperty)
 			router.Put("/{id}", controllers.UpdateProperty)
 			router.Delete("/{id}", controllers.DeleteProperty)
-		})
-
-		router.Route("/users", func(router chi.Router) {
-			router.Post("/sign-in", controllers.SignIn)
-			router.Post("/sign-up", controllers.SignUp)
 		})
 
 		router.Route("/roles", func(router chi.Router) {

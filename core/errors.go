@@ -17,7 +17,7 @@ var (
 	InvalidPasswordError                 = errors.New("Dados de login incorretos")
 	InvalidEmailError                    = errors.New("Dados de login incorretos")
 	UnableToPersistToken                 = errors.New("Não foi possivel criar token, tente novamente")
-	UnableToPersistTokenButEntityCreated = errors.New("Foi criado, mas não foi criado um token de login, tente logar novamente")
+	UnableToPersistTokenButEntityCreated = errors.New("Usuario criado, mas não foi criado um token de login, tente logar novamente")
 	FallbackError                        = errors.New("Ocorreu um erro no servidor")
 )
 
@@ -44,6 +44,10 @@ func HandleHTTPStatus(write http.ResponseWriter, err error) {
 	case EntityAlreadyExistsError:
 		{
 			http.Error(write, errMessage, http.StatusConflict)
+		}
+	case UnableToPersistToken, UnableToPersistTokenButEntityCreated:
+		{
+			http.Error(write, errMessage, http.StatusInternalServerError)
 		}
 
 	default:

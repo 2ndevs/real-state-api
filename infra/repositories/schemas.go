@@ -5,11 +5,11 @@ import (
 )
 
 type User struct {
-  entities.User
+	entities.User
 }
 
 type Role struct {
-  entities.Role
+	entities.Role
 }
 
 type Status struct {

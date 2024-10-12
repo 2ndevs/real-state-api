@@ -2,11 +2,13 @@ package application
 
 import (
 	"errors"
-	"github.com/go-playground/validator/v10"
-	"gorm.io/gorm"
 	"main/core"
 	"main/domain/entities"
 	"main/utils/libs"
+	"time"
+
+	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
 type SignUpService struct {
@@ -47,8 +49,12 @@ func (self SignUpService) Execute(request SignUpRequest) (*SignUpResponse, error
 
 	query := self.Database.Find(&entities.User{}).Where("email = ?", request.Email).First(&existingUser)
 	if query.Error != nil && !errors.Is(query.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.Join(core.EntityAlreadyExistsError, query.Error)
+		return nil, query.Error
 	}
+
+	// if query.Error == nil {
+	// 	return nil, core.EntityAlreadyExistsError
+	// }
 
 	hashedPassword, err := self.Hasher.EncryptPassword(request.Password)
 	if err != nil {
@@ -72,25 +78,38 @@ func (self SignUpService) Execute(request SignUpRequest) (*SignUpResponse, error
 	token, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
-		Data: map[string]any{
-			"email": user.Email,
-			"name":  user.Name,
-		},
+		Time: time.Now().Add(time.Hour * 2).Unix(),
 	})
 	if err != nil {
-		return nil, errors.Join(core.UnableToPersistTokenButEntityCreated, err)
+		return nil, core.UnableToPersistTokenButEntityCreated
 	}
 
 	refreshToken, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
+		Time: time.Now().Add(time.Hour * 24).Unix(),
+		Data: map[string]any{
+			"email":      user.Email,
+			"created_at": user.CreatedAt,
+			"updated_at": user.UpdatedAt,
+		},
 	})
 	if err != nil {
-		return nil, errors.Join(core.UnableToPersistTokenButEntityCreated, err)
+		return nil, core.UnableToPersistTokenButEntityCreated
 	}
 
-	response.Token = *token
-	response.RefreshToken = *refreshToken
+	refreshTokenTransaction := self.Database.Model(&entities.User{}).Where("id = ?", user.ID).Update("refresh_token", refreshToken)
+	if refreshTokenTransaction.Error != nil {
+		return nil, core.UnableToPersistTokenButEntityCreated
+	}
+
+	response = SignUpResponse{
+		Name:         user.Name,
+		Email:        user.Email,
+		Token:        *token,
+		RefreshToken: *refreshToken,
+		RoleID:       user.RoleID,
+	}
 
 	return &response, nil
 }

@@ -13,12 +13,19 @@ func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(writer http.ResponseWriter, request *http.Request) {
 			signPaths := []string{"/admin/users/sign-up", "/admin/users/sign-in"}
-			parser := libs.JWT{}
-
-			token := strings.Split(request.Header.Get("Authorization"), "Bearer ")[1]
 			path := request.URL.Path
 
-			if len(token) <= 0 && !slices.Contains(signPaths, path) {
+			parser := libs.JWT{}
+
+			var token string
+			bearer := request.Header.Get("Authorization")
+			tokenArr := strings.Split(bearer, "Bearer ")
+
+			if len(tokenArr) > 1 {
+				token = tokenArr[1]
+			}
+
+			if len(token) == 0 && !slices.Contains(signPaths, path) {
 				core.HandleHTTPStatus(writer, core.MissingAuthorizationTokenError)
 				return
 			}
