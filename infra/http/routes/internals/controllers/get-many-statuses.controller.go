@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/core"
 	"main/domain/application"
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
@@ -13,7 +14,7 @@ func GetManyStatuses(write http.ResponseWriter, request *http.Request) {
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, ctxErr)
 		return
 	}
 	nameFilter := request.URL.Query().Get("name")
@@ -21,7 +22,7 @@ func GetManyStatuses(write http.ResponseWriter, request *http.Request) {
 
 	statuses, getStatusesErr := statusesService.Execute()
 	if getStatusesErr != nil {
-		http.Error(write, getStatusesErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, getStatusesErr)
 		return
 	}
 
@@ -35,6 +36,6 @@ func GetManyStatuses(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Server error", http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 	}
 }

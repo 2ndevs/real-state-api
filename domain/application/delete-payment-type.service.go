@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ func (self *DeletePaymentTypeService) Execute(paymentTypeID uint64) (*entities.P
 
 	existingPaymentTypeDatabaseResponse := query.First(&existingPaymentType)
 	if errors.Is(existingPaymentTypeDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("payment-type not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingPaymentTypeDatabaseResponse.Error != nil {

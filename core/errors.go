@@ -6,19 +6,20 @@ import (
 )
 
 var (
-	InvalidEnvironmentVariableError      = errors.New("Faltando alguma variavel de ambiente") // FIXME: Nathan fix this shit, I don't have pt layout setup
-	InvalidParametersError               = errors.New("Parametros utilizados são invalidos")
-	EntityAlreadyExistsError             = errors.New("Item ja foi cadastrado")
-	MissingAuthorizationTokenError       = errors.New("Usuario nao autenticado")
-	MissingRefreshTokenError             = errors.New("Nao foi possivel atualizar token")
+	InvalidEnvironmentVariableError      = errors.New("Faltando alguma variável de ambiente")
+	InvalidParametersError               = errors.New("Parâmetros utilizados são inválidos")
+	EntityAlreadyExistsError             = errors.New("Item já foi cadastrado")
+	MissingAuthorizationTokenError       = errors.New("Usuário não autenticado")
+	MissingRefreshTokenError             = errors.New("Não foi possível atualizar o token")
 	AuthorizationTokenExpiredError       = errors.New("Token de autorização expirado")
 	RefreshTokenExpiredError             = errors.New("Token de autorização expirado")
-	PasswordEncryptionError              = errors.New("Não foi possivel encriptar a senha")
+	PasswordEncryptionError              = errors.New("Não foi possível encriptar a senha")
 	InvalidPasswordError                 = errors.New("Dados de login incorretos")
 	InvalidEmailError                    = errors.New("Dados de login incorretos")
-	UnableToPersistToken                 = errors.New("Não foi possivel criar token, tente novamente")
-	UnableToPersistTokenButEntityCreated = errors.New("Usuario criado, mas não foi criado um token de login, tente logar novamente")
+	UnableToPersistToken                 = errors.New("Não foi possível criar o token, tente novamente")
+	UnableToPersistTokenButEntityCreated = errors.New("Usuario criado, mas não foi criado um token de login. Tente logar novamente")
 	FallbackError                        = errors.New("Ocorreu um erro no servidor")
+	NotFoundError                        = errors.New("Não foi possível encontrar o item solicitado")
 )
 
 func HandleHTTPStatus(write http.ResponseWriter, err error) {
@@ -48,6 +49,10 @@ func HandleHTTPStatus(write http.ResponseWriter, err error) {
 	case UnableToPersistToken, UnableToPersistTokenButEntityCreated:
 		{
 			http.Error(write, errMessage, http.StatusInternalServerError)
+		}
+	case NotFoundError:
+		{
+			http.Error(write, errMessage, http.StatusNotFound)
 		}
 
 	default:

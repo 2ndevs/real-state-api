@@ -1,7 +1,7 @@
 package application
 
 import (
-	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +16,7 @@ type CreateKindService struct {
 func (self *CreateKindService) Execute(kind entities.Kind) (*entities.Kind, error) {
 	validationErr := self.Validated.Struct(kind)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	createKindTransaction := self.Database.Create(&kind)

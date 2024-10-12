@@ -1,7 +1,7 @@
 package application
 
 import (
-	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +16,7 @@ type CreatePaymentTypeService struct {
 func (self *CreatePaymentTypeService) Execute(paymentType entities.PaymentType) (*entities.PaymentType, error) {
 	validationErr := self.Validated.Struct(paymentType)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	createPaymentTypeTransaction := self.Database.Create(&paymentType)

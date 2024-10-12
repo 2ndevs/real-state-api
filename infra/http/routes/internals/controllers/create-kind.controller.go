@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
@@ -14,19 +15,19 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 
 	kindRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
-		http.Error(write, parseError.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, ctxErr)
 		return
 	}
 
 	validated, ctxErr := middlewares.GetValidator(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
 
@@ -38,7 +39,7 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 
 	kind, createKindErr := kindService.Execute(kindPayload)
 	if createKindErr != nil {
-		http.Error(write, createKindErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, createKindErr)
 		return
 	}
 
@@ -48,6 +49,6 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Server error", http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 	}
 }

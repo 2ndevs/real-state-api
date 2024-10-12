@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +17,7 @@ type UpdatePropertyService struct {
 func (self *UpdatePropertyService) Execute(property entities.Property, propertyID uint64) (*entities.Property, error) {
 	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	var existingProperty *entities.Property
@@ -24,7 +25,7 @@ func (self *UpdatePropertyService) Execute(property entities.Property, propertyI
 
 	existingPropertyDatabaseResponse := query.First(&existingProperty)
 	if errors.Is(existingPropertyDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("property not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingPropertyDatabaseResponse.Error != nil {

@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +17,7 @@ type UpdatePaymentTypeService struct {
 func (self *UpdatePaymentTypeService) Execute(paymentType entities.PaymentType, paymentTypeID uint64) (*entities.PaymentType, error) {
 	validationErr := self.Validated.Struct(paymentType)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	var existingPaymentType *entities.PaymentType
@@ -24,7 +25,7 @@ func (self *UpdatePaymentTypeService) Execute(paymentType entities.PaymentType, 
 
 	existingPaymentTypeDatabaseResponse := query.First(&existingPaymentType)
 	if errors.Is(existingPaymentTypeDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("payment-type not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingPaymentTypeDatabaseResponse.Error != nil {

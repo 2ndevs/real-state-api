@@ -2,6 +2,7 @@ package application
 
 import (
 	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"gorm.io/gorm"
@@ -17,7 +18,7 @@ func (self *DeleteStatusService) Execute(statusID uint64) (*entities.Status, err
 
 	existingStatusDatabaseResponse := query.First(&existingStatus)
 	if errors.Is(existingStatusDatabaseResponse.Error, gorm.ErrRecordNotFound) {
-		return nil, errors.New("status not found")
+		return nil, core.NotFoundError
 	}
 
 	if existingStatusDatabaseResponse.Error != nil {

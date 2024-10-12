@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
 	"main/infra/http/middlewares"
@@ -14,19 +15,19 @@ func CreateStatus(write http.ResponseWriter, request *http.Request) {
 
 	statusRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
-		http.Error(write, parseError.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, ctxErr)
 		return
 	}
 
 	validated, ctxErr := middlewares.GetValidator(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusBadRequest)
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
 
@@ -37,7 +38,7 @@ func CreateStatus(write http.ResponseWriter, request *http.Request) {
 
 	status, createStatusErr := statusService.Execute(statusPayload)
 	if createStatusErr != nil {
-		http.Error(write, createStatusErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, createStatusErr)
 		return
 	}
 
@@ -47,6 +48,6 @@ func CreateStatus(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Server error", http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 	}
 }

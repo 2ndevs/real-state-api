@@ -1,7 +1,7 @@
 package application
 
 import (
-	"errors"
+	"main/core"
 	"main/domain/entities"
 
 	"github.com/go-playground/validator/v10"
@@ -16,7 +16,7 @@ type CreateStatusService struct {
 func (self *CreateStatusService) Execute(status entities.Status) (*entities.Status, error) {
 	validationErr := self.Validated.Struct(status)
 	if validationErr != nil {
-		return nil, errors.Join(errors.New("validation errors: "), validationErr)
+		return nil, core.InvalidParametersError
 	}
 
 	createStatusTransaction := self.Database.Create(&status)

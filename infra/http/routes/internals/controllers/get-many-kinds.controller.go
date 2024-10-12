@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"main/core"
 	"main/domain/application"
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
@@ -13,7 +14,7 @@ func GetManyKinds(write http.ResponseWriter, request *http.Request) {
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
-		http.Error(write, ctxErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, ctxErr)
 		return
 	}
 
@@ -22,7 +23,7 @@ func GetManyKinds(write http.ResponseWriter, request *http.Request) {
 
 	kinds, getKindsErr := kindService.Execute()
 	if getKindsErr != nil {
-		http.Error(write, getKindsErr.Error(), http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, getKindsErr)
 		return
 	}
 
@@ -36,6 +37,6 @@ func GetManyKinds(write http.ResponseWriter, request *http.Request) {
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
-		http.Error(write, "Server error", http.StatusInternalServerError)
+		core.HandleHTTPStatus(write, err)
 	}
 }
