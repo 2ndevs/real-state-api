@@ -11,8 +11,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetProperty(write http.ResponseWriter, request *http.Request) {
-	httpPresenter := presenters.PropertyPresenter{}
+func DeletePaymentType(write http.ResponseWriter, request *http.Request) {
+	httpPresenter := presenters.PaymentTypePresenter{}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
@@ -21,23 +21,23 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 	}
 
 	idParam := chi.URLParam(request, "id")
-	propertyId, validationErr := strconv.ParseUint(idParam, 10, 32)
+	paymentTypeId, validationErr := strconv.ParseUint(idParam, 10, 32)
 	if validationErr != nil {
 		http.Error(write, "invalid ID", http.StatusBadRequest)
 		return
 	}
 
-	propertyService := application.GetPropertyService{PropertyID: propertyId, Database: database}
+	paymentTypeService := application.DeletePaymentTypeService{Database: database}
 
-	property, getPropertyErr := propertyService.Execute()
-	if getPropertyErr != nil {
-		http.Error(write, getPropertyErr.Error(), http.StatusInternalServerError)
+	paymentType, deletePaymentTypeErr := paymentTypeService.Execute(paymentTypeId)
+	if deletePaymentTypeErr != nil {
+		http.Error(write, deletePaymentTypeErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := httpPresenter.ToHTTP(*property)
+	response := httpPresenter.ToHTTP(*paymentType)
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusNoContent)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {

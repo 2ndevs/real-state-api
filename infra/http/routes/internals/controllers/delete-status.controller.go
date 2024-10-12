@@ -11,8 +11,8 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetProperty(write http.ResponseWriter, request *http.Request) {
-	httpPresenter := presenters.PropertyPresenter{}
+func DeleteStatus(write http.ResponseWriter, request *http.Request) {
+	httpPresenter := presenters.StatusPresenter{}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
@@ -21,23 +21,23 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 	}
 
 	idParam := chi.URLParam(request, "id")
-	propertyId, validationErr := strconv.ParseUint(idParam, 10, 32)
+	statusId, validationErr := strconv.ParseUint(idParam, 10, 32)
 	if validationErr != nil {
 		http.Error(write, "invalid ID", http.StatusBadRequest)
 		return
 	}
 
-	propertyService := application.GetPropertyService{PropertyID: propertyId, Database: database}
+	statusService := application.DeleteStatusService{Database: database}
 
-	property, getPropertyErr := propertyService.Execute()
-	if getPropertyErr != nil {
-		http.Error(write, getPropertyErr.Error(), http.StatusInternalServerError)
+	status, deleteStatusErr := statusService.Execute(statusId)
+	if deleteStatusErr != nil {
+		http.Error(write, deleteStatusErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := httpPresenter.ToHTTP(*property)
+	response := httpPresenter.ToHTTP(*status)
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusNoContent)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {

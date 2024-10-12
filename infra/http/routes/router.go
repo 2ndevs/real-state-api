@@ -33,10 +33,29 @@ func Handler(router chi.Router) {
 	})
 
 	router.Route("/admin", func(router chi.Router) {
-		router.Post("/kinds", controllers.CreateKind)
-		router.Post("/statuses", controllers.CreateStatus)
-		router.Post("/properties", controllers.CreateProperty)
-		router.Post("/payment-types", controllers.CreatePaymentType)
+		router.Route("/kinds", func(router chi.Router) {
+			router.Post("/", controllers.CreateKind)
+			router.Put("/{id}", controllers.UpdateKind)
+			router.Delete("/{id}", controllers.DeleteKind)
+		})
+
+		router.Route("/payment-types", func(router chi.Router) {
+			router.Post("/", controllers.CreatePaymentType)
+			router.Put("/{id}", controllers.UpdatePaymentType)
+			router.Delete("/{id}", controllers.DeletePaymentType)
+		})
+
+		router.Route("/statuses", func(router chi.Router) {
+			router.Post("/", controllers.CreateStatus)
+			router.Put("/{id}", controllers.UpdateStatus)
+			router.Delete("/{id}", controllers.DeleteStatus)
+		})
+
+		router.Route("/properties", func(router chi.Router) {
+			router.Post("/", controllers.CreateProperty)
+			router.Put("/{id}", controllers.UpdateProperty)
+			router.Delete("/{id}", controllers.DeleteProperty)
+		})
 
 		router.Route("/users", func(router chi.Router) {
 			// router.Post("/sign-in", controllers.SignIn)

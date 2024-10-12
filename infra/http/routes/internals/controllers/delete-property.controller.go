@@ -11,7 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 )
 
-func GetProperty(write http.ResponseWriter, request *http.Request) {
+func DeleteProperty(write http.ResponseWriter, request *http.Request) {
 	httpPresenter := presenters.PropertyPresenter{}
 
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
@@ -27,17 +27,17 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	propertyService := application.GetPropertyService{PropertyID: propertyId, Database: database}
+	propertyService := application.DeletePropertyService{Database: database}
 
-	property, getPropertyErr := propertyService.Execute()
-	if getPropertyErr != nil {
-		http.Error(write, getPropertyErr.Error(), http.StatusInternalServerError)
+	property, deletePropertyErr := propertyService.Execute(propertyId)
+	if deletePropertyErr != nil {
+		http.Error(write, deletePropertyErr.Error(), http.StatusInternalServerError)
 		return
 	}
 
 	response := httpPresenter.ToHTTP(*property)
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusNoContent)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
