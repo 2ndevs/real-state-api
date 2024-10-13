@@ -32,6 +32,15 @@ func (self *UpdatePaymentTypeService) Execute(paymentType entities.PaymentType, 
 		return nil, existingPaymentTypeDatabaseResponse.Error
 	}
 
+	var samePaymentType *entities.PaymentType
+
+	findSameQuery := self.Database.Model(&entities.PaymentType{}).Where("name = ? AND id != ?", paymentType.Name, existingPaymentType.ID)
+	response := findSameQuery.First(&samePaymentType)
+
+	if response.Error == nil {
+		return nil, core.EntityAlreadyExistsError
+	}
+
 	paymentType.ID = existingPaymentType.ID
 
 	updatePaymentTypeTransaction := self.Database.Save(&paymentType)

@@ -19,6 +19,15 @@ func (self *CreateStatusService) Execute(status entities.Status) (*entities.Stat
 		return nil, core.InvalidParametersError
 	}
 
+	var existingStatus *entities.Status
+
+	query := self.Database.Model(&entities.Status{}).Where("name = ?", status.Name)
+	response := query.First(&existingStatus)
+
+	if response.Error == nil {
+		return nil, core.EntityAlreadyExistsError
+	}
+
 	createStatusTransaction := self.Database.Create(&status)
 	if createStatusTransaction.Error != nil {
 		return nil, createStatusTransaction.Error
