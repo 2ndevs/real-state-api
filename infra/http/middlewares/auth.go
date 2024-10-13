@@ -1,6 +1,7 @@
 package middlewares
 
 import (
+	"errors"
 	"main/core"
 	"main/utils/libs"
 	"net/http"
@@ -34,8 +35,8 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			_, err := parser.Parse(token)
 
 			if err != nil && !slices.Contains(signPaths, path) {
-				switch err.(error) {
-				case jwt.ErrTokenExpired:
+				switch {
+				case errors.Is(err, jwt.ErrTokenExpired):
 					{
 						if path == "/admin/refresh" {
 							break

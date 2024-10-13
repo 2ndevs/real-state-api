@@ -49,7 +49,7 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 	token, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
-		Time: time.Now().Add(time.Second * 15).Unix(),
+		Time: time.Now().Add(time.Hour * 2).Unix(),
 		Data: map[string]any{
 			"email":      user.Email,
 			"created_at": user.CreatedAt,
