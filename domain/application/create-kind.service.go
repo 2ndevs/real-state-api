@@ -19,6 +19,15 @@ func (self *CreateKindService) Execute(kind entities.Kind) (*entities.Kind, erro
 		return nil, core.InvalidParametersError
 	}
 
+	var existingKind *entities.Kind
+
+	query := self.Database.Model(&entities.Kind{}).Where("name = ?", kind.Name)
+	response := query.First(&existingKind)
+
+	if response.Error == nil {
+		return nil, core.EntityAlreadyExistsError
+	}
+
 	createKindTransaction := self.Database.Create(&kind)
 	if createKindTransaction.Error != nil {
 		return nil, createKindTransaction.Error
