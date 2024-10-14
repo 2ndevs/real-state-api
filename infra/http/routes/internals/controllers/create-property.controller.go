@@ -34,16 +34,17 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 	propertyService := application.CreatePropertyService{Validated: validated, Database: database}
 	propertyPayload := entities.Property{
-		Size:      propertyRequest.Size,
-		Rooms:     propertyRequest.Rooms,
-		Kitchens:  propertyRequest.Kitchens,
-		Bathrooms: propertyRequest.Bathrooms,
-		Address:   propertyRequest.Address,
-		Summary:   propertyRequest.Summary,
-		Details:   propertyRequest.Details,
-		Latitude:  propertyRequest.Latitude,
-		Longitude: propertyRequest.Longitude,
-		Price:     propertyRequest.Price,
+		Size:        propertyRequest.Size,
+		Rooms:       propertyRequest.Rooms,
+		Kitchens:    propertyRequest.Kitchens,
+		Bathrooms:   propertyRequest.Bathrooms,
+		Address:     propertyRequest.Address,
+		Summary:     propertyRequest.Summary,
+		Details:     propertyRequest.Details,
+		Latitude:    propertyRequest.Latitude,
+		Longitude:   propertyRequest.Longitude,
+		Price:       propertyRequest.Price,
+		IsHighlight: propertyRequest.IsHighlight,
 
 		KindID:        propertyRequest.KindID,
 		PaymentTypeID: propertyRequest.PaymentTypeID,
