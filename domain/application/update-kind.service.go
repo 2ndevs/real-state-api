@@ -32,6 +32,15 @@ func (self *UpdateKindService) Execute(kind entities.Kind, kindID uint64) (*enti
 		return nil, existingKindDatabaseResponse.Error
 	}
 
+	var sameKind *entities.Kind
+
+	findSameQuery := self.Database.Model(&entities.Kind{}).Where("name = ? AND id != ?", kind.Name, existingKind.ID)
+	response := findSameQuery.First(&sameKind)
+
+	if response.Error == nil {
+		return nil, core.EntityAlreadyExistsError
+	}
+
 	kind.ID = existingKind.ID
 
 	updateKindTransaction := self.Database.Save(&kind)

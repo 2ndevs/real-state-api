@@ -32,6 +32,15 @@ func (self *UpdateStatusService) Execute(status entities.Status, statusID uint64
 		return nil, existingStatusDatabaseResponse.Error
 	}
 
+	var sameStatus *entities.Status
+
+	findSameQuery := self.Database.Model(&entities.Status{}).Where("name = ? AND id != ?", status.Name, existingStatus.ID)
+	response := findSameQuery.First(&sameStatus)
+
+	if response.Error == nil {
+		return nil, core.EntityAlreadyExistsError
+	}
+
 	status.ID = existingStatus.ID
 
 	updateStatusTransaction := self.Database.Save(&status)

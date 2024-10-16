@@ -19,6 +19,15 @@ func (self *CreatePaymentTypeService) Execute(paymentType entities.PaymentType) 
 		return nil, core.InvalidParametersError
 	}
 
+	var existingPaymentType *entities.PaymentType
+
+	query := self.Database.Model(&entities.PaymentType{}).Where("name = ?", paymentType.Name)
+	response := query.First(&existingPaymentType)
+
+	if response.Error == nil {
+		return nil, core.EntityAlreadyExistsError
+	}
+
 	createPaymentTypeTransaction := self.Database.Create(&paymentType)
 	if createPaymentTypeTransaction.Error != nil {
 		return nil, createPaymentTypeTransaction.Error
