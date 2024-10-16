@@ -31,7 +31,6 @@ func Handler(router chi.Router) {
 	router.Route("/properties", func(router chi.Router) {
 		router.Get("/", controllers.GetManyProperties)
 		router.Get("/{id}", controllers.GetProperty)
-		router.Get("/highlights", controllers.GetHighlightedProperties)
 	})
 
 	router.Route("/admin", func(router chi.Router) {
