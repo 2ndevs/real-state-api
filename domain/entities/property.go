@@ -17,10 +17,10 @@ type Property struct {
 	Latitude         float64 `validate:"required,gte=-90,lte=90"`
 	Longitude        float64 `validate:"required,gte=-180,lte=180"`
 	Price            float64 `validate:"required,min=1"`
-	Discount         float64 `gorm:"index" validate:"min=0"`
-	IsSolded         bool    `gorm:"index,default:false"`
+	Discount         float64 `gorm:"default:0" validate:"min=0"`
+	IsSold           bool    `gorm:"default:false"`
 	IsHighlight      bool    `gorm:"default:false"`
-	ConstructionYear uint    `gorm:"index" validate:"required,min=1945"`
+	ConstructionYear uint    `validate:"required,min=1945"`
 
 	KindID        uint `gorm:"index"`
 	StatusID      uint `validate:"required,min=1"`
