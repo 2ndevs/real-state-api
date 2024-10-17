@@ -68,9 +68,23 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 		query = query.Where("is_highlight = true").Order("updated_at DESC")
 	}
 
+	if filters.IsApartment != nil {
+		var apartmentKind entities.Kind
+		self.Database.Where("name = ?", "apartment").First(&apartmentKind)
+
+		query = query.Where("kind_id = ?", apartmentKind.ID).Order("updated_at DESC")
+	}
+
+	if filters.AllowFinancing != nil {
+		var financingPaymentType entities.PaymentType
+		self.Database.Where("name = ?", "financing").First(&financingPaymentType)
+
+		query = query.Where("payment_type_id = ?", financingPaymentType.ID).Order("updated_at DESC")
+	}
+
 	query = query.Where("deleted_at IS NULL")
 
-	// TODO -> add associations filters
+	// TODO -> add MostVisited query
 
 	getPropertiesTransaction := query.Find(&properties)
 
