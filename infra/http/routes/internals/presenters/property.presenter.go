@@ -26,6 +26,7 @@ type PropertyFromHTTP struct {
 	Discount         float64 `json:"discount" validate:"min=0"`
 	IsSold           bool    `json:"is_sold"`
 	ConstructionYear uint    `json:"construction_year" validate:"required,min=1945"`
+	VisitedBy        string  `json:"visited_by"`
 
 	KindID        uint `json:"kind_id" validate:"required,min=1"`
 	PaymentTypeID uint `json:"payment_type_id" validate:"required,min=1"`
@@ -154,4 +155,13 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	}
 
 	return filters
+}
+
+func (PropertyPresenter) GetIdentity(request *http.Request) (*string, error) {
+	cookie, err := request.Cookie("identity")
+	if err != nil {
+		return nil, err
+	}
+
+	return &cookie.Value, nil
 }

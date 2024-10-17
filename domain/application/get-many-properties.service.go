@@ -82,9 +82,11 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 		query = query.Where("payment_type_id = ?", financingPaymentType.ID).Order("updated_at DESC")
 	}
 
-	query = query.Where("deleted_at IS NULL")
+	if filters.MostVisited != nil {
+		query = query.Order("COALESCE(array_length(visited_by, 1), 0) DESC")
+	}
 
-	// TODO -> add MostVisited query
+	query = query.Where("deleted_at IS NULL")
 
 	getPropertiesTransaction := query.Find(&properties)
 

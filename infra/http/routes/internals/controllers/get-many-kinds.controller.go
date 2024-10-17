@@ -33,7 +33,7 @@ func GetManyKinds(write http.ResponseWriter, request *http.Request) {
 		response = append(response, httpPresenter.ToHTTP(kind))
 	}
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {

@@ -33,7 +33,7 @@ func GetManyPaymentTypes(write http.ResponseWriter, request *http.Request) {
 		response = append(response, httpPresenter.ToHTTP(paymenttype))
 	}
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {
