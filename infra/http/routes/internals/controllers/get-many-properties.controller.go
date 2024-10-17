@@ -32,6 +32,7 @@ func GetManyProperties(write http.ResponseWriter, request *http.Request) {
 	isSpecial := request.URL.Query().Get("is_special")
 	isApartment := request.URL.Query().Get("is_apartment")
 	allowFinancing := request.URL.Query().Get("allow_financing")
+	mostVisited := request.URL.Query().Get("most_visited")
 
 	filters := application.GetManyPropertiesFilters{}
 
@@ -53,6 +54,7 @@ func GetManyProperties(write http.ResponseWriter, request *http.Request) {
 	filters.IsSpecial = utils.ParseParamToBool(isSpecial)
 	filters.IsApartment = utils.ParseParamToBool(isApartment)
 	filters.AllowFinancing = utils.ParseParamToBool(allowFinancing)
+	filters.MostVisited = utils.ParseParamToBool(mostVisited)
 
 	properties, getPropertiesErr := propertiesService.Execute(filters)
 	if getPropertiesErr != nil {
