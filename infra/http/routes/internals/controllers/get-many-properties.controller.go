@@ -66,7 +66,7 @@ func GetManyProperties(write http.ResponseWriter, request *http.Request) {
 		response = append(response, httpPresenter.ToHTTP(property))
 	}
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {

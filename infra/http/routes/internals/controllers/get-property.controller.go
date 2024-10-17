@@ -28,9 +28,14 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	propertyService := application.GetPropertyService{PropertyID: propertyId, Database: database}
+	identity, cookieErr := httpPresenter.GetIdentity(request)
+	if cookieErr != nil || identity == nil {
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
+	}
 
-	property, getPropertyErr := propertyService.Execute()
+	propertyService := application.GetPropertyService{Database: database}
+
+	property, getPropertyErr := propertyService.Execute(propertyId, identity)
 	if getPropertyErr != nil {
 		core.HandleHTTPStatus(write, getPropertyErr)
 		return
@@ -38,7 +43,7 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 
 	response := httpPresenter.ToHTTP(*property)
 
-	write.WriteHeader(http.StatusCreated)
+	write.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(write).Encode(response)
 
 	if err != nil {

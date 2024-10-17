@@ -7,17 +7,23 @@ import (
 )
 
 type GetPropertyService struct {
-	PropertyID uint64
-	Database   *gorm.DB
+	Database *gorm.DB
 }
 
-func (self *GetPropertyService) Execute() (*entities.Property, error) {
+func (self *GetPropertyService) Execute(propertyID uint64, userIdentity *string) (*entities.Property, error) {
 	property := entities.Property{}
 
-	getPropertyTransaction := self.Database.Find(&property, self.PropertyID).Where("deleted_at IS NULL").First(&property)
+	getPropertyTransaction := self.Database.Find(&property, propertyID).Where("deleted_at IS NULL").First(&property)
 	if getPropertyTransaction.Error != nil {
 		return nil, getPropertyTransaction.Error
 	}
+
+	if userIdentity == nil {
+		return &property, nil
+	}
+
+	property.VisitedBy = append(property.VisitedBy, *userIdentity)
+	self.Database.Save(&property)
 
 	return &property, nil
 }
