@@ -7,9 +7,17 @@ import (
 )
 
 type GetManyPropertiesFilters struct {
-	Search    *string
-	Latitude  *float64
-	Longitude *float64
+	Search         *string
+	Latitude       *float64
+	Longitude      *float64
+	IsNew          *bool
+	WithDiscount   *bool
+	IsApartment    *bool
+	RecentlySold   *bool
+	RecentlyBuilt  *bool
+	MostVisited    *bool
+	AllowFinancing *bool
+	IsSpecial      *bool
 }
 
 type GetManyPropertiesService struct {
@@ -38,6 +46,44 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 		`
 
 		query = query.Where(gorm.Expr(haversineQuery, latitude, longitude, latitude))
+	}
+
+	if filters.IsNew != nil {
+		query = query.Order("created_at DESC")
+	}
+
+	if filters.WithDiscount != nil {
+		query = query.Where("discount > 0")
+	}
+
+	if filters.RecentlySold != nil {
+		query = query.Where("is_sold = true").Order("updated_at DESC")
+	}
+
+	if filters.RecentlyBuilt != nil {
+		query = query.Order("construction_year DESC")
+	}
+
+	if filters.IsSpecial != nil {
+		query = query.Where("is_highlight = true").Order("updated_at DESC")
+	}
+
+	if filters.IsApartment != nil {
+		var apartmentKind entities.Kind
+		self.Database.Where("name = ?", "apartment").First(&apartmentKind)
+
+		query = query.Where("kind_id = ?", apartmentKind.ID).Order("updated_at DESC")
+	}
+
+	if filters.AllowFinancing != nil {
+		var financingPaymentType entities.PaymentType
+		self.Database.Where("name = ?", "financing").First(&financingPaymentType)
+
+		query = query.Where("payment_type_id = ?", financingPaymentType.ID).Order("updated_at DESC")
+	}
+
+	if filters.MostVisited != nil {
+		query = query.Order("COALESCE(array_length(visited_by, 1), 0) DESC")
 	}
 
 	query = query.Where("deleted_at IS NULL")

@@ -25,7 +25,6 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
 		core.HandleHTTPStatus(write, ctxErr)
-
 		return
 	}
 
@@ -44,16 +43,20 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 
 	propertyService := application.UpdatePropertyService{Validated: validated, Database: database}
 	propertyPayload := entities.Property{
-		Size:      propertyRequest.Size,
-		Rooms:     propertyRequest.Rooms,
-		Kitchens:  propertyRequest.Kitchens,
-		Bathrooms: propertyRequest.Bathrooms,
-		Address:   propertyRequest.Address,
-		Summary:   propertyRequest.Summary,
-		Details:   propertyRequest.Details,
-		Latitude:  propertyRequest.Latitude,
-		Longitude: propertyRequest.Longitude,
-		Price:     propertyRequest.Price,
+		Size:             propertyRequest.Size,
+		Rooms:            propertyRequest.Rooms,
+		Kitchens:         propertyRequest.Kitchens,
+		Bathrooms:        propertyRequest.Bathrooms,
+		Address:          propertyRequest.Address,
+		Summary:          propertyRequest.Summary,
+		Details:          propertyRequest.Details,
+		Latitude:         propertyRequest.Latitude,
+		Longitude:        propertyRequest.Longitude,
+		Price:            propertyRequest.Price,
+		IsHighlight:      propertyRequest.IsHighlight,
+		Discount:         propertyRequest.Discount,
+		ConstructionYear: propertyRequest.ConstructionYear,
+		IsSold:           propertyRequest.IsSold,
 
 		KindID:        propertyRequest.KindID,
 		PaymentTypeID: propertyRequest.PaymentTypeID,
