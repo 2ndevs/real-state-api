@@ -2,8 +2,11 @@ package presenters
 
 import (
 	"encoding/json"
+	"main/domain/application"
 	"main/domain/entities"
+	"main/utils/libs"
 	"net/http"
+	"strconv"
 )
 
 type PropertyPresenter struct{}
@@ -88,6 +91,70 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		StatusID:      property.StatusID,
 		PaymentTypeID: property.PaymentTypeID,
 	}
+}
+
+func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetManyPropertiesFilters {
+	filters := application.GetManyPropertiesFilters{}
+
+	searchFilter := request.URL.Query().Get("search")
+	latitudeFilter := request.URL.Query().Get("latitude")
+	longitudeFilter := request.URL.Query().Get("longitude")
+	isNewFilter := request.URL.Query().Get("is_new")
+	withDiscountFilter := request.URL.Query().Get("with_discount")
+	recentlySoldFilter := request.URL.Query().Get("recently_sold")
+	recentlyBuiltFilter := request.URL.Query().Get("recently_built")
+	isSpecialFilter := request.URL.Query().Get("is_special")
+	isApartmentFilter := request.URL.Query().Get("is_apartment")
+	allowFinancingFilter := request.URL.Query().Get("allow_financing")
+
+	if searchFilter != "" {
+		filters.Search = &searchFilter
+	}
+
+	latitude := libs.ValidateAndConvertCoordinate(latitudeFilter, -90, 90)
+	longitude := libs.ValidateAndConvertCoordinate(longitudeFilter, -180, 180)
+	if latitude != nil && longitude != nil {
+		filters.Latitude = latitude
+		filters.Longitude = longitude
+	}
+
+	isNew, err := strconv.ParseBool(isNewFilter)
+
+	if isNew && err == nil {
+		filters.IsNew = &isNew
+	}
+
+	withDiscount, err := strconv.ParseBool(withDiscountFilter)
+	if withDiscount && err == nil {
+		filters.WithDiscount = &withDiscount
+	}
+
+	recentlySold, err := strconv.ParseBool(recentlySoldFilter)
+	if recentlySold && err == nil {
+		filters.RecentlySold = &recentlySold
+	}
+
+	recentlyBuilt, err := strconv.ParseBool(recentlyBuiltFilter)
+	if recentlyBuilt && err == nil {
+		filters.RecentlyBuilt = &recentlyBuilt
+	}
+
+	isSpecial, err := strconv.ParseBool(isSpecialFilter)
+	if isSpecial && err == nil {
+		filters.IsSpecial = &isSpecial
+	}
+
+	isApartment, err := strconv.ParseBool(isApartmentFilter)
+	if isApartment && err == nil {
+		filters.IsApartment = &isApartment
+	}
+
+	allowFinancing, err := strconv.ParseBool(allowFinancingFilter)
+	if allowFinancing && err == nil {
+		filters.AllowFinancing = &allowFinancing
+	}
+
+	return filters
 }
 
 func (PropertyPresenter) GetIdentity(request *http.Request) (*string, error) {
