@@ -33,7 +33,6 @@ func GetHighlightedProperties(write http.ResponseWriter, request *http.Request) 
 
 	write.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(write).Encode(response)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 	}
