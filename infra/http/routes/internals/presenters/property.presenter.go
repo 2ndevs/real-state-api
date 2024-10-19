@@ -106,6 +106,7 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	isSpecialFilter := request.URL.Query().Get("is_special")
 	isApartmentFilter := request.URL.Query().Get("is_apartment")
 	allowFinancingFilter := request.URL.Query().Get("allow_financing")
+	mostVisitedFilter := request.URL.Query().Get("most_visited")
 
 	if searchFilter != "" {
 		filters.Search = &searchFilter
@@ -152,6 +153,11 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	allowFinancing, err := strconv.ParseBool(allowFinancingFilter)
 	if allowFinancing && err == nil {
 		filters.AllowFinancing = &allowFinancing
+	}
+
+	mostVisited, err := strconv.ParseBool(mostVisitedFilter)
+	if mostVisited && err == nil {
+		filters.MostVisited = &mostVisited
 	}
 
 	return filters
