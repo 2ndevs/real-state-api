@@ -5,13 +5,10 @@ JWT_SECRET="..." # openssl rand -base64 32
 
 DB_USER="..."
 DB_PASS="..."
-DB_NAME="..."
+DB_NAME="kozempa"
 
-DOMAIN_NAME="..."
-EMAIL="..."
-
-NEXTAUTH_URL="..."
-GOOGLE_MAPS_KEY="..."
+DOMAIN_NAME="domain.example.com"
+EMAIL="johndoe@example.com"
 
 API_URL="http://localhost:3333"
 FRONT_URL="http://localhost:3000"
@@ -20,12 +17,11 @@ FRONT_URL="http://localhost:3000"
 ## UPDATE SYSTEM
 ###
 
-echo "[SCRIPT] Updating packages"
-sudo apt update
+#echo "[SCRIPT] Updating packages"
+#sudo apt update
 
-echo "[SCRIPT] Upgrading packages"
-sudo apt upgrade
-
+#echo "[SCRIPT] Upgrading packages"
+#sudo apt upgrade
 
 ###
 ## CHECKING FOR AVAILABLE PACKAGES
@@ -91,12 +87,6 @@ fi
 if [ $HAS_NGINX != true ]; then
   echo "[SCRIPT] NGINX isn't available, installing..."
   sudo apt install nginx -y
-
-  sudo rm -f /etc/nginx/sites-available/myapp
-  sudo rm -f /etc/nginx/sites-enabled/myapp
-
-  sudo systemctl stop nginx
-
   sudo apt install certbot -y
   #sudo certbot certonly --standalone -d $DOMAIN_NAME --non-interactive --agree-tos -m $EMAIL
 
@@ -108,60 +98,48 @@ if [ $HAS_NGINX != true ]; then
   #if [ ! -f /etc/letsencrypt/ssl-dhparams.pem ]; then
   #  sudo openssl dhparam -out /etc/letsencrypt/ssl-dhparams.pem 2048
   #fi
-
-  sudo cat > /etc/nginx/sites-available/myapp <<EOL
-  limit_req_zone \$binary_remote_addr zone=mylimit:10m rate=10r/s;
-
-  server {
-      listen 80;
-      server_name $DOMAIN_NAME;
-
-      # Redirect all HTTP requests to HTTPS
-      # return 301 https://\$host\$request_uri;
-  #}
-
-  #server {
-      # listen 443 ssl;
-      # server_name $DOMAIN_NAME;
-
-      # ssl_certificate /etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem;
-      # ssl_certificate_key /etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem;
-      # include /etc/letsencrypt/options-ssl-nginx.conf;
-      # ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-
-      # Enable rate limiting
-      limit_req zone=mylimit burst=20 nodelay;
-
-      location / {
-          proxy_pass $FRONT_URL;
-          proxy_http_version 1.1;
-        # proxy_set_header Upgrade \$http_upgrade;
-        # proxy_set_header Connection 'upgrade';
-          proxy_set_header Host \$host;
-        # proxy_cache_bypass \$http_upgrade;
-
-          # Disable buffering for streaming support
-          proxy_buffering off;
-          proxy_set_header X-Accel-Buffering no;
-      }
-
-      location /api/ {
-          proxy_pass $API_URL;
-          proxy_http_version 1.1;
-        # proxy_set_header Upgrade \$http_upgrade;
-        # proxy_set_header Connection 'upgrade';
-          proxy_set_header Host \$host;
-        # proxy_cache_bypass \$http_upgrade;
-      }
-  }
-  EOL
-
-  # Create symbolic link if it doesn't already exist
-  sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/myapp
-
-  # Restart Nginx to apply the new configuration
-  sudo systemctl restart nginx
 fi
+
+sudo cat >/etc/nginx/sites-available/myapp <<EOL
+limit_req_zone \$binary_remote_addr zone=mylimit:10m rate=10r/s;
+
+server {
+    listen 80;
+    # listen 443 ssl;
+    server_name $DOMAIN_NAME;
+
+    # Redirect all HTTP requests to HTTPS
+    # return 301 https://\$host\$request_uri;
+
+    # ssl_certificate /etc/letsencrypt/live/$DOMAIN_NAME/fullchain.pem;
+    # ssl_certificate_key /etc/letsencrypt/live/$DOMAIN_NAME/privkey.pem;
+    # include /etc/letsencrypt/options-ssl-nginx.conf;
+    # ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
+
+    # Enable rate limiting
+    limit_req zone=mylimit burst=20 nodelay;
+
+    location / {
+        proxy_pass $API_URL;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade \$http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host \$host;
+        proxy_cache_bypass \$http_upgrade;
+    }
+}
+EOL
+
+sudo rm -f /etc/nginx/sites-available/myapp
+sudo rm -f /etc/nginx/sites-enabled/myapp
+
+sudo systemctl stop nginx
+
+# Create symbolic link if it doesn't already exist
+sudo ln -s /etc/nginx/sites-available/myapp /etc/nginx/sites-enabled/myapp
+
+# Restart Nginx to apply the new configuration
+sudo systemctl restart nginx
 
 # -------------------------------------------------- #
 
@@ -173,15 +151,15 @@ fi
 
 echo "[SCRIPT] Setting up backend environment variables"
 
-echo "APP_PORT=3333" > "$BACKEND_DIR/.env"
-echo "NODE_ENV='production'" >> "$BACKEND_DIR/.env"
-echo "JWT_SECRET=$JWT_SECRET" >> "$BACKEND_DIR/.env"
-echo "POSTGRES_USER=$DB_USER" >> "$BACKEND_DIR/.env"
-echo "POSTGRES_PASSWORD=$DB_PASS" >> "$BACKEND_DIR/.env"
-echo "POSTGRES_DB=$DB_NAME" >> "$BACKEND_DIR/.env"
-echo "POSTGRES_HOST='localhost'" >> "$BACKEND_DIR/.env"
-echo "POSTGRES_PORT=5432" >> "$BACKEND_DIR/.env"
-echo "DATABASE_URL=postgres://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@localhost:5432/\${POSTGRES_DB}" >> "$BACKEND_DIR/.env"
+echo "APP_PORT=3333" >"$BACKEND_DIR/.env"
+echo "NODE_ENV='production'" >>"$BACKEND_DIR/.env"
+echo "JWT_SECRET=$JWT_SECRET" >>"$BACKEND_DIR/.env"
+echo "POSTGRES_USER=$DB_USER" >>"$BACKEND_DIR/.env"
+echo "POSTGRES_PASSWORD=$DB_PASS" >>"$BACKEND_DIR/.env"
+echo "POSTGRES_DB=$DB_NAME" >>"$BACKEND_DIR/.env"
+echo "POSTGRES_HOST='database'" >>"$BACKEND_DIR/.env"
+echo "POSTGRES_PORT=5432" >>"$BACKEND_DIR/.env"
+echo "DATABASE_URL=postgres://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@localhost:5432/\${POSTGRES_DB}" >>"$BACKEND_DIR/.env"
 
 echo "[SCRIPT] Running backend containers"
 sudo docker compose -f $BACKEND_DIR/docker-compose.yml up -d
