@@ -13,6 +13,3 @@ COPY --from=builder /app/.env ./.env
 
 EXPOSE 3333
 CMD ["./deploy"]
-
-
-
