@@ -3,6 +3,12 @@
 GITHUB_USER="..."
 GITHUB_TOKEN="..."
 
+JWT_SECRET="..." # openssl rand -base64 32
+
+DB_USER="..."
+DB_PASS="..."
+DB_NAME="..."
+
 DOMAIN_NAME="..."
 EMAIL="..."
 
@@ -189,10 +195,10 @@ mv imobiliaria-terreno-api $BACKEND_DIR
 echo "[SCRIPT] Setting up backend environment variables"
 echo "APP_PORT=3333" > "$BACKEND_DIR/.env"
 echo "NODE_ENV='production'" >> "$BACKEND_DIR/.env"
-echo "JWT_SECRET='super-secret-value'" >> "$BACKEND_DIR/.env" # openssl rand -base64 32
-echo "POSTGRES_USER='docker'" >> "$BACKEND_DIR/.env"
-echo "POSTGRES_PASSWORD='docker'" >> "$BACKEND_DIR/.env"
-echo "POSTGRES_DB='kozempa'" >> "$BACKEND_DIR/.env"
+echo "JWT_SECRET=$JWT_SECRET" >> "$BACKEND_DIR/.env" # openssl rand -base64 32
+echo "POSTGRES_USER=$DB_USER" >> "$BACKEND_DIR/.env"
+echo "POSTGRES_PASSWORD=$DB_PASS" >> "$BACKEND_DIR/.env"
+echo "POSTGRES_DB=$DB_NAME" >> "$BACKEND_DIR/.env"
 echo "POSTGRES_HOST='localhost'" >> "$BACKEND_DIR/.env"
 echo "POSTGRES_PORT=5432" >> "$BACKEND_DIR/.env"
 echo "DATABASE_URL=postgres://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@localhost:5432/\${POSTGRES_DB}" >> "$BACKEND_DIR/.env"

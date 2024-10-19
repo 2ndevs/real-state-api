@@ -1,0 +1,32 @@
+on:
+  push:
+    branches:
+      - deploy
+
+jobs:
+  deploy:
+    name: 'Deploy to AWS'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: setup golang
+        uses: actions/setup-go@v5
+
+      - name: install deps
+        run: go get .
+
+      - name: build project
+        run: go build -o backend .
+
+      - name: deploy with ssh
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: ./* 
+          remote_path: /www/backend
+          remote_user: ubuntu
+          remote_host: ${{ secrets.EC2_HOST }}
+          remote_key: ${{ secrets.EC2_KEY }}
