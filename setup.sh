@@ -1,8 +1,5 @@
 #!/bin/bash
 
-GITHUB_USER="..."
-GITHUB_TOKEN="..."
-
 JWT_SECRET="..." # openssl rand -base64 32
 
 DB_USER="..."
@@ -169,33 +166,19 @@ fi
 # -------------------------------------------------- #
 
 ###
-## CLONING REPOSITORIES
+## RUNNING APPS
 ###
 
-BACKEND_PATH="2ndevs/imobiliaria-terreno-api"
-FRONTEND_PATH="2ndevs/imobiliaria-terreno-web"
+BACKEND_DIR="/home/ubuntu/www/backend"
+FRONTEND_DIR="/home/ubuntu/www/frontend"
 
-BACKEND_DIR="backend"
-FRONTEND_DIR="frontend"
-
-if [ -d $BACKEND_DIR ]; then
-  echo "[SCRIPT] Removing old backend folder"
-  rm -rf $BACKEND_DIR
-fi
-
-if [ -d $FRONTEND_DIR ]; then
-  echo "[SCRIPT] Removing old frontend folder"
-  rm -rf $FRONTEND_DIR
-fi
-
-echo "[SCRIPT] Cloning backend repository"
-git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${BACKEND_PATH}
-mv imobiliaria-terreno-api $BACKEND_DIR
+## BACKEND
 
 echo "[SCRIPT] Setting up backend environment variables"
+
 echo "APP_PORT=3333" > "$BACKEND_DIR/.env"
 echo "NODE_ENV='production'" >> "$BACKEND_DIR/.env"
-echo "JWT_SECRET=$JWT_SECRET" >> "$BACKEND_DIR/.env" # openssl rand -base64 32
+echo "JWT_SECRET=$JWT_SECRET" >> "$BACKEND_DIR/.env"
 echo "POSTGRES_USER=$DB_USER" >> "$BACKEND_DIR/.env"
 echo "POSTGRES_PASSWORD=$DB_PASS" >> "$BACKEND_DIR/.env"
 echo "POSTGRES_DB=$DB_NAME" >> "$BACKEND_DIR/.env"
@@ -203,7 +186,7 @@ echo "POSTGRES_HOST='localhost'" >> "$BACKEND_DIR/.env"
 echo "POSTGRES_PORT=5432" >> "$BACKEND_DIR/.env"
 echo "DATABASE_URL=postgres://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@localhost:5432/\${POSTGRES_DB}" >> "$BACKEND_DIR/.env"
 
-echo "[SCRIPT] Running database docker"
+echo "[SCRIPT] Running backend containers"
 docker compose -f $BACKEND_DIR/docker-compose.yml up -d
 
 if ! sudo docker-compose ps | grep "Up"; then
@@ -211,10 +194,18 @@ if ! sudo docker-compose ps | grep "Up"; then
   exit 1
 fi
 
-echo "[SCRIPT] Cloning frontend repository"
-git clone https://${GITHUB_USER}:${GITHUB_TOKEN}@github.com/${FRONTEND_PATH}
-mv imobiliaria-terreno-web $FRONTEND_DIR
+## FRONTEND
 
 echo "[SCRIPT] Setting up frontend environment variables"
+
 echo "NEXT_PUBLIC_GOOGLE_MAPS_KEY=$GOOGLE_MAPS_KEY" >> "$FRONTEND_DIR/.env"
 echo "NEXTAUTH_URL=$NEXTAUTH_URL" >> "$FRONTEND_DIR/.env"
+
+echo "[SCRIPT] Running frontend containers"
+
+docker compose -f $FRONTEND_DIR/docker-compose.yml up -d
+
+if ! sudo docker-compose ps | grep "Up"; then
+  echo "Docker containers failed to start. Check logs with 'docker-compose logs'."
+  exit 1
+fi
