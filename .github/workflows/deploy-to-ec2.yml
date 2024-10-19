@@ -26,7 +26,7 @@ jobs:
         with:
           switches: -avzr --delete
           path: ./* 
-          remote_path: /www/backend
-          remote_user: ubuntu
+          remote_path: /home/ubuntu/www/backend
+          remote_user: ${{ secrets.EC2_USER }}
           remote_host: ${{ secrets.EC2_HOST }}
           remote_key: ${{ secrets.EC2_KEY }}
