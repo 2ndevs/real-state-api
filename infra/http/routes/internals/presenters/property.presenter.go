@@ -1,10 +1,12 @@
 package presenters
 
 import (
-	"encoding/json"
+	"io"
+	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
 	"main/utils/libs"
+	"mime/multipart"
 	"net/http"
 	"strconv"
 )
@@ -27,6 +29,7 @@ type PropertyFromHTTP struct {
 	IsSold           bool    `json:"is_sold"`
 	ConstructionYear uint    `json:"construction_year" validate:"required,min=1945"`
 	VisitedBy        string  `json:"visited_by"`
+	PreviewImages    []byte  `json:"preview_images" validate:"required,min=1"`
 
 	KindID        uint `json:"kind_id" validate:"required,min=1"`
 	PaymentTypeID uint `json:"payment_type_id" validate:"required,min=1"`
@@ -35,20 +38,21 @@ type PropertyFromHTTP struct {
 type PropertyToHTTP struct {
 	ID uint `json:"id"`
 
-	Size             uint    `json:"size"`
-	Rooms            uint    `json:"rooms"`
-	Kitchens         uint    `json:"kitchens"`
-	Bathrooms        uint    `json:"bathrooms"`
-	Address          string  `json:"address"`
-	Summary          string  `json:"summary"`
-	Details          string  `json:"details"`
-	Latitude         float64 `json:"latitude"`
-	Longitude        float64 `json:"longitude"`
-	Price            float64 `json:"price"`
-	IsHighlight      bool    `json:"is_highlight"`
-	Discount         float64 `json:"discount"`
-	IsSold           bool    `json:"is_sold"`
-	ConstructionYear uint    `json:"construction_year"`
+	Size             uint     `json:"size"`
+	Rooms            uint     `json:"rooms"`
+	Kitchens         uint     `json:"kitchens"`
+	Bathrooms        uint     `json:"bathrooms"`
+	Address          string   `json:"address"`
+	Summary          string   `json:"summary"`
+	Details          string   `json:"details"`
+	Latitude         float64  `json:"latitude"`
+	Longitude        float64  `json:"longitude"`
+	Price            float64  `json:"price"`
+	IsHighlight      bool     `json:"is_highlight"`
+	Discount         float64  `json:"discount"`
+	IsSold           bool     `json:"is_sold"`
+	ConstructionYear uint     `json:"construction_year"`
+	PreviewImages    []string `json:"preview_images"`
 
 	KindID        uint `json:"kind_id"`
 	StatusID      uint `json:"status_id"`
@@ -56,13 +60,120 @@ type PropertyToHTTP struct {
 }
 
 func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, error) {
-	var propertyRequest PropertyFromHTTP
-	decoder := json.NewDecoder(request.Body)
-	decoder.DisallowUnknownFields()
+	request.ParseMultipartForm(1024 * 1024 * 15)
+	files := request.MultipartForm.File
 
-	err := decoder.Decode(&propertyRequest)
+	var previewImages []byte
+
+	for _, file := range files["preview_images"] {
+		fileAsBytes := func(file *multipart.FileHeader) []byte {
+			content, err := file.Open()
+			defer content.Close()
+			if err != nil {
+				return nil
+			}
+
+			fileByte, err := io.ReadAll(content)
+			if err != nil {
+				return nil
+			}
+
+			return fileByte
+		}(file)
+
+		if fileAsBytes == nil {
+			break
+		}
+
+		previewImages = append(previewImages, fileAsBytes...)
+	}
+
+	rooms, err := strconv.ParseUint(request.FormValue("rooms"), 32, 10)
 	if err != nil {
 		return nil, err
+	}
+
+	size, err := strconv.ParseUint(request.FormValue("size"), 32, 10)
+	if err != nil {
+		return nil, err
+	}
+
+	kitchens, err := strconv.ParseUint(request.FormValue("kitchens"), 32, 10)
+	if err != nil {
+		return nil, err
+	}
+
+	bathrooms, err := strconv.ParseUint(request.FormValue("bathrooms"), 32, 10)
+	if err != nil {
+		return nil, err
+	}
+
+	address := request.FormValue("address")
+	if len(address) == 0 {
+		return nil, core.InvalidParametersError
+	}
+
+	summary := request.FormValue("summary")
+	if len(summary) == 0 {
+		return nil, core.InvalidParametersError
+	}
+
+	details := request.FormValue("details")
+	if len(details) == 0 {
+		return nil, core.InvalidParametersError
+	}
+
+	latitude, err := strconv.ParseFloat(request.FormValue("latitude"), 64)
+	if err != nil {
+		return nil, err
+	}
+
+	longitude, err := strconv.ParseFloat(request.FormValue("longitude"), 64)
+	if err != nil {
+		return nil, err
+	}
+
+	price, err := strconv.ParseFloat(request.FormValue("price"), 64)
+	if err != nil {
+		return nil, err
+	}
+
+	isHighlight, err := strconv.ParseBool(request.FormValue("is_highlight"))
+	if err != nil {
+		return nil, err
+	}
+
+	discount, err := strconv.ParseFloat(request.FormValue("discount"), 64)
+	if err != nil {
+		return nil, err
+	}
+
+	isSold, err := strconv.ParseBool(request.FormValue("is_sold"))
+	if err != nil {
+		return nil, err
+	}
+
+	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	propertyRequest := PropertyFromHTTP{
+		Rooms:            uint(rooms),
+		Size:             uint(size),
+		Kitchens:         uint(kitchens),
+		Bathrooms:        uint(bathrooms),
+		Address:          address,
+		Summary:          summary,
+		Details:          details,
+		Latitude:         latitude,
+		Longitude:        longitude,
+		Price:            price,
+		IsHighlight:      isHighlight,
+		Discount:         discount,
+		IsSold:           isSold,
+		ConstructionYear: uint(constructionYear),
+		PreviewImages:    previewImages,
 	}
 
 	return &propertyRequest, nil
@@ -86,6 +197,7 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		Discount:         property.Discount,
 		IsSold:           property.IsSold,
 		ConstructionYear: property.ConstructionYear,
+		PreviewImages:    property.PreviewImages,
 
 		KindID:        property.KindID,
 		StatusID:      property.StatusID,
