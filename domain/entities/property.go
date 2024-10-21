@@ -24,7 +24,8 @@ type Property struct {
 	ConstructionYear uint           `validate:"required,min=1945"`
 	VisitedBy        pq.StringArray `gorm:"type:text[]"`
 
-	KindID        uint `gorm:"index"`
-	StatusID      uint `validate:"required,min=1"`
-	PaymentTypeID uint `gorm:"index" validate:"required,min=1"`
+	KindID            uint `validate:"required,min=1"`
+	StatusID          uint `validate:"required,min=1"`
+	PaymentTypeID     uint `validate:"required,min=1"`
+	NegotiationTypeId uint `validate:"required,min=1"`
 }

@@ -86,7 +86,7 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 		query = query.Order("COALESCE(array_length(visited_by, 1), 0) DESC")
 	}
 
-	query = query.Where("deleted_at IS NULL")
+	query = query.Where("deleted_at IS NULL AND is_sold != true")
 
 	getPropertiesTransaction := query.Find(&properties)
 

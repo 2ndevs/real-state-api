@@ -5,5 +5,5 @@ import "gorm.io/gorm"
 type Status struct {
 	gorm.Model
 
-  Name string `gorm:"index" validate:"required"`
+	Name string `gorm:"index" validate:"required"`
 }

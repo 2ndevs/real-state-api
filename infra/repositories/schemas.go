@@ -28,10 +28,17 @@ type PaymentType struct {
 	Status Status
 }
 
+type NegotiationType struct {
+	entities.NegotiationType
+
+	Status Status
+}
+
 type Property struct {
 	entities.Property
 
-	Kind        Kind
-	Status      Status
-	PaymentType PaymentType
+	Kind            Kind
+	Status          Status
+	PaymentType     PaymentType
+	NegotiationType NegotiationType
 }

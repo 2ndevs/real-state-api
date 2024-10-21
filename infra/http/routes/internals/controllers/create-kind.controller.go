@@ -12,7 +12,7 @@ import (
 
 func CreateKind(write http.ResponseWriter, request *http.Request) {
 	httpPresenter := presenters.KindPresenter{}
-
+	//
 	kindRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
 		core.HandleHTTPStatus(write, core.InvalidParametersError)
@@ -47,7 +47,6 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 
 	write.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(write).Encode(response)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 	}
