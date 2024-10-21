@@ -28,8 +28,9 @@ type PropertyFromHTTP struct {
 	ConstructionYear uint    `json:"construction_year" validate:"required,min=1945"`
 	VisitedBy        string  `json:"visited_by"`
 
-	KindID        uint `json:"kind_id" validate:"required,min=1"`
-	PaymentTypeID uint `json:"payment_type_id" validate:"required,min=1"`
+	KindID            uint `json:"kind_id" validate:"required,min=1"`
+	PaymentTypeID     uint `json:"payment_type_id" validate:"required,min=1"`
+	NegotiationTypeID uint `json:"negotiation_type_id" validate:"required,min=1"`
 }
 
 type PropertyToHTTP struct {
@@ -50,9 +51,10 @@ type PropertyToHTTP struct {
 	IsSold           bool    `json:"is_sold"`
 	ConstructionYear uint    `json:"construction_year"`
 
-	KindID        uint `json:"kind_id"`
-	StatusID      uint `json:"status_id"`
-	PaymentTypeID uint `json:"payment_type_id"`
+	KindID            uint `json:"kind_id"`
+	StatusID          uint `json:"status_id"`
+	PaymentTypeID     uint `json:"payment_type_id"`
+	NegotiationTypeID uint `json:"negotiation_type_id"`
 }
 
 func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, error) {
@@ -87,9 +89,10 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		IsSold:           property.IsSold,
 		ConstructionYear: property.ConstructionYear,
 
-		KindID:        property.KindID,
-		StatusID:      property.StatusID,
-		PaymentTypeID: property.PaymentTypeID,
+		KindID:            property.KindID,
+		StatusID:          property.StatusID,
+		PaymentTypeID:     property.PaymentTypeID,
+		NegotiationTypeID: property.NegotiationTypeId,
 	}
 }
 

@@ -49,9 +49,10 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 		ConstructionYear: propertyRequest.ConstructionYear,
 		IsSold:           propertyRequest.IsSold,
 
-		KindID:        propertyRequest.KindID,
-		PaymentTypeID: propertyRequest.PaymentTypeID,
-		StatusID:      1,
+		KindID:            propertyRequest.KindID,
+		PaymentTypeID:     propertyRequest.PaymentTypeID,
+		NegotiationTypeId: propertyRequest.NegotiationTypeID,
+		StatusID:          1,
 	}
 
 	property, createPropertyErr := propertyService.Execute(propertyPayload)
@@ -64,7 +65,6 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 	write.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(write).Encode(response)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 	}
