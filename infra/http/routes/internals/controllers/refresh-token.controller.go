@@ -1,16 +1,17 @@
 package controllers
 
 import (
-	"log"
+	"encoding/json"
 	"main/core"
+	"main/domain/application"
+	"main/infra/http/middlewares"
+	"main/infra/http/routes/internals/presenters"
 	"main/utils/libs"
 	"net/http"
-
-	"github.com/golang-jwt/jwt/v5"
 )
 
 func RefreshToken(writer http.ResponseWriter, request *http.Request) {
-	parser := libs.JWT{}
+	presenter := presenters.RefreshTokenPresenter{}
 	token := request.Header.Get("X-Refresh-Token")
 
 	if len(token) <= 0 {
@@ -18,35 +19,29 @@ func RefreshToken(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	oldToken, err := parser.Parse(token)
-	if err != nil {
-		switch err.(error) {
-		case jwt.ErrTokenExpired:
-			{
-				core.HandleHTTPStatus(writer, core.AuthorizationTokenExpiredError)
-				return
-			}
-
-		default:
-			{
-				core.HandleHTTPStatus(writer, core.MissingAuthorizationTokenError)
-				return
-			}
-		}
-	}
-
-	sub, err := oldToken.Claims.GetSubject()
+	parser := libs.JWT{}
+	database, err := middlewares.GetDatabaseFromContext(request)
 	if err != nil {
 		core.HandleHTTPStatus(writer, err)
-		return
+    return
 	}
-	log.Println("SUB: ", sub)
 
-	role := oldToken.Raw
-	log.Println("RAW: ", role)
+	service := application.RefreshTokenService {
+		Database: database,
+		Parser:   parser,
+	}
+  
+  tokens, err := service.Execute(token)
+  if err != nil {
+    core.HandleHTTPStatus(writer, err)
+    return
+  }
 
-	// refreshToken, err := parser.Generate(libs.CreateJWTParams{
-	// 	Sub:  1,
-	// 	Role: 2,
-	// })
+	response := presenter.ToHTTP(*tokens.Token, *tokens.RefreshToken)
+
+	writer.WriteHeader(http.StatusCreated)
+	err = json.NewEncoder(writer).Encode(response)
+	if err != nil {
+		core.HandleHTTPStatus(writer, err)
+	}
 }
