@@ -1,6 +1,7 @@
-services:
-  postgres:
-    image: postgres:16
+services: 
+  database:
+    image: postgres:17
+    restart: unless-stopped
     container_name: postgres_db
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
@@ -11,11 +12,32 @@ services:
     ports:
       - '5432:5432'
     networks:
-      - backend-net
+      - deploy
+
+  backend:
+    build: .
+    container_name: backend
+    restart: unless-stopped
+    ports: 
+      - ${APP_PORT}:${APP_PORT}
+    environment: 
+      APP_PORT: ${APP_PORT}
+      NODE_ENV: ${NODE_ENV}
+      JWT_SECRET: ${JWT_SECRET}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD} 
+      POSTGRES_DB: ${POSTGRES_DB} 
+      POSTGRES_HOST: ${POSTGRES_HOST}
+      POSTGRES_PORT: ${POSTGRES_PORT}
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}
+    depends_on:
+      - database
+    networks:
+      - deploy
 
 volumes:
   imobiliaria_terreno_db:
 
 networks:
-  backend-net:
+  deploy:
     driver: bridge

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
@@ -15,6 +16,7 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 	propertyRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
+		log.Println(parseError)
 		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
@@ -33,26 +35,30 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 	}
 
 	propertyService := application.CreatePropertyService{Validated: validated, Database: database}
-	propertyPayload := entities.Property{
-		Size:             propertyRequest.Size,
-		Rooms:            propertyRequest.Rooms,
-		Kitchens:         propertyRequest.Kitchens,
-		Bathrooms:        propertyRequest.Bathrooms,
-		Address:          propertyRequest.Address,
-		Summary:          propertyRequest.Summary,
-		Details:          propertyRequest.Details,
-		Latitude:         propertyRequest.Latitude,
-		Longitude:        propertyRequest.Longitude,
-		Price:            propertyRequest.Price,
-		IsHighlight:      propertyRequest.IsHighlight,
-		Discount:         propertyRequest.Discount,
-		ConstructionYear: propertyRequest.ConstructionYear,
-		IsSold:           propertyRequest.IsSold,
+	propertyPayload := application.CreatePropertyServiceRequest{
+		Property: entities.Property{
+			Size:             propertyRequest.Size,
+			Rooms:            propertyRequest.Rooms,
+			Kitchens:         propertyRequest.Kitchens,
+			Bathrooms:        propertyRequest.Bathrooms,
+			Address:          propertyRequest.Address,
+			Summary:          propertyRequest.Summary,
+			Details:          propertyRequest.Details,
+			Latitude:         propertyRequest.Latitude,
+			Longitude:        propertyRequest.Longitude,
+			Price:            propertyRequest.Price,
+			IsHighlight:      propertyRequest.IsHighlight,
+			Discount:         propertyRequest.Discount,
+			ConstructionYear: propertyRequest.ConstructionYear,
+			IsSold:           propertyRequest.IsSold,
 
-		KindID:            propertyRequest.KindID,
-		PaymentTypeID:     propertyRequest.PaymentTypeID,
-		NegotiationTypeId: propertyRequest.NegotiationTypeID,
-		StatusID:          1,
+			KindID:            propertyRequest.KindID,
+			PaymentTypeID:     propertyRequest.PaymentTypeID,
+			NegotiationTypeId: propertyRequest.NegotiationTypeID,
+			StatusID:          1,
+		},
+
+		PreviewImages: propertyRequest.PreviewImages,
 	}
 
 	property, createPropertyErr := propertyService.Execute(propertyPayload)

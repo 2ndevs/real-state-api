@@ -13,7 +13,12 @@ type CreatePropertyService struct {
 	Database  *gorm.DB
 }
 
-func (self *CreatePropertyService) Execute(property entities.Property) (*entities.Property, error) {
+type CreatePropertyServiceRequest struct {
+	entities.Property
+	PreviewImages []byte `validated:"required,min=1"`
+}
+
+func (self *CreatePropertyService) Execute(property CreatePropertyServiceRequest) (*entities.Property, error) {
 	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
 		return nil, core.InvalidParametersError
@@ -24,5 +29,5 @@ func (self *CreatePropertyService) Execute(property entities.Property) (*entitie
 		return nil, createPropertyTransaction.Error
 	}
 
-	return &property, nil
+	return &property.Property, nil
 }

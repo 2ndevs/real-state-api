@@ -2,6 +2,7 @@ package libs
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"os"
 
@@ -18,7 +19,6 @@ type JWT struct{}
 type CreateJWTParams struct {
 	Sub  uint
 	Role uint
-	Data any
 	Time int64
 }
 
@@ -29,9 +29,8 @@ func (JWT) Generate(params CreateJWTParams) (*string, error) {
 	}
 
 	constructor := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"sub":  params.Sub,
-		"role": params.Role,
-		"data": params.Data,
+		"sub":  fmt.Sprintf("%v", params.Sub),
+		"role": fmt.Sprintf("%v", params.Role),
 		"exp":  params.Time,
 	})
 	parsed, err := constructor.SignedString([]byte(secret))
