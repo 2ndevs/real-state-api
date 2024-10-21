@@ -19,7 +19,7 @@ func (self *GetManyPaymentTypesService) Execute() (*[]entities.PaymentType, erro
 		query = query.Where("name ILIKE ?", "%"+*self.NameFilter+"%")
 	}
 
-	query = query.Where("deleted_at IS NULL AND is_sold != true")
+	query = query.Where("deleted_at IS NULL")
 	query = query.Order("name ASC")
 
 	getPaymentTypesTransaction := query.Find(&paymentTypes)
