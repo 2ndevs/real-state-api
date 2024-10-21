@@ -95,7 +95,7 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	size, err := strconv.ParseUint(request.FormValue("size"), 32, 10)
+	size, err := strconv.ParseUint(request.FormValue("size"), 32, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -141,21 +141,45 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 	}
 
 	isHighlight, err := strconv.ParseBool(request.FormValue("is_highlight"))
-	if err != nil {
+	if err != nil && request.FormValue("is_highlight") != "" {
 		return nil, err
+	}
+	if request.FormValue("is_highlight") == "" {
+		isHighlight = false
 	}
 
 	discount, err := strconv.ParseFloat(request.FormValue("discount"), 64)
-	if err != nil {
+	if err != nil && request.FormValue("discount") != "" {
 		return nil, err
+	}
+	if request.FormValue("discount") == "" {
+		discount = 0
 	}
 
 	isSold, err := strconv.ParseBool(request.FormValue("is_sold"))
+	if err != nil && request.FormValue("is_sold") != "" {
+		return nil, err
+	}
+	if request.FormValue("is_sold") == "" {
+		isSold = false
+	}
+
+	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
 	if err != nil {
 		return nil, err
 	}
 
-	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
+	paymentTypeId, err := strconv.ParseUint(request.FormValue("payment_type_id"), 32, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	negotiationTypeId, err := strconv.ParseUint(request.FormValue("negotiation_type_id"), 32, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	kindId, err := strconv.ParseUint(request.FormValue("kind_id"), 32, 24)
 	if err != nil {
 		return nil, err
 	}
@@ -176,6 +200,10 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		IsSold:           isSold,
 		ConstructionYear: uint(constructionYear),
 		PreviewImages:    previewImages,
+
+		KindID:            uint(kindId),
+		PaymentTypeID:     uint(paymentTypeId),
+		NegotiationTypeID: uint(negotiationTypeId),
 	}
 
 	return &propertyRequest, nil

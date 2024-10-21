@@ -1,6 +1,7 @@
 package application
 
 import (
+	"fmt"
 	"main/core"
 	"main/domain/entities"
 
@@ -26,6 +27,7 @@ func (self *CreatePropertyService) Execute(property CreatePropertyServiceRequest
 
 	createPropertyTransaction := self.Database.Create(&property)
 	if createPropertyTransaction.Error != nil {
+		fmt.Print(createPropertyTransaction.Error)
 		return nil, createPropertyTransaction.Error
 	}
 
