@@ -4,6 +4,7 @@ import (
 	"main/domain/entities"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GetPropertyService struct {
@@ -13,7 +14,7 @@ type GetPropertyService struct {
 func (self *GetPropertyService) Execute(propertyID uint64, userIdentity *string) (*entities.Property, error) {
 	property := entities.Property{}
 
-	getPropertyTransaction := self.Database.Find(&property, propertyID).Where("deleted_at IS NULL and is_sold != true").First(&property)
+	getPropertyTransaction := self.Database.Preload(clause.Associations).Find(&property, propertyID).Where("deleted_at IS NULL and is_sold != true").First(&property)
 	if getPropertyTransaction.Error != nil {
 		return nil, getPropertyTransaction.Error
 	}

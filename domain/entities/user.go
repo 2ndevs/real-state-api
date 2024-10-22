@@ -1,9 +1,9 @@
 package entities
 
-import "gorm.io/gorm"
+import "main/core"
 
 type User struct {
-	gorm.Model
+	core.Model
 
 	Name         string `json:"name" validate:"required,gte=5,lte=25"`
 	Email        string `gorm:"embedded" json:"email" validate:"required,email"`
@@ -11,5 +11,5 @@ type User struct {
 	RefreshToken string `json:"refresh_token"`
 
 	StatusID uint `json:"status_id" validate:"required,min=1"`
-	RoleID uint `json:"role_id" validate:"required,min=1"`
+	RoleID   uint `json:"role_id" validate:"required,min=1"`
 }

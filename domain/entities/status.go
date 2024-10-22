@@ -1,9 +1,9 @@
 package entities
 
-import "gorm.io/gorm"
+import "main/core"
 
 type Status struct {
-	gorm.Model
+	core.Model
 
-	Name string `gorm:"index" validate:"required"`
+	Name string `json:"name" gorm:"index" validate:"required"`
 }

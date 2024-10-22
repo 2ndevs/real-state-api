@@ -5,6 +5,7 @@ import (
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
+	"main/utils"
 	"main/utils/libs"
 	"mime/multipart"
 	"net/http"
@@ -59,6 +60,10 @@ type PropertyToHTTP struct {
 	StatusID          uint `json:"status_id"`
 	PaymentTypeID     uint `json:"payment_type_id"`
 	NegotiationTypeID uint `json:"negotiation_type_id"`
+
+	Kind            entities.Kind            `json:"kind"`
+	PaymentType     entities.PaymentType     `json:"payment_type"`
+	NegotiationType entities.NegotiationType `json:"negotiation_type"`
 }
 
 func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, error) {
@@ -233,6 +238,10 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		StatusID:          property.StatusID,
 		PaymentTypeID:     property.PaymentTypeID,
 		NegotiationTypeID: property.NegotiationTypeId,
+
+		Kind:            property.Kind,
+		PaymentType:     property.PaymentType,
+		NegotiationType: property.NegotiationType,
 	}
 }
 
@@ -242,14 +251,18 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	searchFilter := request.URL.Query().Get("search")
 	latitudeFilter := request.URL.Query().Get("latitude")
 	longitudeFilter := request.URL.Query().Get("longitude")
-	isNewFilter := request.URL.Query().Get("is_new")
-	withDiscountFilter := request.URL.Query().Get("with_discount")
-	recentlySoldFilter := request.URL.Query().Get("recently_sold")
-	recentlyBuiltFilter := request.URL.Query().Get("recently_built")
-	isSpecialFilter := request.URL.Query().Get("is_special")
-	isApartmentFilter := request.URL.Query().Get("is_apartment")
-	allowFinancingFilter := request.URL.Query().Get("allow_financing")
-	mostVisitedFilter := request.URL.Query().Get("most_visited")
+	isNewFilter := request.URL.Query().Get("is-new")
+	withDiscountFilter := request.URL.Query().Get("with-discount")
+	recentlySoldFilter := request.URL.Query().Get("recently-sold")
+	recentlyBuiltFilter := request.URL.Query().Get("recently-built")
+	isSpecialFilter := request.URL.Query().Get("is-special")
+	isApartmentFilter := request.URL.Query().Get("is-apartment")
+	allowFinancingFilter := request.URL.Query().Get("allow-financing")
+	mostVisitedFilter := request.URL.Query().Get("most-visited")
+	minValueFilter := request.URL.Query().Get("min-value")
+	maxValueFilter := request.URL.Query().Get("max-value")
+	negotiationTypesFilter := request.URL.Query().Get("negotiation-types")
+	kindsFilter := request.URL.Query().Get("kinds")
 
 	if searchFilter != "" {
 		filters.Search = &searchFilter
@@ -301,6 +314,26 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	mostVisited, err := strconv.ParseBool(mostVisitedFilter)
 	if mostVisited && err == nil {
 		filters.MostVisited = &mostVisited
+	}
+
+	minValue, err := strconv.ParseFloat(minValueFilter, 32)
+	if err == nil {
+		filters.MinValue = &minValue
+	}
+
+	maxValue, err := strconv.ParseFloat(maxValueFilter, 32)
+	if err == nil {
+		filters.MaxValue = &maxValue
+	}
+
+	negotiationTypes := utils.StringToUintArray(negotiationTypesFilter)
+	if negotiationTypes != nil {
+		filters.NegotiationTypes = &negotiationTypes
+	}
+
+	kinds := utils.StringToUintArray(kindsFilter)
+	if kinds != nil {
+		filters.Kinds = &kinds
 	}
 
 	return filters

@@ -4,20 +4,25 @@ import (
 	"main/domain/entities"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GetManyPropertiesFilters struct {
-	Search         *string
-	Latitude       *float64
-	Longitude      *float64
-	IsNew          *bool
-	WithDiscount   *bool
-	IsApartment    *bool
-	RecentlySold   *bool
-	RecentlyBuilt  *bool
-	MostVisited    *bool
-	AllowFinancing *bool
-	IsSpecial      *bool
+	Search           *string
+	Latitude         *float64
+	Longitude        *float64
+	IsNew            *bool
+	WithDiscount     *bool
+	IsApartment      *bool
+	RecentlySold     *bool
+	RecentlyBuilt    *bool
+	MostVisited      *bool
+	AllowFinancing   *bool
+	IsSpecial        *bool
+	MinValue         *float64
+	MaxValue         *float64
+	NegotiationTypes *[]uint
+	Kinds            *[]uint
 }
 
 type GetManyPropertiesService struct {
@@ -27,7 +32,7 @@ type GetManyPropertiesService struct {
 func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) (*[]entities.Property, error) {
 	var properties []entities.Property
 	query := self.Database.Model(&entities.Property{})
-
+	// TODO -> Add relationship fix
 	if filters.Search != nil {
 		query = query.Where("details ILIKE ?", "%"+*filters.Search+"%").
 			Or("address ILIKE ?", "%"+*filters.Search+"%")
@@ -86,9 +91,25 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 		query = query.Order("COALESCE(array_length(visited_by, 1), 0) DESC")
 	}
 
-	query = query.Where("deleted_at IS NULL AND is_sold != true")
+	if filters.MinValue != nil {
+		query = query.Where("price >= ?", *filters.MinValue)
+	}
 
-	getPropertiesTransaction := query.Find(&properties)
+	if filters.MaxValue != nil {
+		query = query.Where("price <= ?", *filters.MaxValue)
+	}
+
+	if filters.NegotiationTypes != nil && len(*filters.NegotiationTypes) > 0 {
+		query = query.Where("negotiation_type_id IN ?", *filters.NegotiationTypes)
+	}
+
+	if filters.Kinds != nil && len(*filters.Kinds) > 0 {
+		query = query.Where("kind_id IN ?", *filters.Kinds)
+	}
+
+	query = query.Where("is_sold != true")
+
+	getPropertiesTransaction := query.Preload(clause.Associations).Find(&properties)
 
 	if getPropertiesTransaction.Error != nil {
 		return nil, getPropertiesTransaction.Error
