@@ -20,12 +20,13 @@ func Connect() (*gorm.DB, error) {
 
 	autoMigrateError := db.AutoMigrate(
 		&Status{},
+		&Property{},
 		&Kind{},
 		&PaymentType{},
-		&Property{},
 		&User{},
 		&Role{},
 		&NegotiationType{},
+		&UnitOfMeasurement{},
 	)
 	if autoMigrateError != nil {
 		return nil, errors.New("Unable to auto migrate schemas")

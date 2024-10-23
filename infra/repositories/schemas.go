@@ -6,23 +6,26 @@ import (
 
 type User struct {
 	entities.User
+
+	Role Role `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
 
 type Role struct {
 	entities.Role
 
-	Users []User
+	Users []User `gorm:"foreignKey:RoleID"`
 }
 
 type Status struct {
 	entities.Status
 
-	Kinds            []Kind `gorm:"foreignKey:StatusID"`
-	NegotiationTypes []NegotiationType
-	PaymentTypes     []PaymentType
-	Properties       []Property
-	Roles            []Role
-	Users            []User
+	Kinds              []Kind `gorm:"foreignKey:StatusID"`
+	NegotiationTypes   []NegotiationType
+	PaymentTypes       []PaymentType
+	Properties         []Property
+	Roles              []Role
+	Users              []User
+	UnitsOfMeasurement []UnitOfMeasurement
 }
 
 type Kind struct {
@@ -48,4 +51,11 @@ type NegotiationType struct {
 
 type Property struct {
 	entities.Property
+}
+
+type UnitOfMeasurement struct {
+	entities.UnitOfMeasurement
+
+	Status     Status
+	Properties []Property `gorm:"foreignKey:UnitOfMeasurementID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }

@@ -26,13 +26,15 @@ type Property struct {
 	VisitedBy        pq.StringArray `gorm:"type:text[]"`
 	PreviewImages    pq.StringArray `gorm:"type:text[]"`
 
-	KindID            uint `gorm:"not null" validate:"required,min=1"`
-	StatusID          uint `validate:"required,min=1"`
-	PaymentTypeID     uint `validate:"required,min=1"`
-	NegotiationTypeId uint `validate:"required,min=1"`
+	KindID              uint `validate:"required,min=1"`
+	StatusID            uint `validate:"required,min=1"`
+	PaymentTypeID       uint `validate:"required,min=1"`
+	NegotiationTypeID   uint `validate:"required,min=1"`
+	UnitOfMeasurementID uint `validate:"required,min=1"`
 
-	Kind            Kind            `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	Status          Status          `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	PaymentType     PaymentType     `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
-	NegotiationType NegotiationType `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Kind              Kind              `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
+	Status            Status            `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
+	PaymentType       PaymentType       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
+	NegotiationType   NegotiationType   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
+	UnitOfMeasurement UnitOfMeasurement `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 }

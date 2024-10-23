@@ -32,9 +32,10 @@ type PropertyFromHTTP struct {
 	VisitedBy        string  `json:"visited_by"`
 	PreviewImages    []byte  `json:"preview_images" validate:"required,min=1"`
 
-	KindID            uint `json:"kind_id" validate:"required,min=1"`
-	PaymentTypeID     uint `json:"payment_type_id" validate:"required,min=1"`
-	NegotiationTypeID uint `json:"negotiation_type_id" validate:"required,min=1"`
+	KindID              uint `json:"kind_id" validate:"required,min=1"`
+	PaymentTypeID       uint `json:"payment_type_id" validate:"required,min=1"`
+	NegotiationTypeID   uint `json:"negotiation_type_id" validate:"required,min=1"`
+	UnitOfMeasurementID uint `json:"unit_of_measurement_id" validate:"required,min=1"`
 }
 
 type PropertyToHTTP struct {
@@ -56,14 +57,16 @@ type PropertyToHTTP struct {
 	ConstructionYear uint     `json:"construction_year"`
 	PreviewImages    []string `json:"preview_images"`
 
-	KindID            uint `json:"kind_id"`
-	StatusID          uint `json:"status_id"`
-	PaymentTypeID     uint `json:"payment_type_id"`
-	NegotiationTypeID uint `json:"negotiation_type_id"`
+	KindID              uint `json:"kind_id"`
+	StatusID            uint `json:"status_id"`
+	PaymentTypeID       uint `json:"payment_type_id"`
+	NegotiationTypeID   uint `json:"negotiation_type_id"`
+	UnitOfMeasurementID uint `json:"unit_of_measurement_id"`
 
-	Kind            entities.Kind            `json:"kind"`
-	PaymentType     entities.PaymentType     `json:"payment_type"`
-	NegotiationType entities.NegotiationType `json:"negotiation_type"`
+	Kind              entities.Kind              `json:"kind"`
+	PaymentType       entities.PaymentType       `json:"payment_type"`
+	NegotiationType   entities.NegotiationType   `json:"negotiation_type"`
+	UnitOfMeasurement entities.UnitOfMeasurement `json:"unit_of_measurement"`
 }
 
 func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, error) {
@@ -189,6 +192,11 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
+	UnitOfMeasurementId, err := strconv.ParseUint(request.FormValue("unit_of_measurement_id"), 32, 24)
+	if err != nil {
+		return nil, err
+	}
+
 	propertyRequest := PropertyFromHTTP{
 		Rooms:            uint(rooms),
 		Size:             uint(size),
@@ -206,9 +214,10 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		ConstructionYear: uint(constructionYear),
 		PreviewImages:    previewImages,
 
-		KindID:            uint(kindId),
-		PaymentTypeID:     uint(paymentTypeId),
-		NegotiationTypeID: uint(negotiationTypeId),
+		KindID:              uint(kindId),
+		PaymentTypeID:       uint(paymentTypeId),
+		NegotiationTypeID:   uint(negotiationTypeId),
+		UnitOfMeasurementID: uint(UnitOfMeasurementId),
 	}
 
 	return &propertyRequest, nil
@@ -234,14 +243,16 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		ConstructionYear: property.ConstructionYear,
 		PreviewImages:    property.PreviewImages,
 
-		KindID:            property.KindID,
-		StatusID:          property.StatusID,
-		PaymentTypeID:     property.PaymentTypeID,
-		NegotiationTypeID: property.NegotiationTypeId,
+		KindID:              property.KindID,
+		StatusID:            property.StatusID,
+		PaymentTypeID:       property.PaymentTypeID,
+		NegotiationTypeID:   property.NegotiationTypeID,
+		UnitOfMeasurementID: property.UnitOfMeasurementID,
 
-		Kind:            property.Kind,
-		PaymentType:     property.PaymentType,
-		NegotiationType: property.NegotiationType,
+		Kind:              property.Kind,
+		PaymentType:       property.PaymentType,
+		NegotiationType:   property.NegotiationType,
+		UnitOfMeasurement: property.UnitOfMeasurement,
 	}
 }
 

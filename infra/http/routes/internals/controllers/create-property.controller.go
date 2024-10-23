@@ -54,7 +54,7 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 			KindID:            propertyRequest.KindID,
 			PaymentTypeID:     propertyRequest.PaymentTypeID,
-			NegotiationTypeId: propertyRequest.NegotiationTypeID,
+			NegotiationTypeID: propertyRequest.NegotiationTypeID,
 			StatusID:          1,
 		},
 
