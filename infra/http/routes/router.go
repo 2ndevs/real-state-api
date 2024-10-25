@@ -39,6 +39,8 @@ func Handler(router chi.Router) {
 		router.Get("/highlights", controllers.GetHighlightedProperties)
 	})
 
+	router.Get("/topics", controllers.GetTopics)
+
 	router.Route("/admin", func(router chi.Router) {
 		router.Use(middlewares.AuthMiddleware)
 
