@@ -110,10 +110,10 @@ func (self *CreatePropertyService) Execute(property CreatePropertyServiceRequest
 			}
 
 			response.value = &fileName
-      channel <- response
+			channel <- response
 		}(image, channel)
 
-    response := <- channel
+		response := <-channel
 
 		if response.err != nil {
 			return nil, response.err

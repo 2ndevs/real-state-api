@@ -21,7 +21,7 @@ func (self *UpdatePropertyService) Execute(property entities.Property, propertyI
 	}
 
 	var existingProperty *entities.Property
-	query := self.Database.Model(&entities.Property{}).Where("id = ?", propertyID)
+	query := self.Database.Model(&entities.Property{}).Where("id = ? and deleted_at IS NULL and is_sold != true", propertyID)
 
 	existingPropertyDatabaseResponse := query.First(&existingProperty)
 	if errors.Is(existingPropertyDatabaseResponse.Error, gorm.ErrRecordNotFound) {

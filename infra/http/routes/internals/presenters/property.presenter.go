@@ -1,10 +1,10 @@
 package presenters
 
 import (
-	"fmt"
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
+	"main/utils"
 	"main/utils/libs"
 	"mime/multipart"
 	"net/http"
@@ -31,8 +31,10 @@ type PropertyFromHTTP struct {
 	VisitedBy        string                  `json:"visited_by"`
 	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
 
-	KindID        uint `json:"kind_id" validate:"required,min=1"`
-	PaymentTypeID uint `json:"payment_type_id" validate:"required,min=1"`
+	KindID              uint `json:"kind_id" validate:"required,min=1"`
+	PaymentTypeID       uint `json:"payment_type_id" validate:"required,min=1"`
+	NegotiationTypeID   uint `json:"negotiation_type_id" validate:"required,min=1"`
+	UnitOfMeasurementID uint `json:"unit_of_measurement_id" validate:"required,min=1"`
 }
 
 type PropertyToHTTP struct {
@@ -54,9 +56,16 @@ type PropertyToHTTP struct {
 	ConstructionYear uint     `json:"construction_year"`
 	PreviewImages    []string `json:"preview_images"`
 
-	KindID        uint `json:"kind_id"`
-	StatusID      uint `json:"status_id"`
-	PaymentTypeID uint `json:"payment_type_id"`
+	KindID              uint `json:"kind_id"`
+	StatusID            uint `json:"status_id"`
+	PaymentTypeID       uint `json:"payment_type_id"`
+	NegotiationTypeID   uint `json:"negotiation_type_id"`
+	UnitOfMeasurementID uint `json:"unit_of_measurement_id"`
+
+	Kind              entities.Kind              `json:"kind"`
+	PaymentType       entities.PaymentType       `json:"payment_type"`
+	NegotiationType   entities.NegotiationType   `json:"negotiation_type"`
+	UnitOfMeasurement entities.UnitOfMeasurement `json:"unit_of_measurement"`
 }
 
 func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, error) {
@@ -74,7 +83,7 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	size, err := strconv.ParseUint(request.FormValue("size"), 32, 10)
+	size, err := strconv.ParseUint(request.FormValue("size"), 32, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -120,21 +129,40 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 	}
 
 	isHighlight, err := strconv.ParseBool(request.FormValue("is_highlight"))
-	if err != nil {
+	if err != nil && request.FormValue("is_highlight") != "" {
 		return nil, err
+	}
+	if request.FormValue("is_highlight") == "" {
+		isHighlight = false
 	}
 
 	discount, err := strconv.ParseFloat(request.FormValue("discount"), 64)
-	if err != nil {
+	if err != nil && request.FormValue("discount") != "" {
 		return nil, err
+	}
+	if request.FormValue("discount") == "" {
+		discount = 0
 	}
 
 	isSold, err := strconv.ParseBool(request.FormValue("is_sold"))
+	if err != nil && request.FormValue("is_sold") != "" {
+		return nil, err
+	}
+	if request.FormValue("is_sold") == "" {
+		isSold = false
+	}
+
+	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
 	if err != nil {
 		return nil, err
 	}
 
-	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
+	paymentTypeId, err := strconv.ParseUint(request.FormValue("payment_type_id"), 32, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	negotiationTypeId, err := strconv.ParseUint(request.FormValue("negotiation_type_id"), 32, 24)
 	if err != nil {
 		return nil, err
 	}
@@ -144,7 +172,7 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	paymentTypeId, err := strconv.ParseUint(request.FormValue("payment_type_id"), 32, 24)
+	UnitOfMeasurementId, err := strconv.ParseUint(request.FormValue("unit_of_measurement_id"), 32, 24)
 	if err != nil {
 		return nil, err
 	}
@@ -165,8 +193,11 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		IsSold:           isSold,
 		ConstructionYear: uint(constructionYear),
 		PreviewImages:    previewImages,
-		KindID:           uint(kindId),
-		PaymentTypeID:    uint(paymentTypeId),
+
+		KindID:              uint(kindId),
+		PaymentTypeID:       uint(paymentTypeId),
+		NegotiationTypeID:   uint(negotiationTypeId),
+		UnitOfMeasurementID: uint(UnitOfMeasurementId),
 	}
 
 	return &propertyRequest, nil
@@ -192,9 +223,16 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		ConstructionYear: property.ConstructionYear,
 		PreviewImages:    property.PreviewImages,
 
-		KindID:        property.KindID,
-		StatusID:      property.StatusID,
-		PaymentTypeID: property.PaymentTypeID,
+		KindID:              property.KindID,
+		StatusID:            property.StatusID,
+		PaymentTypeID:       property.PaymentTypeID,
+		NegotiationTypeID:   property.NegotiationTypeID,
+		UnitOfMeasurementID: property.UnitOfMeasurementID,
+
+		Kind:              property.Kind,
+		PaymentType:       property.PaymentType,
+		NegotiationType:   property.NegotiationType,
+		UnitOfMeasurement: property.UnitOfMeasurement,
 	}
 }
 
@@ -204,13 +242,20 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	searchFilter := request.URL.Query().Get("search")
 	latitudeFilter := request.URL.Query().Get("latitude")
 	longitudeFilter := request.URL.Query().Get("longitude")
-	isNewFilter := request.URL.Query().Get("is_new")
-	withDiscountFilter := request.URL.Query().Get("with_discount")
-	recentlySoldFilter := request.URL.Query().Get("recently_sold")
-	recentlyBuiltFilter := request.URL.Query().Get("recently_built")
-	isSpecialFilter := request.URL.Query().Get("is_special")
-	isApartmentFilter := request.URL.Query().Get("is_apartment")
-	allowFinancingFilter := request.URL.Query().Get("allow_financing")
+	isNewFilter := request.URL.Query().Get("is-new")
+	withDiscountFilter := request.URL.Query().Get("with-discount")
+	recentlySoldFilter := request.URL.Query().Get("recently-sold")
+	recentlyBuiltFilter := request.URL.Query().Get("recently-built")
+	isSpecialFilter := request.URL.Query().Get("is-special")
+	isApartmentFilter := request.URL.Query().Get("is-apartment")
+	allowFinancingFilter := request.URL.Query().Get("allow-financing")
+	mostVisitedFilter := request.URL.Query().Get("most-visited")
+	minValueFilter := request.URL.Query().Get("min-value")
+	maxValueFilter := request.URL.Query().Get("max-value")
+	negotiationTypesFilter := request.URL.Query().Get("negotiation-types")
+	kindsFilter := request.URL.Query().Get("kinds")
+	pageFilter := request.URL.Query().Get("page")
+	perPageFilter := request.URL.Query().Get("per_page")
 
 	if searchFilter != "" {
 		filters.Search = &searchFilter
@@ -258,6 +303,43 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	if allowFinancing && err == nil {
 		filters.AllowFinancing = &allowFinancing
 	}
+
+	mostVisited, err := strconv.ParseBool(mostVisitedFilter)
+	if mostVisited && err == nil {
+		filters.MostVisited = &mostVisited
+	}
+
+	minValue, err := strconv.ParseFloat(minValueFilter, 32)
+	if err == nil {
+		filters.MinValue = &minValue
+	}
+
+	maxValue, err := strconv.ParseFloat(maxValueFilter, 32)
+	if err == nil {
+		filters.MaxValue = &maxValue
+	}
+
+	negotiationTypes := utils.StringToUintArray(negotiationTypesFilter)
+	if negotiationTypes != nil {
+		filters.NegotiationTypes = &negotiationTypes
+	}
+
+	kinds := utils.StringToUintArray(kindsFilter)
+	if kinds != nil {
+		filters.Kinds = &kinds
+	}
+
+	limit, limitErr := strconv.ParseInt(perPageFilter, 16, 16)
+	if perPageFilter == "" || limit < 1 || limitErr != nil {
+		limit = 15
+	}
+	filters.Limit = int(limit)
+
+	page, pageErr := strconv.ParseInt(pageFilter, 16, 16)
+	if pageFilter == "" || page < 1 || pageErr != nil {
+		page = 1
+	}
+	filters.Offset = int((page - 1) * limit)
 
 	return filters
 }

@@ -23,6 +23,11 @@ func Handler(router chi.Router) {
 		router.Get("/{id}", controllers.GetPaymentType)
 	})
 
+	router.Route("/negotiation-types", func(router chi.Router) {
+		router.Get("/", controllers.GetManyNegotiationTypes)
+		router.Get("/{id}", controllers.GetNegotiationType)
+	})
+
 	router.Route("/statuses", func(router chi.Router) {
 		router.Get("/", controllers.GetManyStatuses)
 		router.Get("/{id}", controllers.GetStatus)
@@ -33,6 +38,8 @@ func Handler(router chi.Router) {
 		router.Get("/{id}", controllers.GetProperty)
 		router.Get("/highlights", controllers.GetHighlightedProperties)
 	})
+
+	router.Get("/topics", controllers.GetTopics)
 
 	router.Route("/admin", func(router chi.Router) {
 		router.Use(middlewares.AuthMiddleware)
@@ -53,6 +60,12 @@ func Handler(router chi.Router) {
 			router.Post("/", controllers.CreatePaymentType)
 			router.Put("/{id}", controllers.UpdatePaymentType)
 			router.Delete("/{id}", controllers.DeletePaymentType)
+		})
+
+		router.Route("/negotiation-types", func(router chi.Router) {
+			router.Post("/", controllers.CreateNegotiationType)
+			router.Put("/{id}", controllers.UpdateNegotiationType)
+			router.Delete("/{id}", controllers.DeleteNegotiationType)
 		})
 
 		router.Route("/statuses", func(router chi.Router) {
