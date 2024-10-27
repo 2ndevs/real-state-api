@@ -14,8 +14,9 @@ func (self *GetHighlightedPropertiesService) Execute() (*[]entities.Property, er
 	var properties []entities.Property
 	query := self.Database.Model(&entities.Property{})
 
-	query = query.Where("deleted_at IS NULL AND is_highlight = true")
+	query = query.Where("deleted_at IS NULL AND is_highlight = true AND is_sold != true")
 	query = query.Order("updated_at DESC")
+	query = query.Limit(10)
 
 	getPropertiesTransaction := query.Find(&properties)
 

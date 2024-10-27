@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"log"
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
@@ -15,6 +16,7 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 	propertyRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
+		log.Println(parseError)
 		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
@@ -28,30 +30,41 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 	validated, ctxErr := middlewares.GetValidator(request)
 	if ctxErr != nil {
-		core.HandleHTTPStatus(write, core.InvalidParametersError)
+		core.HandleHTTPStatus(write, ctxErr)
 		return
 	}
 
-	propertyService := application.CreatePropertyService{Validated: validated, Database: database}
-	propertyPayload := entities.Property{
-		Size:             propertyRequest.Size,
-		Rooms:            propertyRequest.Rooms,
-		Kitchens:         propertyRequest.Kitchens,
-		Bathrooms:        propertyRequest.Bathrooms,
-		Address:          propertyRequest.Address,
-		Summary:          propertyRequest.Summary,
-		Details:          propertyRequest.Details,
-		Latitude:         propertyRequest.Latitude,
-		Longitude:        propertyRequest.Longitude,
-		Price:            propertyRequest.Price,
-		IsHighlight:      propertyRequest.IsHighlight,
-		Discount:         propertyRequest.Discount,
-		ConstructionYear: propertyRequest.ConstructionYear,
-		IsSold:           propertyRequest.IsSold,
+	bucket, ctxErr := middlewares.GetBucketContext(request)
+	if ctxErr != nil {
+		core.HandleHTTPStatus(write, ctxErr)
+		return
+	}
 
-		KindID:        propertyRequest.KindID,
-		PaymentTypeID: propertyRequest.PaymentTypeID,
-		StatusID:      1,
+	propertyService := application.CreatePropertyService{Validated: validated, Database: database, Bucket: bucket}
+	propertyPayload := application.CreatePropertyServiceRequest{
+		Property: entities.Property{
+			Size:             propertyRequest.Size,
+			Rooms:            propertyRequest.Rooms,
+			Kitchens:         propertyRequest.Kitchens,
+			Bathrooms:        propertyRequest.Bathrooms,
+			Address:          propertyRequest.Address,
+			Summary:          propertyRequest.Summary,
+			Details:          propertyRequest.Details,
+			Latitude:         propertyRequest.Latitude,
+			Longitude:        propertyRequest.Longitude,
+			Price:            propertyRequest.Price,
+			IsHighlight:      propertyRequest.IsHighlight,
+			Discount:         propertyRequest.Discount,
+			ConstructionYear: propertyRequest.ConstructionYear,
+			IsSold:           propertyRequest.IsSold,
+
+			KindID:            propertyRequest.KindID,
+			PaymentTypeID:     propertyRequest.PaymentTypeID,
+			NegotiationTypeID: propertyRequest.NegotiationTypeID,
+			StatusID:          1,
+		},
+
+		PreviewImages: propertyRequest.PreviewImages,
 	}
 
 	property, createPropertyErr := propertyService.Execute(propertyPayload)
@@ -64,7 +77,6 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 	write.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(write).Encode(response)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 	}

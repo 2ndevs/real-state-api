@@ -20,6 +20,7 @@ var (
 	UnableToPersistTokenButEntityCreated = errors.New("Usuario criado, mas não foi criado um token de login. Tente logar novamente")
 	FallbackError                        = errors.New("Ocorreu um erro no servidor")
 	NotFoundError                        = errors.New("Não foi possível encontrar o item solicitado")
+	ImageUploadError                     = errors.New("Não foi possivel dar upload na imagem")
 )
 
 func HandleHTTPStatus(write http.ResponseWriter, err error) {

@@ -12,7 +12,7 @@ func Connect() (*gorm.DB, error) {
 	connectionUrl := os.Getenv("DATABASE_URL")
 
 	db, err := gorm.Open(postgres.Open(connectionUrl), &gorm.Config{
-		DisableForeignKeyConstraintWhenMigrating: true,
+		DisableForeignKeyConstraintWhenMigrating: false,
 	})
 	if err != nil {
 		return nil, errors.New("Unable to create database connection")
@@ -20,11 +20,13 @@ func Connect() (*gorm.DB, error) {
 
 	autoMigrateError := db.AutoMigrate(
 		&Status{},
+		&Property{},
 		&Kind{},
 		&PaymentType{},
-		&Property{},
 		&User{},
 		&Role{},
+		&NegotiationType{},
+		&UnitOfMeasurement{},
 	)
 	if autoMigrateError != nil {
 		return nil, errors.New("Unable to auto migrate schemas")

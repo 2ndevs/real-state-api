@@ -10,10 +10,10 @@ import (
 	"net/http"
 )
 
-func CreateKind(write http.ResponseWriter, request *http.Request) {
-	httpPresenter := presenters.KindPresenter{}
+func CreateNegotiationType(write http.ResponseWriter, request *http.Request) {
+	httpPresenter := presenters.NegotiationTypePresenter{}
 
-	kindRequest, parseError := httpPresenter.FromHTTP(request)
+	negotiationTypeRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
 		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
@@ -22,6 +22,7 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 	database, ctxErr := middlewares.GetDatabaseFromContext(request)
 	if ctxErr != nil {
 		core.HandleHTTPStatus(write, ctxErr)
+
 		return
 	}
 
@@ -31,19 +32,19 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	kindService := application.CreateKindService{Validated: validated, Database: database}
-	kindPayload := entities.Kind{
-		Name:     kindRequest.Name,
+	negotiationtypeService := application.CreateNegotiationTypeService{Validated: validated, Database: database}
+	negotiationtypePayload := entities.NegotiationType{
+		Name:     negotiationTypeRequest.Name,
 		StatusID: 1,
 	}
 
-	kind, createKindErr := kindService.Execute(kindPayload)
-	if createKindErr != nil {
-		core.HandleHTTPStatus(write, createKindErr)
+	negotiationtype, createNegotiationTypeErr := negotiationtypeService.Execute(negotiationtypePayload)
+	if createNegotiationTypeErr != nil {
+		core.HandleHTTPStatus(write, createNegotiationTypeErr)
 		return
 	}
 
-	response := httpPresenter.ToHTTP(*kind)
+	response := httpPresenter.ToHTTP(*negotiationtype)
 
 	write.WriteHeader(http.StatusCreated)
 	err := json.NewEncoder(write).Encode(response)

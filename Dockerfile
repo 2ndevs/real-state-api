@@ -3,8 +3,7 @@ FROM golang:1.23 AS base
 FROM base AS builder
 WORKDIR /app
 COPY . ./
-RUN go get .
-RUN go build -o deploy .
+RUN go get . && go build -o deploy .
 
 FROM base AS runner
 WORKDIR /app
