@@ -1,7 +1,6 @@
 package presenters
 
 import (
-	"fmt"
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
@@ -178,16 +177,6 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	kindId, err := strconv.ParseUint(request.FormValue("kind_id"), 32, 24)
-	if err != nil {
-		return nil, err
-	}
-
-	paymentTypeId, err := strconv.ParseUint(request.FormValue("payment_type_id"), 32, 24)
-	if err != nil {
-		return nil, err
-	}
-
 	propertyRequest := PropertyFromHTTP{
 		Rooms:            uint(rooms),
 		Size:             uint(size),
@@ -265,6 +254,8 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	maxValueFilter := request.URL.Query().Get("max-value")
 	negotiationTypesFilter := request.URL.Query().Get("negotiation-types")
 	kindsFilter := request.URL.Query().Get("kinds")
+	pageFilter := request.URL.Query().Get("page")
+	perPageFilter := request.URL.Query().Get("per_page")
 
 	if searchFilter != "" {
 		filters.Search = &searchFilter
@@ -337,6 +328,18 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	if kinds != nil {
 		filters.Kinds = &kinds
 	}
+
+	limit, limitErr := strconv.ParseInt(perPageFilter, 16, 16)
+	if perPageFilter == "" || limit < 1 || limitErr != nil {
+		limit = 15
+	}
+	filters.Limit = int(limit)
+
+	page, pageErr := strconv.ParseInt(pageFilter, 16, 16)
+	if pageFilter == "" || page < 1 || pageErr != nil {
+		page = 1
+	}
+	filters.Offset = int((page - 1) * limit)
 
 	return filters
 }

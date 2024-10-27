@@ -23,6 +23,8 @@ type GetManyPropertiesFilters struct {
 	MaxValue         *float64
 	NegotiationTypes *[]uint
 	Kinds            *[]uint
+	Offset           int
+	Limit            int
 }
 
 type GetManyPropertiesService struct {
@@ -109,7 +111,7 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 
 	query = query.Where("is_sold != true")
 
-	getPropertiesTransaction := query.Preload(clause.Associations).Find(&properties)
+	getPropertiesTransaction := query.Preload(clause.Associations).Offset(filters.Offset).Limit(filters.Limit).Find(&properties)
 
 	if getPropertiesTransaction.Error != nil {
 		return nil, getPropertiesTransaction.Error
