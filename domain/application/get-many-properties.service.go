@@ -34,7 +34,7 @@ type GetManyPropertiesService struct {
 func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) (*[]entities.Property, error) {
 	var properties []entities.Property
 	query := self.Database.Model(&entities.Property{})
-	// TODO -> Add relationship fix
+
 	if filters.Search != nil {
 		query = query.Where("details ILIKE ?", "%"+*filters.Search+"%").
 			Or("address ILIKE ?", "%"+*filters.Search+"%")

@@ -14,7 +14,6 @@ func SeedRoles(db *gorm.DB) {
 		fmt.Printf("failed to truncate table roles: %w", err)
 	}
 
-	// Definindo os papéis e suas permissões
 	roles := []entities.Role{
 		{
 			Name:        "Admin",
@@ -42,8 +41,6 @@ func SeedRoles(db *gorm.DB) {
 			StatusID:    1,
 		},
 	}
-
-	// Inserindo os registros de roles
 
 	for _, role := range roles {
 		db.Create(&role)

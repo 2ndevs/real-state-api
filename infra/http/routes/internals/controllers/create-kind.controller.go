@@ -12,7 +12,7 @@ import (
 
 func CreateKind(write http.ResponseWriter, request *http.Request) {
 	httpPresenter := presenters.KindPresenter{}
-	//
+
 	kindRequest, parseError := httpPresenter.FromHTTP(request)
 	if parseError != nil {
 		core.HandleHTTPStatus(write, core.InvalidParametersError)
