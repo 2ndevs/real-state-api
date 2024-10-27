@@ -100,6 +100,9 @@ if [ $HAS_NGINX != true ]; then
   #fi
 fi
 
+sudo rm -f /etc/nginx/sites-available/myapp
+sudo rm -f /etc/nginx/sites-enabled/myapp
+
 sudo cat >/etc/nginx/sites-available/myapp <<EOL
 limit_req_zone \$binary_remote_addr zone=mylimit:10m rate=10r/s;
 
@@ -129,9 +132,6 @@ server {
     }
 }
 EOL
-
-sudo rm -f /etc/nginx/sites-available/myapp
-sudo rm -f /etc/nginx/sites-enabled/myapp
 
 sudo systemctl stop nginx
 
