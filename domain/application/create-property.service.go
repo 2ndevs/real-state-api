@@ -110,10 +110,10 @@ func (self *CreatePropertyService) Execute(property CreatePropertyServiceRequest
 			}
 
 			response.value = &fileName
-      channel <- response
+			channel <- response
 		}(image, channel)
 
-    response := <- channel
+		response := <-channel
 
 		if response.err != nil {
 			return nil, response.err
@@ -128,7 +128,6 @@ func (self *CreatePropertyService) Execute(property CreatePropertyServiceRequest
 
 	createPropertyTransaction := self.Database.Create(&property.Property)
 	if createPropertyTransaction.Error != nil {
-		fmt.Print(createPropertyTransaction.Error)
 		return nil, createPropertyTransaction.Error
 	}
 
