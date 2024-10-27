@@ -1,7 +1,7 @@
 package presenters
 
 import (
-	"io"
+	"fmt"
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
@@ -15,22 +15,22 @@ import (
 type PropertyPresenter struct{}
 
 type PropertyFromHTTP struct {
-	Size             uint    `json:"size" validate:"required,min=1"`
-	Rooms            uint    `json:"rooms" validate:"required,min=0"`
-	Kitchens         uint    `json:"kitchens" validate:"required,min=0"`
-	Bathrooms        uint    `json:"bathrooms" validate:"required,min=0"`
-	Address          string  `json:"address" validate:"required"`
-	Summary          string  `json:"summary" validate:"required"`
-	Details          string  `json:"details" validate:"required"`
-	Latitude         float64 `json:"latitude" validate:"required,gte=-90,lte=90"`
-	Longitude        float64 `json:"longitude" validate:"required,gte=-180,lte=180"`
-	Price            float64 `json:"price" validate:"required,min=1"`
-	IsHighlight      bool    `json:"is_highlight" validate:"required"`
-	Discount         float64 `json:"discount" validate:"min=0"`
-	IsSold           bool    `json:"is_sold"`
-	ConstructionYear uint    `json:"construction_year" validate:"required,min=1945"`
-	VisitedBy        string  `json:"visited_by"`
-	PreviewImages    []byte  `json:"preview_images" validate:"required,min=1"`
+	Size             uint                    `json:"size" validate:"required,min=1"`
+	Rooms            uint                    `json:"rooms" validate:"required,min=0"`
+	Kitchens         uint                    `json:"kitchens" validate:"required,min=0"`
+	Bathrooms        uint                    `json:"bathrooms" validate:"required,min=0"`
+	Address          string                  `json:"address" validate:"required"`
+	Summary          string                  `json:"summary" validate:"required"`
+	Details          string                  `json:"details" validate:"required"`
+	Latitude         float64                 `json:"latitude" validate:"required,gte=-90,lte=90"`
+	Longitude        float64                 `json:"longitude" validate:"required,gte=-180,lte=180"`
+	Price            float64                 `json:"price" validate:"required,min=1"`
+	IsHighlight      bool                    `json:"is_highlight" validate:"required"`
+	Discount         float64                 `json:"discount" validate:"min=0"`
+	IsSold           bool                    `json:"is_sold"`
+	ConstructionYear uint                    `json:"construction_year" validate:"required,min=1945"`
+	VisitedBy        string                  `json:"visited_by"`
+	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
 
 	KindID              uint `json:"kind_id" validate:"required,min=1"`
 	PaymentTypeID       uint `json:"payment_type_id" validate:"required,min=1"`
@@ -73,29 +73,10 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 	request.ParseMultipartForm(1024 * 1024 * 15)
 	files := request.MultipartForm.File
 
-	var previewImages []byte
+	var previewImages []*multipart.FileHeader
 
 	for _, file := range files["preview_images"] {
-		fileAsBytes := func(file *multipart.FileHeader) []byte {
-			content, err := file.Open()
-			defer content.Close()
-			if err != nil {
-				return nil
-			}
-
-			fileByte, err := io.ReadAll(content)
-			if err != nil {
-				return nil
-			}
-
-			return fileByte
-		}(file)
-
-		if fileAsBytes == nil {
-			break
-		}
-
-		previewImages = append(previewImages, fileAsBytes...)
+		previewImages = append(previewImages, file)
 	}
 
 	rooms, err := strconv.ParseUint(request.FormValue("rooms"), 32, 10)
@@ -193,6 +174,16 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 	}
 
 	UnitOfMeasurementId, err := strconv.ParseUint(request.FormValue("unit_of_measurement_id"), 32, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	kindId, err := strconv.ParseUint(request.FormValue("kind_id"), 32, 24)
+	if err != nil {
+		return nil, err
+	}
+
+	paymentTypeId, err := strconv.ParseUint(request.FormValue("payment_type_id"), 32, 24)
 	if err != nil {
 		return nil, err
 	}

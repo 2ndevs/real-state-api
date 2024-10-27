@@ -30,11 +30,17 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 	validated, ctxErr := middlewares.GetValidator(request)
 	if ctxErr != nil {
-		core.HandleHTTPStatus(write, core.InvalidParametersError)
+		core.HandleHTTPStatus(write, ctxErr)
 		return
 	}
 
-	propertyService := application.CreatePropertyService{Validated: validated, Database: database}
+	bucket, ctxErr := middlewares.GetBucketContext(request)
+	if ctxErr != nil {
+		core.HandleHTTPStatus(write, ctxErr)
+		return
+	}
+
+	propertyService := application.CreatePropertyService{Validated: validated, Database: database, Bucket: bucket}
 	propertyPayload := application.CreatePropertyServiceRequest{
 		Property: entities.Property{
 			Size:             propertyRequest.Size,

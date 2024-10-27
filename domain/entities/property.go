@@ -16,8 +16,8 @@ type Property struct {
 	Address          string         `validate:"required"`
 	Summary          string         `validate:"required"`
 	Details          string         `validate:"required"`
-	Latitude         float64        `validate:"required,gte=-90,lte=90"`
-	Longitude        float64        `validate:"required,gte=-180,lte=180"`
+	Latitude         float64        `validate:"gte=-90,lte=90"`
+	Longitude        float64        `validate:"gte=-180,lte=180"`
 	Price            float64        `validate:"required,min=1"`
 	Discount         float64        `validate:"min=0"`
 	IsSold           bool           `gorm:"default:false"`
@@ -26,11 +26,11 @@ type Property struct {
 	VisitedBy        pq.StringArray `gorm:"type:text[]"`
 	PreviewImages    pq.StringArray `gorm:"type:text[]"`
 
-	KindID              uint `validate:"required,min=1"`
-	StatusID            uint `validate:"required,min=1"`
-	PaymentTypeID       uint `validate:"required,min=1"`
-	NegotiationTypeID   uint `validate:"required,min=1"`
-	UnitOfMeasurementID uint `validate:"required,min=1"`
+	KindID        uint `gorm:"index" validate:"required,min=1"`
+	StatusID      uint `validate:"required,min=1"`
+	PaymentTypeID uint `gorm:"index" validate:"required,min=1"`
+	NegotiationTypeID   uint `gorm:"index" validate:"required,min=1"`
+	UnitOfMeasurementID uint `gorm:"index" validate:"required,min=1"`
 
 	Kind              Kind              `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 	Status            Status            `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
