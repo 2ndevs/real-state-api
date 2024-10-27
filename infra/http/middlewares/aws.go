@@ -17,12 +17,12 @@ const S3ContextKey S3Context = "aws-s3"
 func S3Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(writer http.ResponseWriter, request *http.Request) {
-			config, err := config.LoadDefaultConfig(context.TODO(), config.WithRegion("us-east-1"))
+			awsConfig, err := config.LoadDefaultConfig(context.Background(), config.WithRegion("us-east-1"))
 			if err != nil {
 				log.Fatal("Unable to load AWS SDK")
 			}
 
-			sdk := s3.NewFromConfig(config)
+			sdk := s3.NewFromConfig(awsConfig)
 			ctx := context.WithValue(request.Context(), S3ContextKey, sdk)
 
 			next.ServeHTTP(writer, request.WithContext(ctx))
