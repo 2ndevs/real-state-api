@@ -21,6 +21,10 @@ type GetManyPropertiesFilters struct {
 	IsSpecial        *bool
 	MinValue         *float64
 	MaxValue         *float64
+	MinBedrooms      *uint64
+	MinBathrooms     *uint64
+	MaxBedrooms      *uint64
+	MaxBathrooms     *uint64
 	NegotiationTypes *[]uint
 	Kinds            *[]uint
 	Offset           int
@@ -107,6 +111,22 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 
 	if filters.Kinds != nil && len(*filters.Kinds) > 0 {
 		query = query.Where("kind_id IN ?", *filters.Kinds)
+	}
+
+	if filters.MinBedrooms != nil {
+		query = query.Where("rooms >= ?", *filters.MinBedrooms)
+	}
+
+	if filters.MaxBedrooms != nil {
+		query = query.Where("rooms <= ?", *filters.MaxBedrooms)
+	}
+
+	if filters.MinBathrooms != nil {
+		query = query.Where("bathrooms >= ?", *filters.MinBathrooms)
+	}
+
+	if filters.MaxBathrooms != nil {
+		query = query.Where("bathrooms <= ?", *filters.MaxBathrooms)
 	}
 
 	query = query.Where("is_sold != true")
