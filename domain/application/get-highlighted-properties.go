@@ -4,6 +4,7 @@ import (
 	"main/domain/entities"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GetHighlightedPropertiesService struct {
@@ -18,7 +19,7 @@ func (self *GetHighlightedPropertiesService) Execute() (*[]entities.Property, er
 	query = query.Order("updated_at DESC")
 	query = query.Limit(10)
 
-	getPropertiesTransaction := query.Find(&properties)
+	getPropertiesTransaction := query.Preload(clause.Associations).Find(&properties)
 
 	if getPropertiesTransaction.Error != nil {
 		return nil, getPropertiesTransaction.Error

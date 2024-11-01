@@ -255,7 +255,11 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	negotiationTypesFilter := request.URL.Query().Get("negotiation-types")
 	kindsFilter := request.URL.Query().Get("kinds")
 	pageFilter := request.URL.Query().Get("page")
-	perPageFilter := request.URL.Query().Get("per_page")
+	perPageFilter := request.URL.Query().Get("per-page")
+	minBedroomsFilter := request.URL.Query().Get("min-bedrooms")
+	minBathroomsFilter := request.URL.Query().Get("min-bathrooms")
+	maxBedroomsFilter := request.URL.Query().Get("max-bedrooms")
+	maxBathroomsFilter := request.URL.Query().Get("max-bathrooms")
 
 	if searchFilter != "" {
 		filters.Search = &searchFilter
@@ -340,6 +344,26 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 		page = 1
 	}
 	filters.Offset = int((page - 1) * limit)
+
+	minBedroom, minBedroomErr := strconv.ParseUint(minBedroomsFilter, 16, 16)
+	if minBedroomsFilter != "" && minBedroomErr == nil {
+		filters.MinBedrooms = &minBedroom
+	}
+
+	minBathroom, minBathroomErr := strconv.ParseUint(minBathroomsFilter, 16, 16)
+	if minBathroomsFilter != "" && minBathroomErr == nil {
+		filters.MinBathrooms = &minBathroom
+	}
+
+	maxBedroom, maxBedroomErr := strconv.ParseUint(maxBedroomsFilter, 16, 16)
+	if maxBedroomsFilter != "" && maxBedroomErr == nil {
+		filters.MaxBedrooms = &maxBedroom
+	}
+
+	maxBathroom, maxBathroomErr := strconv.ParseUint(maxBathroomsFilter, 16, 16)
+	if maxBathroomsFilter != "" && maxBathroomErr == nil {
+		filters.MaxBathrooms = &maxBathroom
+	}
 
 	return filters
 }
