@@ -36,6 +36,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -58,6 +59,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -80,6 +82,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -102,6 +105,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -124,6 +128,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -146,6 +151,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -168,6 +174,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -190,6 +197,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -212,6 +220,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 		{
 			Size:                uint(rand.Float64()*500 + 50),
@@ -234,6 +243,7 @@ func SeedProperties(db *gorm.DB) {
 			VisitedBy:           []string{generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5(), generateRandomMD5()},
 			NegotiationTypeID:   uint(rand.Float64()*9 + 1),
 			UnitOfMeasurementID: uint(rand.Float64()*5 + 1),
+			PreviewImages: []string{"fallback.jpg"},
 		},
 	}
 

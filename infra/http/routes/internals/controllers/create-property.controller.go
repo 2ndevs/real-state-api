@@ -61,6 +61,7 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 			KindID:            propertyRequest.KindID,
 			PaymentTypeID:     propertyRequest.PaymentTypeID,
 			NegotiationTypeID: propertyRequest.NegotiationTypeID,
+			UnitOfMeasurementID: propertyRequest.UnitOfMeasurementID,
 			StatusID:          1,
 		},
 

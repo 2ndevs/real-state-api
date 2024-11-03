@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"io"
+	"log"
 	"main/core"
 	"main/domain/entities"
 	"mime/multipart"
@@ -38,6 +39,7 @@ type ImageUploadChannelResponse struct {
 func (self *CreatePropertyService) Execute(property CreatePropertyServiceRequest) (*entities.Property, error) {
 	validationErr := self.Validated.Struct(property)
 	if validationErr != nil {
+		log.Println(validationErr.Error())
 		return nil, core.InvalidParametersError
 	}
 
@@ -125,6 +127,10 @@ func (self *CreatePropertyService) Execute(property CreatePropertyServiceRequest
 	wait.Wait()
 
 	property.Property.PreviewImages = append(property.Property.PreviewImages, images...)
+
+	if len(property.Property.PreviewImages) == 0 {
+		property.Property.PreviewImages = []string{"fallback.jpg"}
+	}
 
 	createPropertyTransaction := self.Database.Create(&property.Property)
 	if createPropertyTransaction.Error != nil {
