@@ -4,6 +4,7 @@ import (
 	"main/domain/entities"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GetManyKindsService struct {
@@ -22,7 +23,7 @@ func (self *GetManyKindsService) Execute() (*[]entities.Kind, error) {
 	query = query.Where("deleted_at IS NULL")
 	query = query.Order("name ASC")
 
-	getKindsTransaction := query.Find(&kinds)
+	getKindsTransaction := query.Preload(clause.Associations).Find(&kinds)
 
 	if getKindsTransaction.Error != nil {
 		return nil, getKindsTransaction.Error
