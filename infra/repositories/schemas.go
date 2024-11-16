@@ -31,7 +31,6 @@ type Status struct {
 type Kind struct {
 	entities.Kind
 
-	Status     Status
 	Properties []Property `gorm:"foreignKey:KindID"`
 }
 

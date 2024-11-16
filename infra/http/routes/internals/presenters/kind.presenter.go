@@ -13,9 +13,10 @@ type KindFromHTTP struct {
 }
 
 type KindToHTTP struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	StatusID uint   `json:"status_id"`
+	ID       uint            `json:"id"`
+	Name     string          `json:"name"`
+	StatusID uint            `json:"status_id"`
+	Status   entities.Status `json:"status"`
 }
 
 func (KindPresenter) FromHTTP(request *http.Request) (*KindFromHTTP, error) {
@@ -37,5 +38,6 @@ func (KindPresenter) ToHTTP(kind entities.Kind) KindToHTTP {
 		ID:       kind.ID,
 		Name:     kind.Name,
 		StatusID: kind.StatusID,
+		Status:   kind.Status,
 	}
 }
