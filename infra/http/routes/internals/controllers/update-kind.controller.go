@@ -41,10 +41,15 @@ func UpdateKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	if kindRequest.StatusID == nil {
+		defaultStatusValue := uint(1)
+		kindRequest.StatusID = &defaultStatusValue
+	}
+
 	kindService := application.UpdateKindService{Validated: validated, Database: database}
 	kindPayload := entities.Kind{
 		Name:     kindRequest.Name,
-		StatusID: 1,
+		StatusID: *kindRequest.StatusID,
 	}
 
 	kind, updateKindErr := kindService.Execute(kindPayload, kindId)
@@ -57,7 +62,6 @@ func UpdateKind(write http.ResponseWriter, request *http.Request) {
 
 	write.WriteHeader(http.StatusNoContent)
 	err := json.NewEncoder(write).Encode(response)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 	}
