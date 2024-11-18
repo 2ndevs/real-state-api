@@ -31,10 +31,15 @@ func CreateKind(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	if kindRequest.StatusID == nil {
+		defaultStatusValue := uint(1)
+		kindRequest.StatusID = &defaultStatusValue
+	}
+
 	kindService := application.CreateKindService{Validated: validated, Database: database}
 	kindPayload := entities.Kind{
 		Name:     kindRequest.Name,
-		StatusID: 1,
+		StatusID: *kindRequest.StatusID,
 	}
 
 	kind, createKindErr := kindService.Execute(kindPayload)

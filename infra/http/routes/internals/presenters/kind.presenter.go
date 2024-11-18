@@ -9,7 +9,8 @@ import (
 type KindPresenter struct{}
 
 type KindFromHTTP struct {
-	Name string `json:"name" validate:"required,gte=3,lte=100"`
+	Name     string `json:"name" validate:"required,gte=3,lte=100"`
+	StatusID *uint  `json:"status_id" validate:"gte=1,lte=2"`
 }
 
 type KindToHTTP struct {
