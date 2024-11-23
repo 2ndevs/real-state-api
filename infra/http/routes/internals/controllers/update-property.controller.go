@@ -57,6 +57,7 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 		Discount:         propertyRequest.Discount,
 		ConstructionYear: propertyRequest.ConstructionYear,
 		IsSold:           propertyRequest.IsSold,
+		ContactNumber:    propertyRequest.ContactNumber,
 
 		KindID:        propertyRequest.KindID,
 		PaymentTypeID: propertyRequest.PaymentTypeID,
@@ -73,7 +74,6 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 
 	write.WriteHeader(http.StatusNoContent)
 	err := json.NewEncoder(write).Encode(response)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 	}

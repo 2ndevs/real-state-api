@@ -30,6 +30,7 @@ type PropertyFromHTTP struct {
 	ConstructionYear uint                    `json:"construction_year" validate:"required,min=1945"`
 	VisitedBy        string                  `json:"visited_by"`
 	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
+	ContactNumber    string                  `json:"contact_number" validate:"required,min=13,max=13"`
 
 	KindID              uint `json:"kind_id" validate:"required,min=1"`
 	PaymentTypeID       uint `json:"payment_type_id" validate:"required,min=1"`
@@ -55,6 +56,7 @@ type PropertyToHTTP struct {
 	IsSold           bool     `json:"is_sold"`
 	ConstructionYear uint     `json:"construction_year"`
 	PreviewImages    []string `json:"preview_images"`
+	ContactNumber    string   `json:"contact_number"`
 
 	KindID              uint `json:"kind_id"`
 	StatusID            uint `json:"status_id"`
@@ -177,6 +179,11 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
+	contactNumber := request.FormValue("contact_number")
+	if len(contactNumber) == 0 {
+		return nil, core.InvalidParametersError
+	}
+
 	propertyRequest := PropertyFromHTTP{
 		Rooms:            uint(rooms),
 		Size:             uint(size),
@@ -193,6 +200,7 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		IsSold:           isSold,
 		ConstructionYear: uint(constructionYear),
 		PreviewImages:    previewImages,
+		ContactNumber:    contactNumber,
 
 		KindID:              uint(kindId),
 		PaymentTypeID:       uint(paymentTypeId),
@@ -222,6 +230,7 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		IsSold:           property.IsSold,
 		ConstructionYear: property.ConstructionYear,
 		PreviewImages:    property.PreviewImages,
+		ContactNumber:    property.ContactNumber,
 
 		KindID:              property.KindID,
 		StatusID:            property.StatusID,

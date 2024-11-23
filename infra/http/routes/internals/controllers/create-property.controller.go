@@ -57,12 +57,13 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 			Discount:         propertyRequest.Discount,
 			ConstructionYear: propertyRequest.ConstructionYear,
 			IsSold:           propertyRequest.IsSold,
+			ContactNumber:    propertyRequest.ContactNumber,
 
-			KindID:            propertyRequest.KindID,
-			PaymentTypeID:     propertyRequest.PaymentTypeID,
-			NegotiationTypeID: propertyRequest.NegotiationTypeID,
+			KindID:              propertyRequest.KindID,
+			PaymentTypeID:       propertyRequest.PaymentTypeID,
+			NegotiationTypeID:   propertyRequest.NegotiationTypeID,
 			UnitOfMeasurementID: propertyRequest.UnitOfMeasurementID,
-			StatusID:          1,
+			StatusID:            1,
 		},
 
 		PreviewImages: propertyRequest.PreviewImages,

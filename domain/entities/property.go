@@ -25,10 +25,11 @@ type Property struct {
 	ConstructionYear uint           `validate:"required,min=1945"`
 	VisitedBy        pq.StringArray `gorm:"type:text[]"`
 	PreviewImages    pq.StringArray `gorm:"type:text[]"`
+	ContactNumber    string         `validate:"required,min=13,max=13"`
 
-	KindID        uint `gorm:"index" validate:"required,min=1"`
-	StatusID      uint `validate:"required,min=1"`
-	PaymentTypeID uint `gorm:"index" validate:"required,min=1"`
+	KindID              uint `gorm:"index" validate:"required,min=1"`
+	StatusID            uint `validate:"required,min=1"`
+	PaymentTypeID       uint `gorm:"index" validate:"required,min=1"`
 	NegotiationTypeID   uint `gorm:"index" validate:"required,min=1"`
 	UnitOfMeasurementID uint `gorm:"index" validate:"required,min=1"`
 
