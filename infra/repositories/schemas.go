@@ -58,3 +58,7 @@ type UnitOfMeasurement struct {
 	Status     Status
 	Properties []Property `gorm:"foreignKey:UnitOfMeasurementID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
 }
+
+type InterestedUser struct {
+	entities.InterestedUser
+}
