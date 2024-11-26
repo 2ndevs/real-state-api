@@ -41,6 +41,10 @@ func Handler(router chi.Router) {
 
 	router.Get("/topics", controllers.GetTopics)
 
+	router.Route("/interested-users", func(router chi.Router) {
+		router.Post("/", controllers.CreateInterestedUser)
+	})
+
 	router.Route("/admin", func(router chi.Router) {
 		router.Use(middlewares.AuthMiddleware)
 
@@ -84,6 +88,13 @@ func Handler(router chi.Router) {
 			router.Post("/", controllers.CreateRole)
 			// router.Get("/", controllers.GetManyRoles)
 			// router.Get("/{id}", controllers.GetRole)
+		})
+
+		router.Route("/interested-users", func(router chi.Router) {
+			router.Get("/", controllers.GetManyInterestedUsers)
+			router.Get("/{id}", controllers.GetInterestedUser)
+			router.Delete("/{id}", controllers.DeleteInterestedUser)
+			router.Put("/{id}", controllers.UpdateInterestedUser)
 		})
 	})
 }

@@ -27,6 +27,7 @@ func Connect() (*gorm.DB, error) {
 		&Role{},
 		&NegotiationType{},
 		&UnitOfMeasurement{},
+		&InterestedUser{},
 	)
 	if autoMigrateError != nil {
 		return nil, errors.New("Unable to auto migrate schemas")
