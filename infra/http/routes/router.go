@@ -50,6 +50,12 @@ func Handler(router chi.Router) {
 
 		router.Put("/refresh", controllers.RefreshToken)
 		router.Route("/users", func(router chi.Router) {
+			router.Get("/", controllers.GetManyUsers)
+
+			// router.Get("/:id", controllers.GetUser)
+			// router.Delete("/:id", controllers.DeleteUser)
+			// router.Put("/:id", controllers.UpdateUser)
+
 			router.Post("/sign-in", controllers.SignIn)
 			router.Post("/sign-up", controllers.SignUp)
 		})
