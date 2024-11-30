@@ -2,6 +2,7 @@ package core
 
 import (
 	"errors"
+	"log"
 	"net/http"
 )
 
@@ -25,13 +26,15 @@ var (
 
 func HandleHTTPStatus(write http.ResponseWriter, err error) {
 	errMessage := err.Error()
+	log.Printf("%v", errMessage)
 
 	switch err.(error) {
 	case
 		InvalidEmailError,
 		InvalidPasswordError,
 		MissingAuthorizationTokenError,
-		MissingRefreshTokenError:
+		MissingRefreshTokenError,
+		RefreshTokenExpiredError:
 		{
 			http.Error(write, errMessage, http.StatusUnauthorized)
 		}
