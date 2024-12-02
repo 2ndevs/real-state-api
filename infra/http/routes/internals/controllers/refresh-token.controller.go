@@ -12,7 +12,7 @@ import (
 
 func RefreshToken(writer http.ResponseWriter, request *http.Request) {
 	presenter := presenters.RefreshTokenPresenter{}
-	token := request.Header.Get("X-Refresh-Token")
+	token := request.Header.Get("x-refresh-token")
 
 	if len(token) <= 0 {
 		core.HandleHTTPStatus(writer, core.MissingRefreshTokenError)

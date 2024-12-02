@@ -27,7 +27,7 @@ func (self RefreshTokenService) Execute(refreshToken string) (*RefreshTokenRespo
 		switch err.(error) {
 		case jwt.ErrTokenExpired:
 			{
-				return nil, core.AuthorizationTokenExpiredError
+				return nil, core.RefreshTokenExpiredError
 			}
 
 		default:
