@@ -4,6 +4,7 @@ import (
 	"main/domain/entities"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GetManyMeasurementUnitService struct {
@@ -14,7 +15,7 @@ func (self GetManyMeasurementUnitService) Execute() ([]entities.UnitOfMeasuremen
 	var response []entities.UnitOfMeasurement
 	
 	model := self.Database.Model(&entities.UnitOfMeasurement{})
-	query := model.Where("deleted_at IS NULL")
+	query := model.Preload(clause.Associations).Where("deleted_at IS NULL")
 
 	transaction := query.Find(&response)
 	if transaction.Error != nil {
