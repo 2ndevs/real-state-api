@@ -96,6 +96,10 @@ func Handler(router chi.Router) {
 			// router.Get("/{id}", controllers.GetRole)
 		})
 
+		router.Route("/measurement-unit", func(router chi.Router) {
+			router.Get("/", controllers.GetManyMeasurementUnits)
+		})
+
 		router.Route("/interested-users", func(router chi.Router) {
 			router.Get("/", controllers.GetManyInterestedUsers)
 			router.Get("/{id}", controllers.GetInterestedUser)
