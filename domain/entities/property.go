@@ -9,8 +9,10 @@ import (
 type Property struct {
 	core.Model
 
-	Size             uint           `validate:"required,min=1"`
+	TotalArea        uint           `validate:"required,min=1"`
+	BuiltArea        uint           `validate:"required,min=1"`
 	Rooms            uint           `validate:"required,min=0"`
+	Suites           uint           `validate:"required,min=0"`
 	Kitchens         uint           `validate:"required,min=0"`
 	Bathrooms        uint           `validate:"required,min=0"`
 	Address          string         `validate:"required"`
@@ -30,12 +32,10 @@ type Property struct {
 	KindID              uint `gorm:"index" validate:"required,min=1"`
 	StatusID            uint `validate:"required,min=1"`
 	PaymentTypeID       uint `gorm:"index" validate:"required,min=1"`
-	NegotiationTypeID   uint `gorm:"index" validate:"required,min=1"`
 	UnitOfMeasurementID uint `gorm:"index" validate:"required,min=1"`
 
 	Kind              Kind              `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 	Status            Status            `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 	PaymentType       PaymentType       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
-	NegotiationType   NegotiationType   `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 	UnitOfMeasurement UnitOfMeasurement `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 }
