@@ -9,7 +9,7 @@ type NegotiationType struct {
 
 	Name string `json:"name" gorm:"index" validate:"required"`
 
-	StatusID uint            `json:"status_id" validate:"required,min=1"`
+	StatusID uint `json:"status_id" validate:"required,min=1"`
 
 	Status Status `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 }
