@@ -4,6 +4,7 @@ import (
 	"main/domain/entities"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GetManyPaymentTypesService struct {
@@ -22,7 +23,7 @@ func (self *GetManyPaymentTypesService) Execute() (*[]entities.PaymentType, erro
 	query = query.Where("deleted_at IS NULL")
 	query = query.Order("name ASC")
 
-	getPaymentTypesTransaction := query.Find(&paymentTypes)
+	getPaymentTypesTransaction := query.Preload(clause.Associations).Find(&paymentTypes)
 
 	if getPaymentTypesTransaction.Error != nil {
 		return nil, getPaymentTypesTransaction.Error

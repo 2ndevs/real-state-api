@@ -13,9 +13,13 @@ type PaymentTypeFromHTTP struct {
 }
 
 type PaymentTypeToHTTP struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	StatusID uint   `json:"status_id"`
+	ID uint `json:"id"`
+
+	Name string `json:"name"`
+
+	StatusID uint `json:"status_id"`
+
+	Status entities.Status `json:"status"`
 }
 
 func (PaymentTypePresenter) FromHTTP(request *http.Request) (*PaymentTypeFromHTTP, error) {
@@ -36,6 +40,7 @@ func (PaymentTypePresenter) ToHTTP(paymentType entities.PaymentType) PaymentType
 	return PaymentTypeToHTTP{
 		ID:       paymentType.ID,
 		Name:     paymentType.Name,
+		Status:   paymentType.Status,
 		StatusID: paymentType.StatusID,
 	}
 }
