@@ -28,7 +28,7 @@ type Property struct {
 	ContactNumber    string         `validate:"required,min=13,max=13"`
 
 	KindID              uint `gorm:"index" validate:"required,min=1"`
-	StatusID            uint `validate:"required,min=1"`
+	StatusID            uint `gorm:"index" validate:"required,min=1"`
 	PaymentTypeID       uint `gorm:"index" validate:"required,min=1"`
 	NegotiationTypeID   uint `gorm:"index" validate:"required,min=1"`
 	UnitOfMeasurementID uint `gorm:"index" validate:"required,min=1"`

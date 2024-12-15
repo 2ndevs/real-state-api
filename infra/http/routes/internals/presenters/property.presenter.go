@@ -64,6 +64,7 @@ type PropertyToHTTP struct {
 	NegotiationTypeID   uint `json:"negotiation_type_id"`
 	UnitOfMeasurementID uint `json:"unit_of_measurement_id"`
 
+	Status            entities.Status            `json:"status"`
 	Kind              entities.Kind              `json:"kind"`
 	PaymentType       entities.PaymentType       `json:"payment_type"`
 	NegotiationType   entities.NegotiationType   `json:"negotiation_type"`
@@ -238,6 +239,7 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		NegotiationTypeID:   property.NegotiationTypeID,
 		UnitOfMeasurementID: property.UnitOfMeasurementID,
 
+		Status:            property.Status,
 		Kind:              property.Kind,
 		PaymentType:       property.PaymentType,
 		NegotiationType:   property.NegotiationType,
