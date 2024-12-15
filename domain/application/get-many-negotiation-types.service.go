@@ -4,6 +4,7 @@ import (
 	"main/domain/entities"
 
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GetManyNegotiationTypesService struct {
@@ -22,7 +23,7 @@ func (self *GetManyNegotiationTypesService) Execute() (*[]entities.NegotiationTy
 	query = query.Where("deleted_at IS NULL")
 	query = query.Order("name ASC")
 
-	getNegotiationTypesTransaction := query.Find(&negotiationTypes)
+	getNegotiationTypesTransaction := query.Preload(clause.Associations).Find(&negotiationTypes)
 
 	if getNegotiationTypesTransaction.Error != nil {
 		return nil, getNegotiationTypesTransaction.Error
