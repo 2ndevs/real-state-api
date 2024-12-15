@@ -7,6 +7,15 @@ import (
 	"gorm.io/gorm/clause"
 )
 
+type SortBy string
+
+const (
+	SortByRecents      SortBy = "recents"
+	SortByHighestPrice SortBy = "highest-price"
+	SortByLowestPrice  SortBy = "lowest-price"
+	SortByMostVisiteds SortBy = "most-visiteds"
+)
+
 type GetManyPropertiesFilters struct {
 	Search           *string
 	Latitude         *float64
@@ -29,6 +38,7 @@ type GetManyPropertiesFilters struct {
 	Kinds            *[]uint
 	Offset           int
 	Limit            int
+	SortBy           *SortBy
 }
 
 type GetManyPropertiesService struct {
@@ -127,6 +137,19 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 
 	if filters.MaxBathrooms != nil {
 		query = query.Where("bathrooms <= ?", *filters.MaxBathrooms)
+	}
+
+	if filters.SortBy != nil {
+		switch *filters.SortBy {
+		case SortByRecents:
+			query = query.Order("created_at DESC")
+		case SortByHighestPrice:
+			query = query.Order("price DESC")
+		case SortByLowestPrice:
+			query = query.Order("price ASC")
+		case SortByMostVisiteds:
+			query = query.Order("COALESCE(array_length(visited_by, 1), 0) DESC")
+		}
 	}
 
 	query = query.Where("is_sold != true")

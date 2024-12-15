@@ -278,6 +278,7 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	minBathroomsFilter := request.URL.Query().Get("min-bathrooms")
 	maxBedroomsFilter := request.URL.Query().Get("max-bedrooms")
 	maxBathroomsFilter := request.URL.Query().Get("max-bathrooms")
+	sortByFilter := request.URL.Query().Get("sort-by")
 
 	if searchFilter != "" {
 		filters.Search = &searchFilter
@@ -381,6 +382,18 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 	maxBathroom, maxBathroomErr := strconv.ParseUint(maxBathroomsFilter, 16, 16)
 	if maxBathroomsFilter != "" && maxBathroomErr == nil {
 		filters.MaxBathrooms = &maxBathroom
+	}
+
+	validSortOptions := map[string]application.SortBy{
+		"recents":       application.SortByRecents,
+		"highest-price": application.SortByHighestPrice,
+		"lowest-price":  application.SortByLowestPrice,
+		"most-visiteds": application.SortByMostVisiteds,
+	}
+
+	sortOption, exists := validSortOptions[sortByFilter]
+	if exists {
+		filters.SortBy = &sortOption
 	}
 
 	return filters
