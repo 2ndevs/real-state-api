@@ -14,8 +14,10 @@ import (
 type PropertyPresenter struct{}
 
 type PropertyFromHTTP struct {
-	Size             uint                    `json:"size" validate:"required,min=1"`
+	BuiltArea        uint                    `json:"built_area" validate:"required,min=1"`
+	TotalArea        uint                    `json:"total_area" validate:"required,min=1"`
 	Rooms            uint                    `json:"rooms" validate:"required,min=0"`
+	Suites           uint                    `json:"suites" validate:"required,min=0"`
 	Kitchens         uint                    `json:"kitchens" validate:"required,min=0"`
 	Bathrooms        uint                    `json:"bathrooms" validate:"required,min=0"`
 	Address          string                  `json:"address" validate:"required"`
@@ -34,15 +36,16 @@ type PropertyFromHTTP struct {
 
 	KindID              uint `json:"kind_id" validate:"required,min=1"`
 	PaymentTypeID       uint `json:"payment_type_id" validate:"required,min=1"`
-	NegotiationTypeID   uint `json:"negotiation_type_id" validate:"required,min=1"`
 	UnitOfMeasurementID uint `json:"unit_of_measurement_id" validate:"required,min=1"`
 }
 
 type PropertyToHTTP struct {
 	ID uint `json:"id"`
 
-	Size             uint     `json:"size"`
+	BuiltArea        uint     `json:"built_area"`
+	TotalArea        uint     `json:"total_area"`
 	Rooms            uint     `json:"rooms"`
+	Suites           uint     `json:"suites"`
 	Kitchens         uint     `json:"kitchens"`
 	Bathrooms        uint     `json:"bathrooms"`
 	Address          string   `json:"address"`
@@ -61,13 +64,11 @@ type PropertyToHTTP struct {
 	KindID              uint `json:"kind_id"`
 	StatusID            uint `json:"status_id"`
 	PaymentTypeID       uint `json:"payment_type_id"`
-	NegotiationTypeID   uint `json:"negotiation_type_id"`
 	UnitOfMeasurementID uint `json:"unit_of_measurement_id"`
 
 	Status            entities.Status            `json:"status"`
 	Kind              entities.Kind              `json:"kind"`
 	PaymentType       entities.PaymentType       `json:"payment_type"`
-	NegotiationType   entities.NegotiationType   `json:"negotiation_type"`
 	UnitOfMeasurement entities.UnitOfMeasurement `json:"unit_of_measurement"`
 }
 
@@ -86,7 +87,17 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	size, err := strconv.ParseUint(request.FormValue("size"), 32, 64)
+	suites, err := strconv.ParseUint(request.FormValue("suites"), 32, 10)
+	if err != nil {
+		return nil, err
+	}
+
+	builtArea, err := strconv.ParseUint(request.FormValue("built_area"), 32, 64)
+	if err != nil {
+		return nil, err
+	}
+
+	totalArea, err := strconv.ParseUint(request.FormValue("total_area"), 32, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -165,11 +176,6 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	negotiationTypeId, err := strconv.ParseUint(request.FormValue("negotiation_type_id"), 32, 24)
-	if err != nil {
-		return nil, err
-	}
-
 	kindId, err := strconv.ParseUint(request.FormValue("kind_id"), 32, 24)
 	if err != nil {
 		return nil, err
@@ -187,7 +193,9 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 
 	propertyRequest := PropertyFromHTTP{
 		Rooms:            uint(rooms),
-		Size:             uint(size),
+		Suites:           uint(suites),
+		BuiltArea:        uint(builtArea),
+		TotalArea:        uint(totalArea),
 		Kitchens:         uint(kitchens),
 		Bathrooms:        uint(bathrooms),
 		Address:          address,
@@ -205,7 +213,6 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 
 		KindID:              uint(kindId),
 		PaymentTypeID:       uint(paymentTypeId),
-		NegotiationTypeID:   uint(negotiationTypeId),
 		UnitOfMeasurementID: uint(UnitOfMeasurementId),
 	}
 
@@ -216,8 +223,10 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 	return PropertyToHTTP{
 		ID: property.ID,
 
-		Size:             property.Size,
+		BuiltArea:        property.BuiltArea,
+		TotalArea:        property.TotalArea,
 		Rooms:            property.Rooms,
+		Suites:           property.Suites,
 		Kitchens:         property.Kitchens,
 		Bathrooms:        property.Bathrooms,
 		Address:          property.Address,
@@ -236,13 +245,11 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		KindID:              property.KindID,
 		StatusID:            property.StatusID,
 		PaymentTypeID:       property.PaymentTypeID,
-		NegotiationTypeID:   property.NegotiationTypeID,
 		UnitOfMeasurementID: property.UnitOfMeasurementID,
 
 		Status:            property.Status,
 		Kind:              property.Kind,
 		PaymentType:       property.PaymentType,
-		NegotiationType:   property.NegotiationType,
 		UnitOfMeasurement: property.UnitOfMeasurement,
 	}
 }

@@ -43,8 +43,10 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 
 	propertyService := application.UpdatePropertyService{Validated: validated, Database: database}
 	propertyPayload := entities.Property{
-		Size:             propertyRequest.Size,
+		BuiltArea:        propertyRequest.BuiltArea,
+		TotalArea:        propertyRequest.TotalArea,
 		Rooms:            propertyRequest.Rooms,
+		Suites:           propertyRequest.Suites,
 		Kitchens:         propertyRequest.Kitchens,
 		Bathrooms:        propertyRequest.Bathrooms,
 		Address:          propertyRequest.Address,

@@ -44,8 +44,7 @@ type PaymentType struct {
 type NegotiationType struct {
 	entities.NegotiationType
 
-	Status     Status
-	Properties []Property
+	Status Status
 }
 
 type Property struct {
@@ -55,8 +54,7 @@ type Property struct {
 type UnitOfMeasurement struct {
 	entities.UnitOfMeasurement
 
-	Status     Status
-	Properties []Property `gorm:"foreignKey:UnitOfMeasurementID;constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Status Status
 }
 
 type InterestedUser struct {

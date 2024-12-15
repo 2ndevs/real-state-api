@@ -43,8 +43,10 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 	propertyService := application.CreatePropertyService{Validated: validated, Database: database, Bucket: bucket}
 	propertyPayload := application.CreatePropertyServiceRequest{
 		Property: entities.Property{
-			Size:             propertyRequest.Size,
+			BuiltArea:        propertyRequest.BuiltArea,
+			TotalArea:        propertyRequest.TotalArea,
 			Rooms:            propertyRequest.Rooms,
+			Suites:           propertyRequest.Suites,
 			Kitchens:         propertyRequest.Kitchens,
 			Bathrooms:        propertyRequest.Bathrooms,
 			Address:          propertyRequest.Address,
@@ -61,7 +63,6 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 
 			KindID:              propertyRequest.KindID,
 			PaymentTypeID:       propertyRequest.PaymentTypeID,
-			NegotiationTypeID:   propertyRequest.NegotiationTypeID,
 			UnitOfMeasurementID: propertyRequest.UnitOfMeasurementID,
 			StatusID:            1,
 		},
