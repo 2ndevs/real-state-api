@@ -13,9 +13,13 @@ type NegotiationTypeFromHTTP struct {
 }
 
 type NegotiationTypeToHTTP struct {
-	ID       uint   `json:"id"`
-	Name     string `json:"name"`
-	StatusID uint   `json:"status_id"`
+	ID uint `json:"id"`
+
+	Name string `json:"name"`
+
+	StatusID uint `json:"status_id"`
+
+	Status entities.Status `json:"status"`
 }
 
 func (NegotiationTypePresenter) FromHTTP(request *http.Request) (*NegotiationTypeFromHTTP, error) {
@@ -36,6 +40,7 @@ func (NegotiationTypePresenter) ToHTTP(negotiationType entities.NegotiationType)
 	return NegotiationTypeToHTTP{
 		ID:       negotiationType.ID,
 		Name:     negotiationType.Name,
+		Status:   negotiationType.Status,
 		StatusID: negotiationType.StatusID,
 	}
 }
