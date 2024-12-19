@@ -90,8 +90,10 @@ func Handler(router chi.Router) {
 
 		router.Route("/roles", func(router chi.Router) {
 			router.Post("/", controllers.CreateRole)
-			// router.Get("/", controllers.GetManyRoles)
-			// router.Get("/{id}", controllers.GetRole)
+			router.Get("/", controllers.GetManyRoles)
+			router.Get("/{id}", controllers.GetRole)
+			router.Put("/{id}", controllers.UpdateRole)
+			router.Delete("/{id}", controllers.DeleteRole)
 		})
 
 		router.Route("/measurement-unit", func(router chi.Router) {
