@@ -36,10 +36,15 @@ func CreateRole(write http.ResponseWriter, request *http.Request) {
 		Database: database,
 	}
 
+	if body.StatusID == nil {
+		defaultStatusValue := uint(1)
+		body.StatusID = &defaultStatusValue
+	}
+
 	payload := entities.Role{
 		Name:        body.Name,
 		Permissions: body.Permissions,
-		StatusID:    1,
+		StatusID:    *body.StatusID,
 	}
 
 	response, err := createRoleService.Execute(payload)
@@ -50,7 +55,6 @@ func CreateRole(write http.ResponseWriter, request *http.Request) {
 
 	write.WriteHeader(http.StatusCreated)
 	err = json.NewEncoder(write).Encode(response)
-
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
 	}

@@ -11,13 +11,15 @@ type RolePresenter struct{}
 type RoleFromHTTP struct {
 	Name        string   `json:"name" validate:"required,gte=3,lte=20"`
 	Permissions []string `json:"permissions" validate:"required"`
+	StatusID    *uint    `json:"status_id" validate:"gte=1,lte=2"`
 }
 
 type RoleToHTTP struct {
-	ID          uint     `json:"id"`
-	Name        string   `json:"name"`
-	Permissions []string `json:"permissions"`
-	StatusID    uint     `json:"status_id"`
+	ID          uint            `json:"id"`
+	Name        string          `json:"name"`
+	Permissions []string        `json:"permissions"`
+	StatusID    uint            `json:"status_id"`
+	Status      entities.Status `json:"status"`
 }
 
 func (RolePresenter) FromHTTP(request *http.Request) (*RoleFromHTTP, error) {
@@ -40,5 +42,6 @@ func (RolePresenter) ToHTTP(role entities.Role) RoleToHTTP {
 		Name:        role.Name,
 		Permissions: role.Permissions,
 		StatusID:    role.StatusID,
+		Status:      role.Status,
 	}
 }

@@ -13,4 +13,6 @@ type Role struct {
 	Permissions pq.StringArray `gorm:"type:text[]" json:"permissions" validate:"required,min=1"`
 
 	StatusID uint `json:"status_id" validate:"required,gte=1"`
+
+	Status Status `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 }
