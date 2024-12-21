@@ -32,10 +32,15 @@ func CreateNegotiationType(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	if negotiationTypeRequest.StatusID == nil {
+		defaultStatusValue := uint(1)
+		negotiationTypeRequest.StatusID = &defaultStatusValue
+	}
+
 	negotiationtypeService := application.CreateNegotiationTypeService{Validated: validated, Database: database}
 	negotiationtypePayload := entities.NegotiationType{
 		Name:     negotiationTypeRequest.Name,
-		StatusID: 1,
+		StatusID: *negotiationTypeRequest.StatusID,
 	}
 
 	negotiationtype, createNegotiationTypeErr := negotiationtypeService.Execute(negotiationtypePayload)
