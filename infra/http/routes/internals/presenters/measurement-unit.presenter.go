@@ -11,6 +11,7 @@ type MeasurementUnitPresenter struct{}
 type MeasurementUnitFromHTTP struct {
 	Name         string `json:"name" validate:"required,gte=3,lte=100"`
 	Abbreviation string `json:"abbreviation" validate:"required,gte=2"`
+	StatusID     *uint   `json:"status_id"`
 }
 
 type MeasurementUnitToHTTP struct {
