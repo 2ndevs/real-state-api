@@ -9,17 +9,15 @@ import (
 type NegotiationTypePresenter struct{}
 
 type NegotiationTypeFromHTTP struct {
-	Name string `json:"name" validate:"required,gte=3,lte=100"`
+	Name     string `json:"name" validate:"required,gte=3,lte=100"`
+	StatusID *uint  `json:"status_id" validate:"gte=1,lte=2"`
 }
 
 type NegotiationTypeToHTTP struct {
-	ID uint `json:"id"`
-
-	Name string `json:"name"`
-
-	StatusID uint `json:"status_id"`
-
-	Status entities.Status `json:"status"`
+	ID       uint            `json:"id"`
+	Name     string          `json:"name"`
+	StatusID uint            `json:"status_id"`
+	Status   entities.Status `json:"status"`
 }
 
 func (NegotiationTypePresenter) FromHTTP(request *http.Request) (*NegotiationTypeFromHTTP, error) {
