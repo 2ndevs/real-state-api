@@ -98,6 +98,10 @@ func Handler(router chi.Router) {
 
 		router.Route("/measurement-unit", func(router chi.Router) {
 			router.Get("/", controllers.GetManyMeasurementUnits)
+			router.Get("/{id}", controllers.GetMeasurementUnit)
+			router.Put("/{id}", controllers.UpdateMeasurementUnit)
+			router.Post("/", controllers.CreateMeasurementUnit)
+			router.Delete("/{id}", controllers.DeleteMeasurementUnit)
 		})
 
 		router.Route("/interested-users", func(router chi.Router) {
