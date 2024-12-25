@@ -35,7 +35,11 @@ func CreatePaymentType(write http.ResponseWriter, request *http.Request) {
 	paymenttypeService := application.CreatePaymentTypeService{Validated: validated, Database: database}
 	paymenttypePayload := entities.PaymentType{
 		Name:     paymentTypeRequest.Name,
-		StatusID: 1,
+		StatusID: *paymentTypeRequest.StatusID,
+	}
+
+	if paymentTypeRequest.StatusID == nil {
+		paymenttypePayload.StatusID = 1
 	}
 
 	paymenttype, createPaymentTypeErr := paymenttypeService.Execute(paymenttypePayload)
