@@ -25,7 +25,6 @@ type Property struct {
 	IsSold           bool           `gorm:"default:false"`
 	IsHighlight      bool           `gorm:"default:false"`
 	ConstructionYear uint           `validate:"required,min=1945"`
-	VisitedBy        pq.StringArray `gorm:"type:text[]"`
 	PreviewImages    pq.StringArray `gorm:"type:text[]"`
 	ContactNumber    string         `validate:"required,min=13,max=13"`
 
@@ -38,4 +37,5 @@ type Property struct {
 	Status            Status            `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 	PaymentType       PaymentType       `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 	UnitOfMeasurement UnitOfMeasurement `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
+	Visits            []Visit           `gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;" validate:"-"`
 }

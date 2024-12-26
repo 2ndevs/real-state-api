@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type PropertyPresenter struct{}
@@ -30,13 +31,18 @@ type PropertyFromHTTP struct {
 	Discount         float64                 `json:"discount" validate:"min=0"`
 	IsSold           bool                    `json:"is_sold"`
 	ConstructionYear uint                    `json:"construction_year" validate:"required,min=1945"`
-	VisitedBy        string                  `json:"visited_by"`
 	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
 	ContactNumber    string                  `json:"contact_number" validate:"required,min=13,max=13"`
 
 	KindID              uint `json:"kind_id" validate:"required,min=1"`
 	PaymentTypeID       uint `json:"payment_type_id" validate:"required,min=1"`
 	UnitOfMeasurementID uint `json:"unit_of_measurement_id" validate:"required,min=1"`
+}
+
+type VisitToHTTP struct {
+	ID        uint      `json:"id"`
+	UserID    string    `json:"user_id"`
+	CreatedAt time.Time `json:"create_at"`
 }
 
 type PropertyToHTTP struct {
@@ -70,6 +76,7 @@ type PropertyToHTTP struct {
 	Kind              entities.Kind              `json:"kind"`
 	PaymentType       entities.PaymentType       `json:"payment_type"`
 	UnitOfMeasurement entities.UnitOfMeasurement `json:"unit_of_measurement"`
+	Visits            []VisitToHTTP              `json:"visits"`
 }
 
 func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, error) {
@@ -220,6 +227,15 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 }
 
 func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
+	visits := make([]VisitToHTTP, len(property.Visits))
+	for i, visit := range property.Visits {
+		visits[i] = VisitToHTTP{
+			ID:        visit.ID,
+			UserID:    visit.UserID,
+			CreatedAt: visit.CreatedAt,
+		}
+	}
+
 	return PropertyToHTTP{
 		ID: property.ID,
 
@@ -251,6 +267,7 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		Kind:              property.Kind,
 		PaymentType:       property.PaymentType,
 		UnitOfMeasurement: property.UnitOfMeasurement,
+		Visits:            visits,
 	}
 }
 

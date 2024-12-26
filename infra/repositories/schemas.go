@@ -49,6 +49,12 @@ type NegotiationType struct {
 
 type Property struct {
 	entities.Property
+
+	Visits []Visit
+}
+
+type Visit struct {
+	entities.Visit
 }
 
 type UnitOfMeasurement struct {

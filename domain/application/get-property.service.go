@@ -14,17 +14,22 @@ type GetPropertyService struct {
 func (self *GetPropertyService) Execute(propertyID uint64, userIdentity *string) (*entities.Property, error) {
 	property := entities.Property{}
 
-	getPropertyTransaction := self.Database.Preload(clause.Associations).Find(&property, propertyID).Where("deleted_at IS NULL and is_sold != true").First(&property)
+	if userIdentity != nil {
+		visit := entities.Visit{
+			PropertyID: uint(propertyID),
+			UserID:     *userIdentity,
+		}
+
+		visitTransaction := self.Database.Save(&visit)
+		if visitTransaction.Error != nil {
+			return nil, visitTransaction.Error
+		}
+	}
+
+	getPropertyTransaction := self.Database.Preload(clause.Associations).Preload("Visits").Find(&property, propertyID).Where("deleted_at IS NULL and is_sold != true").First(&property)
 	if getPropertyTransaction.Error != nil {
 		return nil, getPropertyTransaction.Error
 	}
-
-	if userIdentity == nil {
-		return &property, nil
-	}
-
-	property.VisitedBy = append(property.VisitedBy, *userIdentity)
-	self.Database.Save(&property)
 
 	return &property, nil
 }
