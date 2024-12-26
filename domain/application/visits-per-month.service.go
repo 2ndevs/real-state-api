@@ -17,7 +17,7 @@ func (self *VisitsPerMonthService) Execute() ([]VisitsPerMonthResponse, error) {
 	var result []VisitsPerMonthResponse
 	err := self.Database.
 		Table("visits").
-		Select("DATE_TRUNC('month', created_at) AS month, COUNT(*) AS count").
+		Select("DATE_TRUNC('month', created_at) AT TIME ZONE 'utc' AS month, COUNT(*) AS count").
 		Group("month").
 		Order("month").
 		Scan(&result).Error

@@ -15,7 +15,7 @@ func (self *SoldPerMonthService) Execute() ([]SoldPerMonthResponse, error) {
 	var result []SoldPerMonthResponse
 	err := self.Database.
 		Table("properties").
-		Select("DATE_TRUNC('month', sold_at) AS month, COUNT(*) AS count").
+		Select("DATE_TRUNC('month', sold_at) AT TIME ZONE 'utc' AS month, COUNT(*) AS count").
 		Where("sold_at IS NOT NULL").
 		Group("month").
 		Order("month").
