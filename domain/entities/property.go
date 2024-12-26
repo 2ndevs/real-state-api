@@ -2,6 +2,7 @@ package entities
 
 import (
 	"main/core"
+	"time"
 
 	"github.com/lib/pq"
 )
@@ -22,7 +23,7 @@ type Property struct {
 	Longitude        float64        `validate:"gte=-180,lte=180"`
 	Price            float64        `validate:"required,min=1"`
 	Discount         float64        `validate:"min=0"`
-	IsSold           bool           `gorm:"default:false"`
+	SoldAt           *time.Time     `gorm:"default:null"`
 	IsHighlight      bool           `gorm:"default:false"`
 	ConstructionYear uint           `validate:"required,min=1945"`
 	PreviewImages    pq.StringArray `gorm:"type:text[]"`

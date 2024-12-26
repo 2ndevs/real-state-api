@@ -29,7 +29,7 @@ type PropertyFromHTTP struct {
 	Price            float64                 `json:"price" validate:"required,min=1"`
 	IsHighlight      bool                    `json:"is_highlight" validate:"required"`
 	Discount         float64                 `json:"discount" validate:"min=0"`
-	IsSold           bool                    `json:"is_sold"`
+	SoldAt           *time.Time              `json:"sold_at"`
 	ConstructionYear uint                    `json:"construction_year" validate:"required,min=1945"`
 	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
 	ContactNumber    string                  `json:"contact_number" validate:"required,min=13,max=13"`
@@ -48,24 +48,24 @@ type VisitToHTTP struct {
 type PropertyToHTTP struct {
 	ID uint `json:"id"`
 
-	BuiltArea        uint     `json:"built_area"`
-	TotalArea        uint     `json:"total_area"`
-	Rooms            uint     `json:"rooms"`
-	Suites           uint     `json:"suites"`
-	Kitchens         uint     `json:"kitchens"`
-	Bathrooms        uint     `json:"bathrooms"`
-	Address          string   `json:"address"`
-	Summary          string   `json:"summary"`
-	Details          string   `json:"details"`
-	Latitude         float64  `json:"latitude"`
-	Longitude        float64  `json:"longitude"`
-	Price            float64  `json:"price"`
-	IsHighlight      bool     `json:"is_highlight"`
-	Discount         float64  `json:"discount"`
-	IsSold           bool     `json:"is_sold"`
-	ConstructionYear uint     `json:"construction_year"`
-	PreviewImages    []string `json:"preview_images"`
-	ContactNumber    string   `json:"contact_number"`
+	BuiltArea        uint       `json:"built_area"`
+	TotalArea        uint       `json:"total_area"`
+	Rooms            uint       `json:"rooms"`
+	Suites           uint       `json:"suites"`
+	Kitchens         uint       `json:"kitchens"`
+	Bathrooms        uint       `json:"bathrooms"`
+	Address          string     `json:"address"`
+	Summary          string     `json:"summary"`
+	Details          string     `json:"details"`
+	Latitude         float64    `json:"latitude"`
+	Longitude        float64    `json:"longitude"`
+	Price            float64    `json:"price"`
+	IsHighlight      bool       `json:"is_highlight"`
+	Discount         float64    `json:"discount"`
+	SoldAt           *time.Time `json:"sold_at"`
+	ConstructionYear uint       `json:"construction_year"`
+	PreviewImages    []string   `json:"preview_images"`
+	ContactNumber    string     `json:"contact_number"`
 
 	KindID              uint `json:"kind_id"`
 	StatusID            uint `json:"status_id"`
@@ -165,13 +165,16 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		discount = 0
 	}
 
-	isSold, err := strconv.ParseBool(request.FormValue("is_sold"))
-	if err != nil && request.FormValue("is_sold") != "" {
+	var soldAt *time.Time
+	soldAtStr := request.FormValue("sold_at")
+	if soldAtStr == "" {
+		soldAt = nil
+	}
+	parsedTime, err := time.Parse(time.RFC3339, soldAtStr)
+	if err != nil {
 		return nil, err
 	}
-	if request.FormValue("is_sold") == "" {
-		isSold = false
-	}
+	soldAt = &parsedTime
 
 	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
 	if err != nil {
@@ -213,7 +216,7 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		Price:            price,
 		IsHighlight:      isHighlight,
 		Discount:         discount,
-		IsSold:           isSold,
+		SoldAt:           soldAt,
 		ConstructionYear: uint(constructionYear),
 		PreviewImages:    previewImages,
 		ContactNumber:    contactNumber,
@@ -253,7 +256,7 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		Price:            property.Price,
 		IsHighlight:      property.IsHighlight,
 		Discount:         property.Discount,
-		IsSold:           property.IsSold,
+		SoldAt:           property.SoldAt,
 		ConstructionYear: property.ConstructionYear,
 		PreviewImages:    property.PreviewImages,
 		ContactNumber:    property.ContactNumber,
