@@ -78,7 +78,7 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 	}
 
 	if filters.RecentlySold != nil {
-		query = query.Where("is_sold = true").Order("updated_at DESC")
+		query = query.Where("sold_at IS NOT NULL").Order("sold_at DESC")
 	}
 
 	if filters.RecentlyBuilt != nil {
@@ -152,7 +152,7 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 		}
 	}
 
-	query = query.Where("is_sold IS NULL")
+	query = query.Where("sold_at IS NULL")
 
 	getPropertiesTransaction := query.Preload(clause.Associations).Offset(filters.Offset).Limit(filters.Limit).Find(&properties)
 
