@@ -44,7 +44,11 @@ func UpdatePaymentType(write http.ResponseWriter, request *http.Request) {
 	paymentTypeService := application.UpdatePaymentTypeService{Validated: validated, Database: database}
 	paymenttypePayload := entities.PaymentType{
 		Name:     paymentTypeRequest.Name,
-		StatusID: 1,
+		StatusID: *paymentTypeRequest.StatusID,
+	}
+
+	if paymentTypeRequest.StatusID == nil {
+		paymenttypePayload.StatusID = 1
 	}
 
 	paymentType, updatePaymentTypeErr := paymentTypeService.Execute(paymenttypePayload, paymentTypeId)

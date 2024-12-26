@@ -9,17 +9,15 @@ import (
 type PaymentTypePresenter struct{}
 
 type PaymentTypeFromHTTP struct {
-	Name string `json:"name" validate:"required,gte=3,lte=100"`
+	Name     string `json:"name" validate:"required,gte=3,lte=100"`
+	StatusID *uint   `json:"status_id" validate:"required"`
 }
 
 type PaymentTypeToHTTP struct {
-	ID uint `json:"id"`
-
-	Name string `json:"name"`
-
-	StatusID uint `json:"status_id"`
-
-	Status entities.Status `json:"status"`
+	ID       uint            `json:"id"`
+	Name     string          `json:"name"`
+	StatusID uint            `json:"status_id"`
+	Status   entities.Status `json:"status"`
 }
 
 func (PaymentTypePresenter) FromHTTP(request *http.Request) (*PaymentTypeFromHTTP, error) {
