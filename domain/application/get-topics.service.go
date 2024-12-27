@@ -35,7 +35,7 @@ func (self *GetTopicsService) Execute() (*Topics, error) {
 
 	self.Database.Joins("JOIN kinds ON kinds.id = properties.kind_id").Where("kinds.name = ? AND properties.sold_at IS NULL AND properties.deleted_at IS NULL", "Apartamento").Model(properties).Count(&topics.Apartments)
 
-	self.Database.Model(properties).Where("sold_at = true AND updated_at >= ?", LAST_MONTH).Count(&topics.RecentlySold)
+	self.Database.Model(properties).Where("sold_at IS NOT NULL AND updated_at >= ?", LAST_MONTH).Count(&topics.RecentlySold)
 
 	self.Database.Model(properties).Where("construction_year >= ? AND sold_at IS NULL AND deleted_at IS NULL", LAST_YEAR.Year()).Count(&topics.RecentlyBuilt)
 
