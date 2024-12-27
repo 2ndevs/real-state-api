@@ -18,7 +18,20 @@ func VisitsByFeature(write http.ResponseWriter, request *http.Request) {
 
 	feature := request.URL.Query().Get("feature")
 
-	service := application.VisitsByFeatureService{Database: database, Feature: feature}
+	featureColumns := map[string]string{
+		"bathrooms": "bathrooms",
+		"rooms":     "rooms",
+		"suites":    "suites",
+		"kitchens":  "kitchens",
+	}
+
+	featureColumn, exists := featureColumns[feature]
+	if !exists {
+		core.HandleHTTPStatus(write, core.InvalidParametersError)
+		return
+	}
+
+	service := application.VisitsByFeatureService{Database: database, Feature: featureColumn}
 	result, err := service.Execute()
 	if err != nil {
 		core.HandleHTTPStatus(write, err)
