@@ -7,7 +7,6 @@ import (
 	"main/infra/http/middlewares"
 	"main/infra/http/routes/internals/presenters"
 	"net/http"
-	"strconv"
 )
 
 func VisitsByFeature(write http.ResponseWriter, request *http.Request) {
@@ -18,13 +17,8 @@ func VisitsByFeature(write http.ResponseWriter, request *http.Request) {
 	}
 
 	feature := request.URL.Query().Get("feature")
-	value, err := strconv.Atoi(request.URL.Query().Get("value"))
-	if err != nil {
-		core.HandleHTTPStatus(write, core.InvalidParametersError)
-		return
-	}
 
-	service := application.VisitsByFeatureService{Database: database, Feature: feature, Value: value}
+	service := application.VisitsByFeatureService{Database: database, Feature: feature}
 	result, err := service.Execute()
 	if err != nil {
 		core.HandleHTTPStatus(write, err)

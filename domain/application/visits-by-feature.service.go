@@ -1,40 +1,30 @@
 package application
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type VisitsByFeatureService struct {
 	Database *gorm.DB
 	Feature  string
-	Value    int
 }
 
-type VisitsByFeatureResponse struct {
-	PropertyID uint `json:"property_id"`
-	Count      int  `json:"count"`
+type VisitsByFeatureAndMonthResponse struct {
+	Feature string `json:"feature"`
+	Month   string `json:"month"`
+	Count   int    `json:"count"`
 }
 
-func (self *VisitsByFeatureService) Execute() ([]VisitsByFeatureResponse, error) {
-	var result []VisitsByFeatureResponse
+func (self *VisitsByFeatureService) Execute() ([]VisitsByFeatureAndMonthResponse, error) {
+	var result []VisitsByFeatureAndMonthResponse
 
 	query := self.Database.Table("properties").
-		Select("properties.id AS property_id, COUNT(visits.id) AS count").
+		Select("? AS feature, DATE_TRUNC('month', visits.created_at) AT TIME ZONE 'utc' AS month, COUNT(visits.id) AS count", self.Feature).
 		Joins("JOIN visits ON visits.property_id = properties.id").
-		Group("properties.id").
-		Order("count DESC")
-
-	switch self.Feature {
-	case "bathrooms":
-		query = query.Where("bathrooms = ?", self.Value)
-	case "rooms":
-		query = query.Where("rooms = ?", self.Value)
-	case "suites":
-		query = query.Where("suites = ?", self.Value)
-	case "kitchens":
-		query = query.Where("kitchens = ?", self.Value)
-
-	default:
-		return nil, nil
-	}
+		Group(fmt.Sprintf("%s, month", self.Feature)).
+		Order("month, count DESC")
 
 	err := query.Scan(&result).Error
 	if err != nil {
