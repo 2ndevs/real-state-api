@@ -58,7 +58,7 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 		IsHighlight:      propertyRequest.IsHighlight,
 		Discount:         propertyRequest.Discount,
 		ConstructionYear: propertyRequest.ConstructionYear,
-		IsSold:           propertyRequest.IsSold,
+		SoldAt:           propertyRequest.SoldAt,
 		ContactNumber:    propertyRequest.ContactNumber,
 
 		KindID:        propertyRequest.KindID,

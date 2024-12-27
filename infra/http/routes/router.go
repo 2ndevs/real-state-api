@@ -110,5 +110,12 @@ func Handler(router chi.Router) {
 			router.Delete("/{id}", controllers.DeleteInterestedUser)
 			router.Put("/{id}", controllers.UpdateInterestedUser)
 		})
+
+		router.Route("/charts", func(router chi.Router) {
+			router.Get("/visits/month", controllers.VisitsPerMonth)
+			router.Get("/visits/kind", controllers.VisitsByKind)
+			router.Get("/visits/feature", controllers.VisitsByFeature)
+			router.Get("/sold/month", controllers.SoldPerMonth)
+		})
 	})
 }
