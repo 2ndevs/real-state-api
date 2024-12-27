@@ -152,7 +152,7 @@ func (self *GetManyPropertiesService) Execute(filters GetManyPropertiesFilters) 
 		}
 	}
 
-	query = query.Where("sold_at IS NULL")
+	query = query.Where("deleted_at IS NULL")
 
 	getPropertiesTransaction := query.Preload(clause.Associations).Offset(filters.Offset).Limit(filters.Limit).Find(&properties)
 

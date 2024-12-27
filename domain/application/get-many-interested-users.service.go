@@ -13,7 +13,7 @@ type GetManyInterestedUsersService struct {
 
 func (self *GetManyInterestedUsersService) Execute() (*[]entities.InterestedUser, error) {
 	var interestedUsers []entities.InterestedUser
-	query := self.Database.Model(&entities.InterestedUser{})
+	query := self.Database.Model(&entities.InterestedUser{}).Order("created_at DESC")
 
 	query = query.Where("deleted_at IS NULL")
 
