@@ -13,11 +13,13 @@ type VisitsPerMonthToHTTP struct {
 
 func (VisitsPerMonthPresenter) ToHTTP(data []application.VisitsPerMonthResponse) []VisitsPerMonthToHTTP {
 	result := make([]VisitsPerMonthToHTTP, len(data))
+
 	for i, item := range data {
 		result[i] = VisitsPerMonthToHTTP{
 			Month: item.Month,
 			Count: item.Count,
 		}
 	}
+
 	return result
 }

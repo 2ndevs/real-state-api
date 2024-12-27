@@ -13,6 +13,7 @@ type VisitsByKindResponse struct {
 
 func (self *VisitsByKindService) Execute() ([]VisitsByKindResponse, error) {
 	var result []VisitsByKindResponse
+
 	err := self.Database.
 		Table("visits").
 		Select("kinds.name AS kind, COUNT(visits.id) AS count").
@@ -24,5 +25,6 @@ func (self *VisitsByKindService) Execute() ([]VisitsByKindResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return result, nil
 }

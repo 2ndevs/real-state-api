@@ -11,11 +11,13 @@ type VisitsByFeatureToHTTP struct {
 
 func (VisitsByFeaturePresenter) ToHTTP(data []application.VisitsByFeatureResponse) []VisitsByFeatureToHTTP {
 	result := make([]VisitsByFeatureToHTTP, len(data))
+
 	for i, item := range data {
 		result[i] = VisitsByFeatureToHTTP{
 			PropertyID: item.PropertyID,
 			Count:      item.Count,
 		}
 	}
+
 	return result
 }

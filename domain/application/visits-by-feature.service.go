@@ -15,6 +15,7 @@ type VisitsByFeatureResponse struct {
 
 func (self *VisitsByFeatureService) Execute() ([]VisitsByFeatureResponse, error) {
 	var result []VisitsByFeatureResponse
+
 	query := self.Database.Table("properties").
 		Select("properties.id AS property_id, COUNT(visits.id) AS count").
 		Joins("JOIN visits ON visits.property_id = properties.id").
@@ -39,5 +40,6 @@ func (self *VisitsByFeatureService) Execute() ([]VisitsByFeatureResponse, error)
 	if err != nil {
 		return nil, err
 	}
+
 	return result, nil
 }

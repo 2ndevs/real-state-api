@@ -13,6 +13,7 @@ type SoldPerMonthResponse struct {
 
 func (self *SoldPerMonthService) Execute() ([]SoldPerMonthResponse, error) {
 	var result []SoldPerMonthResponse
+
 	err := self.Database.
 		Table("properties").
 		Select("DATE_TRUNC('month', sold_at) AT TIME ZONE 'utc' AS month, COUNT(*) AS count").
@@ -23,5 +24,6 @@ func (self *SoldPerMonthService) Execute() ([]SoldPerMonthResponse, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return result, nil
 }
