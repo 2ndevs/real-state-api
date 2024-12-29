@@ -90,32 +90,32 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		previewImages = append(previewImages, file)
 	}
 
-	rooms, err := strconv.ParseUint(request.FormValue("rooms"), 32, 10)
+	rooms, err := strconv.ParseUint(request.FormValue("rooms"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
 
-	suites, err := strconv.ParseUint(request.FormValue("suites"), 32, 10)
+	suites, err := strconv.ParseUint(request.FormValue("suites"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
 
-	builtArea, err := strconv.ParseUint(request.FormValue("built_area"), 32, 64)
+	builtArea, err := strconv.ParseUint(request.FormValue("built_area"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
 
-	totalArea, err := strconv.ParseUint(request.FormValue("total_area"), 32, 64)
+	totalArea, err := strconv.ParseUint(request.FormValue("total_area"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
 
-	kitchens, err := strconv.ParseUint(request.FormValue("kitchens"), 32, 10)
+	kitchens, err := strconv.ParseUint(request.FormValue("kitchens"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
 
-	bathrooms, err := strconv.ParseUint(request.FormValue("bathrooms"), 32, 10)
+	bathrooms, err := strconv.ParseUint(request.FormValue("bathrooms"), 10, 64)
 	if err != nil {
 		return nil, err
 	}
@@ -181,17 +181,17 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	paymentTypeId, err := strconv.ParseUint(request.FormValue("payment_type_id"), 32, 24)
+	paymentTypeId, err := strconv.ParseUint(request.FormValue("payment_type_id"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
 
-	kindId, err := strconv.ParseUint(request.FormValue("kind_id"), 32, 24)
+	kindId, err := strconv.ParseUint(request.FormValue("kind_id"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
 
-	UnitOfMeasurementId, err := strconv.ParseUint(request.FormValue("unit_of_measurement_id"), 32, 24)
+	UnitOfMeasurementId, err := strconv.ParseUint(request.FormValue("unit_of_measurement_id"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
@@ -388,34 +388,34 @@ func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetM
 		filters.Kinds = &kinds
 	}
 
-	limit, limitErr := strconv.ParseInt(perPageFilter, 16, 16)
+	limit, limitErr := strconv.ParseInt(perPageFilter, 10, 32)
 	if perPageFilter == "" || limit < 1 || limitErr != nil {
 		limit = 15
 	}
 	filters.Limit = int(limit)
 
-	page, pageErr := strconv.ParseInt(pageFilter, 16, 16)
+	page, pageErr := strconv.ParseInt(pageFilter, 10, 32)
 	if pageFilter == "" || page < 1 || pageErr != nil {
 		page = 1
 	}
 	filters.Offset = int((page - 1) * limit)
 
-	minBedroom, minBedroomErr := strconv.ParseUint(minBedroomsFilter, 16, 16)
+	minBedroom, minBedroomErr := strconv.ParseUint(minBedroomsFilter, 10, 32)
 	if minBedroomsFilter != "" && minBedroomErr == nil {
 		filters.MinBedrooms = &minBedroom
 	}
 
-	minBathroom, minBathroomErr := strconv.ParseUint(minBathroomsFilter, 16, 16)
+	minBathroom, minBathroomErr := strconv.ParseUint(minBathroomsFilter, 10, 32)
 	if minBathroomsFilter != "" && minBathroomErr == nil {
 		filters.MinBathrooms = &minBathroom
 	}
 
-	maxBedroom, maxBedroomErr := strconv.ParseUint(maxBedroomsFilter, 16, 16)
+	maxBedroom, maxBedroomErr := strconv.ParseUint(maxBedroomsFilter, 10, 32)
 	if maxBedroomsFilter != "" && maxBedroomErr == nil {
 		filters.MaxBedrooms = &maxBedroom
 	}
 
-	maxBathroom, maxBathroomErr := strconv.ParseUint(maxBathroomsFilter, 16, 16)
+	maxBathroom, maxBathroomErr := strconv.ParseUint(maxBathroomsFilter, 10, 32)
 	if maxBathroomsFilter != "" && maxBathroomErr == nil {
 		filters.MaxBathrooms = &maxBathroom
 	}
