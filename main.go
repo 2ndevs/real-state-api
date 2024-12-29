@@ -38,8 +38,8 @@ func main() {
 
 	fmt.Printf("[SERVER] Running on port %v\n", port)
 	serverError := http.ListenAndServe(port, router)
-
 	if serverError != nil {
+		log.Printf("%v\n", serverError)
 		log.Fatal("Unable to run server")
 	}
 

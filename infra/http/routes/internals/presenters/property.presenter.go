@@ -34,9 +34,10 @@ type PropertyFromHTTP struct {
 	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
 	ContactNumber    string                  `json:"contact_number" validate:"required,min=13,max=13"`
 
-	KindID              uint `json:"kind_id" validate:"required,min=1"`
-	PaymentTypeID       uint `json:"payment_type_id" validate:"required,min=1"`
-	UnitOfMeasurementID uint `json:"unit_of_measurement_id" validate:"required,min=1"`
+	KindID              uint  `json:"kind_id" validate:"required,min=1"`
+	StatusID            *uint `json:"status_id"`
+	PaymentTypeID       uint  `json:"payment_type_id" validate:"required,min=1"`
+	UnitOfMeasurementID uint  `json:"unit_of_measurement_id" validate:"required,min=1"`
 }
 
 type VisitToHTTP struct {
