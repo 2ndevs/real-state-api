@@ -172,10 +172,9 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		soldAt = nil
 	}
 	parsedTime, err := time.Parse(time.RFC3339, soldAtStr)
-	if err != nil {
-		return nil, err
+	if err == nil {
+		soldAt = &parsedTime
 	}
-	soldAt = &parsedTime
 
 	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
 	if err != nil {
