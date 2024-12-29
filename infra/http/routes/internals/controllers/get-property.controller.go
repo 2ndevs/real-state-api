@@ -22,20 +22,16 @@ func GetProperty(write http.ResponseWriter, request *http.Request) {
 	}
 
 	idParam := chi.URLParam(request, "id")
-	propertyId, validationErr := strconv.ParseUint(idParam, 10, 32)
+	propertyId, validationErr := strconv.Atoi(idParam)
 	if validationErr != nil {
 		core.HandleHTTPStatus(write, core.InvalidParametersError)
 		return
 	}
 
-	identity, cookieErr := httpPresenter.GetIdentity(request)
-	if cookieErr != nil || identity == nil {
-		core.HandleHTTPStatus(write, core.InvalidParametersError)
-	}
-
+	identity, _ := httpPresenter.GetIdentity(request)
 	propertyService := application.GetPropertyService{Database: database}
 
-	property, getPropertyErr := propertyService.Execute(propertyId, identity)
+	property, getPropertyErr := propertyService.Execute(uint64(propertyId), identity)
 	if getPropertyErr != nil {
 		core.HandleHTTPStatus(write, getPropertyErr)
 		return

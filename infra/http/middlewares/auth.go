@@ -14,8 +14,7 @@ import (
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(
 		func(writer http.ResponseWriter, request *http.Request) {
-			// TODO: remove sign up when the project is in production and being used
-			signPaths := []string{"/admin/users/sign-up", "/admin/users/sign-in"}
+			signPaths := []string{"/admin/users/sign-in"}
 			path := request.URL.Path
 
 			parser := libs.JWT{}

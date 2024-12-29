@@ -68,16 +68,16 @@ type PropertyToHTTP struct {
 	PreviewImages    []string   `json:"preview_images"`
 	ContactNumber    string     `json:"contact_number"`
 
-	KindID              uint `json:"kind_id"`
-	StatusID            uint `json:"status_id"`
-	PaymentTypeID       uint `json:"payment_type_id"`
-	UnitOfMeasurementID uint `json:"unit_of_measurement_id"`
+	KindID              *uint `json:"kind_id"`
+	StatusID            *uint `json:"status_id"`
+	PaymentTypeID       *uint `json:"payment_type_id"`
+	UnitOfMeasurementID *uint `json:"unit_of_measurement_id"`
 
-	Status            entities.Status            `json:"status"`
-	Kind              entities.Kind              `json:"kind"`
-	PaymentType       entities.PaymentType       `json:"payment_type"`
-	UnitOfMeasurement entities.UnitOfMeasurement `json:"unit_of_measurement"`
-	Visits            []VisitToHTTP              `json:"visits"`
+	Status            *entities.Status            `json:"status"`
+	Kind              *entities.Kind              `json:"kind"`
+	PaymentType       *entities.PaymentType       `json:"payment_type"`
+	UnitOfMeasurement *entities.UnitOfMeasurement `json:"unit_of_measurement"`
+	Visits            *[]VisitToHTTP              `json:"visits"`
 }
 
 func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, error) {
@@ -196,6 +196,13 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
+	Status, err := strconv.Atoi(request.FormValue("status_id"))
+	if err != nil {
+		return nil, err
+	}
+
+	StatusId := uint(Status)
+
 	contactNumber := request.FormValue("contact_number")
 	if len(contactNumber) == 0 {
 		return nil, core.InvalidParametersError
@@ -224,22 +231,16 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		KindID:              uint(kindId),
 		PaymentTypeID:       uint(paymentTypeId),
 		UnitOfMeasurementID: uint(UnitOfMeasurementId),
+		StatusID:            &StatusId,
 	}
 
 	return &propertyRequest, nil
 }
 
 func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
-	visits := make([]VisitToHTTP, len(property.Visits))
-	for i, visit := range property.Visits {
-		visits[i] = VisitToHTTP{
-			ID:        visit.ID,
-			UserID:    visit.UserID,
-			CreatedAt: visit.CreatedAt,
-		}
-	}
+	hasVisits := len(property.Visits) > 0
 
-	return PropertyToHTTP{
+	entity := PropertyToHTTP{
 		ID: property.ID,
 
 		BuiltArea:        property.BuiltArea,
@@ -256,22 +257,37 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		Price:            property.Price,
 		IsHighlight:      property.IsHighlight,
 		Discount:         property.Discount,
-		SoldAt:           property.SoldAt,
+		// SoldAt:           property.SoldAt,
 		ConstructionYear: property.ConstructionYear,
 		PreviewImages:    property.PreviewImages,
 		ContactNumber:    property.ContactNumber,
 
-		KindID:              property.KindID,
-		StatusID:            property.StatusID,
-		PaymentTypeID:       property.PaymentTypeID,
-		UnitOfMeasurementID: property.UnitOfMeasurementID,
+		KindID:              &property.KindID,
+		StatusID:            &property.StatusID,
+		PaymentTypeID:       &property.PaymentTypeID,
+		UnitOfMeasurementID: &property.UnitOfMeasurementID,
 
-		Status:            property.Status,
-		Kind:              property.Kind,
-		PaymentType:       property.PaymentType,
-		UnitOfMeasurement: property.UnitOfMeasurement,
-		Visits:            visits,
+		Status:            &property.Status,
+		Kind:              &property.Kind,
+		PaymentType:       &property.PaymentType,
+		UnitOfMeasurement: &property.UnitOfMeasurement,
 	}
+
+	if hasVisits {
+		visits := make([]VisitToHTTP, len(property.Visits))
+
+		for i, visit := range property.Visits {
+			visits[i] = VisitToHTTP{
+				ID:        visit.ID,
+				UserID:    visit.UserID,
+				CreatedAt: visit.CreatedAt,
+			}
+		}
+
+		entity.Visits = &visits
+	}
+
+	return entity
 }
 
 func (PropertyPresenter) GetSearchParams(request *http.Request) application.GetManyPropertiesFilters {
