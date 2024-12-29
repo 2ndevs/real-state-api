@@ -176,7 +176,7 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		soldAt = &parsedTime
 	}
 
-	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 32, 24)
+	constructionYear, err := strconv.ParseUint(request.FormValue("construction_year"), 10, 32)
 	if err != nil {
 		return nil, err
 	}
@@ -257,7 +257,7 @@ func (PropertyPresenter) ToHTTP(property entities.Property) PropertyToHTTP {
 		Price:            property.Price,
 		IsHighlight:      property.IsHighlight,
 		Discount:         property.Discount,
-		// SoldAt:           property.SoldAt,
+		SoldAt:           property.SoldAt,
 		ConstructionYear: property.ConstructionYear,
 		PreviewImages:    property.PreviewImages,
 		ContactNumber:    property.ContactNumber,

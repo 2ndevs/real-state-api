@@ -63,7 +63,8 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 
 		KindID:        propertyRequest.KindID,
 		PaymentTypeID: propertyRequest.PaymentTypeID,
-		StatusID:      1,
+		UnitOfMeasurementID: propertyRequest.UnitOfMeasurementID,
+		StatusID:      *propertyRequest.StatusID,
 	}
 
 	property, updatePropertyErr := propertyService.Execute(propertyPayload, propertyId)
