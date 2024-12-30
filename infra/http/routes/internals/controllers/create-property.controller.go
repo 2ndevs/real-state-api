@@ -64,10 +64,14 @@ func CreateProperty(write http.ResponseWriter, request *http.Request) {
 			KindID:              propertyRequest.KindID,
 			PaymentTypeID:       propertyRequest.PaymentTypeID,
 			UnitOfMeasurementID: propertyRequest.UnitOfMeasurementID,
-			StatusID:            1,
+			StatusID:            *propertyRequest.StatusID,
 		},
 
 		PreviewImages: propertyRequest.PreviewImages,
+	}
+
+	if propertyRequest.StatusID == nil {
+		propertyPayload.StatusID = 1
 	}
 
 	property, createPropertyErr := propertyService.Execute(propertyPayload)

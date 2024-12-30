@@ -33,6 +33,7 @@ func (self *UpdatePropertyService) Execute(property entities.Property, propertyI
 	}
 
 	property.ID = existingProperty.ID
+	property.PreviewImages = existingProperty.PreviewImages
 
 	updatePropertyTransaction := self.Database.Save(&property)
 	if updatePropertyTransaction.Error != nil {

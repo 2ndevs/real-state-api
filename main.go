@@ -28,6 +28,7 @@ func main() {
 	router := chi.NewRouter()
 
 	middlewares.Debug(router)
+
 	router.Use(middlewares.S3Middleware)
 	router.Use(middlewares.ValidatorMiddleware)
 	router.Use(middlewares.DatabaseMiddleware(database))
@@ -38,8 +39,8 @@ func main() {
 
 	fmt.Printf("[SERVER] Running on port %v\n", port)
 	serverError := http.ListenAndServe(port, router)
-
 	if serverError != nil {
+		log.Printf("%v\n", serverError)
 		log.Fatal("Unable to run server")
 	}
 

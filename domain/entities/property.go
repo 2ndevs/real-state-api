@@ -12,10 +12,10 @@ type Property struct {
 
 	TotalArea        uint           `validate:"required,min=1"`
 	BuiltArea        uint           `validate:"required,min=1"`
-	Rooms            uint           `validate:"required,min=0"`
-	Suites           uint           `validate:"required,min=0"`
-	Kitchens         uint           `validate:"required,min=0"`
-	Bathrooms        uint           `validate:"required,min=0"`
+	Rooms            uint           `validate:"min=0"`
+	Suites           uint           `validate:"min=0"`
+	Kitchens         uint           `validate:"min=0"`
+	Bathrooms        uint           `validate:"min=0"`
 	Address          string         `validate:"required"`
 	Summary          string         `validate:"required"`
 	Details          string         `validate:"required"`
