@@ -27,7 +27,7 @@ type Property struct {
 	IsHighlight      bool           `gorm:"default:false"`
 	ConstructionYear uint           `validate:"required,min=1945"`
 	PreviewImages    pq.StringArray `gorm:"type:text[]"`
-	ContactNumber    string         `validate:"required,min=13,max=13"`
+	ContactNumber    string         `validate:"required,min=9,max=16"`
 
 	KindID              uint `gorm:"index" validate:"required,min=1"`
 	StatusID            uint `gorm:"index" validate:"required,min=1"`

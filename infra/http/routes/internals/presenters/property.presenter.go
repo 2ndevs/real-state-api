@@ -32,7 +32,7 @@ type PropertyFromHTTP struct {
 	SoldAt           *time.Time              `json:"sold_at"`
 	ConstructionYear uint                    `json:"construction_year" validate:"required,min=1945"`
 	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
-	ContactNumber    string                  `json:"contact_number" validate:"required,min=13,max=13"`
+	ContactNumber    string                  `json:"contact_number" validate:"required,min=9,max=16"`
 
 	KindID              uint  `json:"kind_id" validate:"required,min=1"`
 	StatusID            *uint `json:"status_id"`
