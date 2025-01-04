@@ -30,7 +30,7 @@ type UserToHTTP struct {
 	StatusId uint `json:"status_id"`
 }
 
-func (UserPresenter) FromHTTP(request http.Request) (*UserFromHTTP, error) {
+func (UserPresenter) FromHTTP(request *http.Request) (*UserFromHTTP, error) {
 	var userRequest UserFromHTTP
 
 	decoder := json.NewDecoder(request.Body)
