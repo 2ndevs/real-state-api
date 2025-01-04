@@ -56,6 +56,8 @@ func Handler(router chi.Router) {
 			router.Post("/sign-up", controllers.SignUp)
 
 			router.Get("/{id}", controllers.GetUser)
+			router.Put("/{id}", controllers.UpdateUser)
+			router.Delete("/{id}", controllers.DeleteUser)
 		})
 
 		router.Route("/kinds", func(router chi.Router) {
