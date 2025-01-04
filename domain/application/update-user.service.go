@@ -59,9 +59,6 @@ func (self *UpdateUserService) Execute(id string, payload UpdateUserServiceReque
 		response.PasswordHash = *hashedPassword
 	}
 
-	libs.PrettyPrint(payload)
-	libs.PrettyPrint(response)
-
 	updateUserTransaction := self.Database.Save(&response)
 	if updateUserTransaction.Error != nil {
 		return nil, updateUserTransaction.Error
