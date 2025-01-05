@@ -16,8 +16,8 @@ func SeedProperties(db *gorm.DB) {
 
 	properties := []entities.Property{
 		{
-			TotalArea:           uint(rand.Float64()*500 + 50),
-			BuiltArea:           uint(rand.Float64()*400 + 30),
+			TotalArea:           rand.Float64()*500 + 50,
+			BuiltArea:           rand.Float64()*400 + 30,
 			Rooms:               uint(rand.Float64()*6 + 1),
 			Kitchens:            uint(rand.Float64()*3 + 1),
 			Bathrooms:           uint(rand.Float64()*4 + 1),
@@ -38,8 +38,8 @@ func SeedProperties(db *gorm.DB) {
 			PreviewImages:       []string{"fallback.jpg"},
 		},
 		{
-			TotalArea:           uint(rand.Float64()*500 + 50),
-			BuiltArea:           uint(rand.Float64()*400 + 30),
+			TotalArea:           rand.Float64()*500 + 50,
+			BuiltArea:           rand.Float64()*400 + 30,
 			Rooms:               uint(rand.Float64()*6 + 1),
 			Kitchens:            uint(rand.Float64()*3 + 1),
 			Bathrooms:           uint(rand.Float64()*4 + 1),

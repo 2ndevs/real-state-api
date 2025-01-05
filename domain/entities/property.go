@@ -10,8 +10,8 @@ import (
 type Property struct {
 	core.Model
 
-	TotalArea        uint           `validate:"required,min=1"`
-	BuiltArea        uint           `validate:"required,min=1"`
+	TotalArea        float64        `validate:"required,min=1"`
+	BuiltArea        float64        `validate:"required,min=1"`
 	Rooms            uint           `validate:"min=0"`
 	Suites           uint           `validate:"min=0"`
 	Kitchens         uint           `validate:"min=0"`

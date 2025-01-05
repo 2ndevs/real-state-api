@@ -1,6 +1,7 @@
 package presenters
 
 import (
+	"fmt"
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
@@ -15,8 +16,8 @@ import (
 type PropertyPresenter struct{}
 
 type PropertyFromHTTP struct {
-	BuiltArea        uint                    `json:"built_area" validate:"required,min=1"`
-	TotalArea        uint                    `json:"total_area" validate:"required,min=1"`
+	BuiltArea        float64                 `json:"built_area" validate:"required,min=1"`
+	TotalArea        float64                 `json:"total_area" validate:"required,min=1"`
 	Rooms            uint                    `json:"rooms" validate:"required,min=0"`
 	Suites           uint                    `json:"suites" validate:"required,min=0"`
 	Kitchens         uint                    `json:"kitchens" validate:"required,min=0"`
@@ -49,8 +50,8 @@ type VisitToHTTP struct {
 type PropertyToHTTP struct {
 	ID uint `json:"id"`
 
-	BuiltArea        uint       `json:"built_area"`
-	TotalArea        uint       `json:"total_area"`
+	BuiltArea        float64    `json:"built_area"`
+	TotalArea        float64    `json:"total_area"`
 	Rooms            uint       `json:"rooms"`
 	Suites           uint       `json:"suites"`
 	Kitchens         uint       `json:"kitchens"`
@@ -100,12 +101,12 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		return nil, err
 	}
 
-	builtArea, err := strconv.ParseUint(request.FormValue("built_area"), 10, 32)
+	builtArea, err := strconv.ParseFloat(request.FormValue("built_area"), 64)
 	if err != nil {
 		return nil, err
 	}
 
-	totalArea, err := strconv.ParseUint(request.FormValue("total_area"), 10, 32)
+	totalArea, err := strconv.ParseFloat(request.FormValue("total_area"), 64)
 	if err != nil {
 		return nil, err
 	}
@@ -171,7 +172,8 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 	if soldAtStr == "" {
 		soldAt = nil
 	}
-	parsedTime, err := time.Parse(time.RFC3339, soldAtStr)
+	parsedTime, err := time.Parse(time.RFC1123, soldAtStr)
+	fmt.Println(parsedTime)
 	if err == nil {
 		soldAt = &parsedTime
 	}
@@ -211,8 +213,8 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 	propertyRequest := PropertyFromHTTP{
 		Rooms:            uint(rooms),
 		Suites:           uint(suites),
-		BuiltArea:        uint(builtArea),
-		TotalArea:        uint(totalArea),
+		BuiltArea:        builtArea,
+		TotalArea:        totalArea,
 		Kitchens:         uint(kitchens),
 		Bathrooms:        uint(bathrooms),
 		Address:          address,
