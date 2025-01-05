@@ -1,7 +1,6 @@
 package presenters
 
 import (
-	"fmt"
 	"main/core"
 	"main/domain/application"
 	"main/domain/entities"
@@ -173,7 +172,6 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		soldAt = nil
 	}
 	parsedTime, err := time.Parse(time.RFC1123, soldAtStr)
-	fmt.Println(parsedTime)
 	if err == nil {
 		soldAt = &parsedTime
 	}
