@@ -3,11 +3,11 @@ package main
 import (
 	"fmt"
 	"log"
+	"main/infra/http/middlewares"
+	"main/infra/http/routes"
 	"net/http"
 	"os"
 
-	"main/infra/http/middlewares"
-	"main/infra/http/routes"
 	database "main/infra/repositories"
 
 	"github.com/go-chi/chi/v5"
@@ -27,6 +27,8 @@ func main() {
 
 	router := chi.NewRouter()
 
+	middlewares.Cors(router)
+
 	middlewares.Debug(router)
 
 	router.Use(middlewares.S3Middleware)
@@ -43,5 +45,4 @@ func main() {
 		log.Printf("%v\n", serverError)
 		log.Fatal("Unable to run server")
 	}
-
 }
