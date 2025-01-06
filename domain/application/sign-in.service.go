@@ -49,7 +49,7 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 	token, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
-		Time: time.Now().Add(time.Hour * 2).Unix(),
+		Time: time.Now().Add(time.Hour * 24 * 7).Unix(),
 	})
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (self SignInService) Execute(params SignInRequest) (*SignInResponse, error)
 	refreshToken, err := self.Parser.Generate(libs.CreateJWTParams{
 		Sub:  user.ID,
 		Role: user.RoleID,
-		Time: time.Now().Add(time.Hour * 24).Unix(),
+		Time: time.Now().Add(time.Hour * 24 * 30).Unix(),
 	})
 	if err != nil {
 		return nil, err
