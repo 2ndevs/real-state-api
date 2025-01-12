@@ -28,6 +28,12 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	bucket, ctxErr := middlewares.GetBucketContext(request)
+	if ctxErr != nil {
+		core.HandleHTTPStatus(write, ctxErr)
+		return
+	}
+
 	validated, ctxErr := middlewares.GetValidator(request)
 	if ctxErr != nil {
 		core.HandleHTTPStatus(write, ctxErr)
@@ -41,7 +47,11 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	propertyService := application.UpdatePropertyService{Validated: validated, Database: database}
+	propertyService := application.UpdatePropertyService{
+		Validated: validated,
+		Database:  database,
+		Bucket:    bucket,
+	}
 	propertyPayload := entities.Property{
 		BuiltArea:        propertyRequest.BuiltArea,
 		TotalArea:        propertyRequest.TotalArea,
@@ -61,13 +71,22 @@ func UpdateProperty(write http.ResponseWriter, request *http.Request) {
 		SoldAt:           propertyRequest.SoldAt,
 		ContactNumber:    propertyRequest.ContactNumber,
 
-		KindID:        propertyRequest.KindID,
-		PaymentTypeID: propertyRequest.PaymentTypeID,
+		KindID:              propertyRequest.KindID,
+		PaymentTypeID:       propertyRequest.PaymentTypeID,
 		UnitOfMeasurementID: propertyRequest.UnitOfMeasurementID,
-		StatusID:      *propertyRequest.StatusID,
+		StatusID:            *propertyRequest.StatusID,
 	}
 
-	property, updatePropertyErr := propertyService.Execute(propertyPayload, propertyId)
+	payload := application.UpdatePropertyRequest{
+		Property: propertyPayload,
+		DeleteIds: propertyRequest.DeletedImageIds,
+	}
+
+	if propertyRequest.PreviewImages != nil {
+		payload.UploadedImages = propertyRequest.PreviewImages
+	}
+
+	property, updatePropertyErr := propertyService.Execute(payload, propertyId)
 	if updatePropertyErr != nil {
 		core.HandleHTTPStatus(write, updatePropertyErr)
 		return
