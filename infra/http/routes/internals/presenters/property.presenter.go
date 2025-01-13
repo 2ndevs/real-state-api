@@ -32,6 +32,7 @@ type PropertyFromHTTP struct {
 	SoldAt           *time.Time              `json:"sold_at"`
 	ConstructionYear uint                    `json:"construction_year" validate:"required,min=1945"`
 	PreviewImages    []*multipart.FileHeader `json:"preview_images" validate:"required,min=1"`
+	DeletedImageIds  *[]string               `json:"deleted_image_ids"`
 	ContactNumber    string                  `json:"contact_number" validate:"required,min=9,max=16"`
 
 	KindID              uint  `json:"kind_id" validate:"required,min=1"`
@@ -232,6 +233,19 @@ func (PropertyPresenter) FromHTTP(request *http.Request) (*PropertyFromHTTP, err
 		PaymentTypeID:       uint(paymentTypeId),
 		UnitOfMeasurementID: uint(UnitOfMeasurementId),
 		StatusID:            &StatusId,
+	}
+
+	deletedIds := request.MultipartForm.Value["deleted_image_ids"]
+	propertyRequest.DeletedImageIds = &[]string{}
+
+	if len(deletedIds) > 0 {
+		propertyRequest.DeletedImageIds = &[]string{
+			deletedIds[0],
+		}
+
+		for _, item := range deletedIds[1:] {
+			*propertyRequest.DeletedImageIds = append(*propertyRequest.DeletedImageIds, item)
+		}
 	}
 
 	return &propertyRequest, nil

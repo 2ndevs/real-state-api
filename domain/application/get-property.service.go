@@ -26,7 +26,13 @@ func (self *GetPropertyService) Execute(propertyID uint64, userIdentity *string)
 		}
 	}
 
-	getPropertyTransaction := self.Database.Preload(clause.Associations).Preload("Visits").Find(&property, propertyID).Where("deleted_at IS NULL and sold_at IS NULL").First(&property)
+	getPropertyTransaction := self.Database.
+		Preload(clause.Associations).
+		Preload("Visits").
+		Find(&property, propertyID).
+		Where("deleted_at IS NULL").
+		First(&property)
+
 	if getPropertyTransaction.Error != nil {
 		return nil, getPropertyTransaction.Error
 	}
