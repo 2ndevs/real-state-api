@@ -11,7 +11,7 @@ type Property struct {
 	core.Model
 
 	TotalArea        float64        `validate:"required,min=1"`
-	BuiltArea        float64        `validate:"required,min=1"`
+	BuiltArea        float64        `validate:"min=0"`
 	Rooms            uint           `validate:"min=0"`
 	Suites           uint           `validate:"min=0"`
 	Kitchens         uint           `validate:"min=0"`
