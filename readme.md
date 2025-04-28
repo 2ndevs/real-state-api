@@ -1,6 +1,12 @@
+<br/>
+
 <div align="center">
-  * Preview only project, read more <a href="https://github.com/2ndevs/real-state-api/blob/main/LICENSE">here</a> *
+  <strong>
+    PREVIEW ONLY PROJECT, READ MORE <a href="https://github.com/2ndevs/real-state-api/blob/main/LICENSE">HERE</a>
+  </strong>
 </div>
+
+<br/>
 
 # Real Estate API
 
