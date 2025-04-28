@@ -1,3 +1,7 @@
+<div align="center">
+  * Preview only project, read more <a href="https://github.com/2ndevs/real-state-api/blob/main/LICENSE">here</a> *
+</div>
+
 # Real Estate API
 
 This project is an API designed for a real estate website where users can search for their ideal property in a specific city. The API is built using **Bun** and **Fastify**, with a **PostgreSQL** database running in a **Docker Compose** environment. The API provides separate routes for web users and administrators, allowing for property management and report generation.
